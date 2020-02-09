@@ -1,0 +1,6 @@
+/venv
+/virtualenv
+
+main.py
+
+.idea/
