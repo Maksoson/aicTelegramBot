@@ -31,7 +31,7 @@ def sendWelcome(message):
 def checkUser(message):
     with closing(getConnection()) as connection:
         with connection.cursor() as cursor:
-            bot.send_message(message.chat_id, 'db success')
+            bot.send_message(message.chat.id, 'db success')
             # query = 'SELECT * FROM aicroboticsbot.users WHERE user_id = %s'
             # cursor.execute(query, message.from_user.id)
             #
