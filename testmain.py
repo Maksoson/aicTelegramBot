@@ -31,7 +31,7 @@ def sendWelcome(message):
 def addUsersTable(message):
     with closing(getConnection()) as connection:
         with connection.cursor() as cursor:
-            query = """CREATE TABLE IF NOT EXISTS users (
+            query = """CREATE TABLE users (
                       id integer(11) NOT NULL AUTO_INCREMENT,
                       user_accname varchar(90) DEFAULT NULL,
                       user_firstname varchar(90) DEFAULT NULL,
