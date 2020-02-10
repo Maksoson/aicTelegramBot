@@ -25,8 +25,9 @@ age = 0
 @bot.message_handler(commands=['start', 'help'])
 def sendWelcome(message):
     # checkUser(message)
-    if addUsersTable(message):
-        bot.send_message(message.chat.id, 'Привет , ' + message.from_user.username + ' (:')
+    addUsersTable(message)
+    bot.send_message(message.chat.id, 'Привет , ' + message.from_user.username + ' (:')
+
 
 def addUsersTable(message):
     with closing(getConnection()) as connection:
@@ -41,9 +42,9 @@ def addUsersTable(message):
                       user_isbot boolean NOT NULL,
                       PRIMARY KEY (id) );
                     """
-            if cursor.execute(query):
-                bot.send_message(message.chat.id, "success")
 
+            cursor.execute(query)
+            bot.send_message(message.chat.id, "success")
 
 
 def checkUser(message):
