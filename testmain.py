@@ -31,16 +31,16 @@ def sendWelcome(message):
 def addUsersTable(message):
     with closing(getConnection()) as connection:
         with connection.cursor() as cursor:
-            query = """CREATE TABLE IF NOT EXISTS "users" (
-                      id integer(11) NOT NULL AUTO_INCREMENT,
-                      user_accname varchar(90) DEFAULT NULL,
-                      user_firstname varchar(90) DEFAULT NULL,
-                      user_lastname varchar(90) DEFAULT NULL,
-                      user_id integer(11) NOT NULL,
-                      user_language varchar(20) DEFAULT NULL,
-                      user_rank varchar(45) NOT NULL DEFAULT 'Beginner',
-                      user_isbot tinyint(4) NOT NULL,
-                      PRIMARY KEY (id)
+            query = """CREATE TABLE IF NOT EXISTS users (
+                      "id" integer(11) NOT NULL AUTO_INCREMENT,
+                      "user_accname" varchar(90) DEFAULT NULL,
+                      "user_firstname" varchar(90) DEFAULT NULL,
+                      "user_lastname" varchar(90) DEFAULT NULL,
+                      "user_id" integer(11) NOT NULL,
+                      "user_language" varchar(20) DEFAULT NULL,
+                      "user_rank" varchar(45) NOT NULL DEFAULT 'Beginner',
+                      "user_isbot" tinyint(4) NOT NULL,
+                      PRIMARY KEY ("id")
                     ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
                     """
             if cursor.execute(query):
