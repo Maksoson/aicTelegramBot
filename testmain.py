@@ -24,23 +24,42 @@ age = 0
 
 @bot.message_handler(commands=['start', 'help'])
 def sendWelcome(message):
-    checkUser(message)
-    bot.send_message(message.chat.id, 'Привет , ' + message.from_user.username + ' (:')
+    # checkUser(message)
+    if addUsersTable(message):
+        bot.send_message(message.chat.id, 'Привет , ' + message.from_user.username + ' (:')
+
+def addUsersTable(message):
+    with closing(getConnection()) as connection:
+        with connection.cursor() as cursor:
+            query = """CREATE TABLE IF NOT EXISTS `users` (
+                      `id` int(11) NOT NULL AUTO_INCREMENT,
+                      `user_accname` varchar(90) DEFAULT NULL,
+                      `user_firstname` varchar(90) DEFAULT NULL,
+                      `user_lastname` varchar(90) DEFAULT NULL,
+                      `user_id` int(11) NOT NULL,
+                      `user_language` varchar(20) DEFAULT NULL,
+                      `user_rank` varchar(45) NOT NULL DEFAULT 'Beginner',
+                      `user_isbot` tinyint(4) NOT NULL,
+                      PRIMARY KEY (`id`)
+                    ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
+                    """
+            if cursor.execute(query):
+                bot.send_message(message.chat.id, "success")
+
 
 
 def checkUser(message):
     with closing(getConnection()) as connection:
         with connection.cursor() as cursor:
-            bot.send_message(message.chat.id, 'db success')
-            # query = 'SELECT * FROM aicroboticsbot.users WHERE user_id = %s'
-            # cursor.execute(query, message.from_user.id)
-            #
-            # if cursor.rowcount > 0:
-            #     for row in cursor:
-            #         if compareUserData(row, message) == False:
-            #             updateUser(message)
-            # else:
-            #     addUser(message)
+            query = 'SELECT * FROM aicroboticsbot.users WHERE user_id = %s'
+            cursor.execute(query, message.from_user.id)
+
+            if cursor.rowcount > 0:
+                for row in cursor:
+                    if not compareUserData(row, message):
+                        updateUser(message)
+            else:
+                addUser(message)
 
 
 def compareUserData(old_userdata, new_userdata):
@@ -144,7 +163,7 @@ def getConnection():
 #         charset=config.DBCHARSET,
 #         cursorclass=DictCursor
 #     )
-    DATABASELINK = "postgres://{USER}:{PASSWORD}@{HOST}:{PORT}/{NAME}".format(USER=config.DBUSER, PASSWORD=config.DBPASSWORD, HOST=config.DBHOST, PORT=config.DBPORT, NAME=config.DBNAME)
+    DATABASELINK = config.DATABASELINK
 
     db_info = dj_database_url.config(default=DATABASELINK)
     connection = psycopg2.connect(database=db_info.get('NAME'),
