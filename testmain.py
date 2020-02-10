@@ -7,6 +7,8 @@ import pymysql
 from pymysql.cursors import DictCursor
 from flask import Flask, request
 import logging
+import dj_database_url
+import psycopg2
 
 
 bot = telebot.TeleBot(config.TOKEN)
@@ -19,23 +21,27 @@ name = ''
 surname = ''
 age = 0
 
+
 @bot.message_handler(commands=['start', 'help'])
 def sendWelcome(message):
     # checkUser(message)
     bot.send_message(message.chat.id, 'Привет , ' + message.from_user.username + ' (:')
 
+
 def checkUser(message):
     with closing(getConnection()) as connection:
         with connection.cursor() as cursor:
-            query = 'SELECT * FROM aicroboticsbot.users WHERE user_id = %s'
-            cursor.execute(query, message.from_user.id)
+            bot.send_message(message.chat_id, 'db success')
+            # query = 'SELECT * FROM aicroboticsbot.users WHERE user_id = %s'
+            # cursor.execute(query, message.from_user.id)
+            #
+            # if cursor.rowcount > 0:
+            #     for row in cursor:
+            #         if compareUserData(row, message) == False:
+            #             updateUser(message)
+            # else:
+            #     addUser(message)
 
-            if cursor.rowcount > 0:
-                for row in cursor:
-                    if compareUserData(row, message) == False:
-                        updateUser(message)
-            else:
-                addUser(message)
 
 def compareUserData(old_userdata, new_userdata):
     if old_userdata['user_accname'] != new_userdata.from_user.username:
@@ -51,6 +57,7 @@ def compareUserData(old_userdata, new_userdata):
 
     return True
 
+
 def addUser(message):
     with closing(getConnection()) as connection:
         with connection.cursor() as cursor:
@@ -59,6 +66,7 @@ def addUser(message):
             cursor.execute(query, (message.from_user.username, message.from_user.first_name, message.from_user.last_name,
                                    message.from_user.id, message.from_user.language_code, message.from_user.is_bot))
             connection.commit()
+
 
 def updateUser(message):
     with closing(getConnection()) as connection:
@@ -69,11 +77,13 @@ def updateUser(message):
                                    message.from_user.id, message.from_user.language_code, message.from_user.is_bot))
             connection.commit()
 
+
 def get_name(message):
     global name
     name = message.text
     bot.send_message(message.from_user.id, 'Какая у тебя фамилия?')
     bot.register_next_step_handler(message, get_surname)
+
 
 def get_surname(message):
     global surname
@@ -81,8 +91,9 @@ def get_surname(message):
     bot.send_message(message.from_user.id, 'Сколько тебе лет?')
     bot.register_next_step_handler(message, get_age)
 
+
 def get_age(message):
-    global age;
+    global age
     age = message.text
     keyboard = telebot.types.InlineKeyboardMarkup(True)
     key_yes = telebot.types.InlineKeyboardButton(text='Да', callback_data='yes')
@@ -91,6 +102,7 @@ def get_age(message):
     keyboard.add(key_no)
     question = 'Тебе ' + str(age) + ' лет, тебя зовут ' + name + ' ' + surname + '?'
     bot.send_message(message.from_user.id, text=question, reply_markup=keyboard)
+
 
 @bot.message_handler(content_types=['text'])
 def send_text(message):
@@ -108,53 +120,61 @@ def send_text(message):
         bot.send_message(message.from_user.id, "Как тебя зовут?")
         bot.register_next_step_handler(message, get_name)
 
+
 @bot.message_handler(content_types=['sticker'])
 def sticker_id(message):
     print(message)
 
+
 @bot.callback_query_handler(func=lambda call: True)
 def callback_worker(call):
     if call.data == "yes":
-        bot.send_message(call.message.chat.id, 'Запомню :)');
+        bot.send_message(call.message.chat.id, 'Запомню :)')
     elif call.data == "no":
         bot.send_message(call.message.chat.id, "Повтори, как тебя зовут?")
         bot.register_next_step_handler(call.message, get_name)
 
 
 def getConnection():
-    connection = pymysql.connect(
-        host=config.DBHOST,
-        user=config.DBUSER,
-        password=config.DBPASSWORD,
-        db=config.DBNAME,
-        charset=config.DBCHARSET,
-        cursorclass=DictCursor
-    )
+#     connection = pymysql.connect(
+#         host=config.DBHOST,
+#         user=config.DBUSER,
+#         password=config.DBPASSWORD,
+#         db=config.DBNAME,
+#         charset=config.DBCHARSET,
+#         cursorclass=DictCursor
+#     )
+    DATABASELINK = "postgres://{USER}:{PASSWORD}@{HOST}:{PORT}/{NAME}".format(USER=config.DBUSER, PASSWORD=config.DBPASSWORD, HOST=config.DBHOST, PORT=config.DBPORT, NAME=config.DBNAME)
+
+    db_info = dj_database_url.config(default=DATABASELINK)
+    connection = psycopg2.connect(database=db_info.get('NAME'),
+                        user=db_info.get('USER'),
+                        password=db_info.get('PASSWORD'),
+                        host=db_info.get('HOST'),
+                        port=db_info.get('PORT'))
 
     return connection
 
 
 server = Flask(__name__)
 
+
 @server.route("/{}".format(config.TOKEN), methods=['POST'])
 def getMessage():
     update = bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode('utf-8'))])
-    # update = tele
-    print(update)
 
     return "!", 200
+
 
 @server.route('/setwebhook', methods=['GET', 'POST'])
 def set_webhook():
     bot.remove_webhook()
-    # s = bot.set_webhook('https://immense-sands-85048.herokuapp.com/')
     s = bot.set_webhook('{URL}{HOOK}'.format(URL=config.URL, HOOK=config.TOKEN))
     if s:
         return "webhook setup ok", 200
     else:
         return "webhook setup failed", 200
 
-    # return "?", 200
 
 @server.route('/')
 def index():
