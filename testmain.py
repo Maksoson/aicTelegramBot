@@ -144,11 +144,21 @@ def getMessage():
 
     return "!", 200
 
-@server.route("/")
-def webhook():
+@server.route('/setwebhook', methods=['GET', 'POST'])
+def set_webhook():
     bot.remove_webhook()
-    bot.set_webhook('https://immense-sands-85048.herokuapp.com/')
-    return "?", 200
+    # s = bot.set_webhook('https://immense-sands-85048.herokuapp.com/')
+    s = bot.set_webhook('{URL}{HOOK}'.format(URL=config.URL, HOOK=config.TOKEN))
+    if s:
+        return "webhook setup ok", 200
+    else:
+        return "webhook setup failed", 200
+
+    # return "?", 200
+
+@server.route('/')
+def index():
+    return '.'
 
 
 if __name__ == "__main__":

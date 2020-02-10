@@ -1,6 +1,7 @@
 TOKEN = '1092261236:AAGz-OItiVwTyQbokHP_0BJezxYveI0GQWw'
 TIMEZONE = 'Europe/Moscow'
 TIMEZONE_COMMON_NAME = 'Moscow'
+URL = 'https://immense-sands-85048.herokuapp.com/'
 
 DBHOST = '127.0.0.1'
 DBUSER = 'root'
