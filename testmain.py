@@ -38,7 +38,7 @@ def addUsersTable(message):
                       user_id integer NOT NULL,
                       user_language varchar(20) DEFAULT NULL,
                       user_rank varchar(45) NOT NULL DEFAULT 'Beginner',
-                      user_isbot tinyint(4) NOT NULL,
+                      user_isbot boolean NOT NULL,
                       PRIMARY KEY (id) );
                     """
             if cursor.execute(query):
