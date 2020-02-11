@@ -25,19 +25,13 @@ age = 0
 @bot.message_handler(commands=['start', 'help'])
 def sendWelcome(message):
     # checkUser(message)
-    createSchema()
     addUsersTable(message)
     bot.send_message(message.chat.id, 'Привет , ' + message.from_user.username + ' (:')
-
-def createSchema():
-    with closing(getConnection()) as connection:
-        with connection.cursor() as cursor:
-            cursor.execute('CREATE SCHEMA aicroboticsBot')
 
 def addUsersTable(message):
     with closing(getConnection()) as connection:
         with connection.cursor() as cursor:
-            query = """CREATE TABLE aicrobotic.users ( id SERIAL PRIMARY KEY,
+            query = """CREATE TABLE public.users ( id SERIAL PRIMARY KEY,
                       user_accname varchar(90) DEFAULT NULL,
                       user_firstname varchar(90) DEFAULT NULL,
                       user_lastname varchar(90) DEFAULT NULL,
