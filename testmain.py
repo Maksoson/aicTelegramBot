@@ -13,15 +13,16 @@ dbfuncs = dbfuncs.DatabaseFuncs(bot)
 botfuncs = botfuncs.BotFuncs(bot)
 
 start_keyboard = telebot.types.ReplyKeyboardMarkup(True)
-start_keyboard.row('Занять переговорную', 'Вывести список занятости')
-start_keyboard.row('Время', 'День')
-start_keyboard.row('Регистрация', 'Помощь')
+start_keyboard.row('Занять переговорную', 'Моя занятость')
+start_keyboard.row('Вывести общий список занятости')
+start_keyboard.row('Мои данные', 'Дата', 'Помощь')
 
 name = ''
 surname = ''
 age = 0
 
 
+# ------------------------------------------------ #
 @bot.message_handler(commands=['start', 'help'])
 def sendWelcome(message):
     if dbfuncs.checkUser(message):
