@@ -32,7 +32,7 @@ def sendWelcome(message):
 def addUsersTable(message):
     with closing(getConnection()) as connection:
         with connection.cursor() as cursor:
-            query = """CREATE TABLE users ( id SERIAL,
+            query = """CREATE TABLE users ( id SERIAL PRIMARY KEY,
                       user_accname varchar(90) DEFAULT NULL,
                       user_firstname varchar(90) DEFAULT NULL,
                       user_lastname varchar(90) DEFAULT NULL,
@@ -42,8 +42,8 @@ def addUsersTable(message):
                       user_isbot boolean NOT NULL );
                     """
 
-            if cursor.execute(query):
-                bot.send_message(message.chat.id, "success")
+            cursor.execute(query)
+            bot.send_message(message.chat.id, "success")
 
 
 def checkUser(message):
