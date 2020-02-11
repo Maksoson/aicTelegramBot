@@ -4,7 +4,6 @@ import config
 import os
 from flask import Flask, request
 
-# import functions
 from functions import dbfuncs, botfuncs
 
 bot = telebot.TeleBot(config.TOKEN)
@@ -16,18 +15,28 @@ start_keyboard.row('Занять переговорную', 'Моя занято
 start_keyboard.row('Вывести общий список занятости')
 start_keyboard.row('Мои данные', 'Дата', 'Помощь')
 
-name = ''
-surname = ''
-age = 0
-
 
 # ------------------------------------------------ #
-@bot.message_handler(commands=['start', 'help'])
-def sendWelcome(message):
+@bot.message_handler(commands=['start'])
+def startFunc(message):
     if dbfuncs.checkUser(message):
         bot.send_message(message.chat.id, 'Я тебя знаю , ' + message.from_user.username + ' (:', reply_markup=start_keyboard)
     else:
         bot.send_message(message.chat.id, 'Добро пожаловать, ' + message.from_user.username + '. Располагайся как дома! (:', reply_markup=start_keyboard)
+
+
+@bot.message_handler(commands=['help'])
+def pleaseHelp(message):
+    dbfuncs.checkUser(message)
+    bot.send_message(message.chat.id, 'Вас приветствует компания AIC Robotics!\n\n'
+                                      'Данный бот предназначен для бронирования расписания переговорки.\n'
+                                      'На клавиатуре представлен весь функционал.\n'
+                                      'Приятного использования!\n\n')
+
+
+@bot.message_handler(regexp='((https?):((//)|(\\\\))+([\w\d:#@%/;$()~_?\+-=\\\.&](#!)?)*)')
+def command_url(message):
+    bot.reply_to(message, "I shouldn't open that url, should I?")
 
 
 @bot.message_handler(content_types=['text'])
