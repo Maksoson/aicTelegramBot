@@ -51,7 +51,7 @@ def checkUser(message):
     with closing(getConnection()) as connection:
         with connection.cursor() as cursor:
             query = 'SELECT * FROM users WHERE user_id = %s'
-            cursor.execute(query, message.from_user.id)
+            cursor.execute(query, [message.from_user.id])
 
             if cursor.rowcount > 0:
                 for row in cursor:
