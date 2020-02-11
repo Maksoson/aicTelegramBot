@@ -32,19 +32,25 @@ def sendWelcome(message):
 def addUsersTable(message):
     with closing(getConnection()) as connection:
         with connection.cursor() as cursor:
-            query = """CREATE TABLE IF NOT EXISTS users ( id serial,
-                      user_accname varchar(90) DEFAULT NULL,
-                      user_firstname varchar(90) DEFAULT NULL,
-                      user_lastname varchar(90) DEFAULT NULL,
-                      user_id integer NOT NULL,
-                      user_language varchar(20) DEFAULT NULL,
-                      user_rank varchar(45) NOT NULL DEFAULT 'Beginner',
-                      user_isbot boolean NOT NULL,
-                      PRIMARY KEY (id) );
-                    """
-
+            query = """SELECT table_name FROM information_schema.tables
+WHERE table_schema NOT IN ('information_schema','pg_catalog');"""
             cursor.execute(query)
-            bot.send_message(message.chat.id, "success")
+
+            for row in cursor:
+                print(row)
+            # query = """CREATE TABLE IF NOT EXISTS users ( id serial,
+            #           user_accname varchar(90) DEFAULT NULL,
+            #           user_firstname varchar(90) DEFAULT NULL,
+            #           user_lastname varchar(90) DEFAULT NULL,
+            #           user_id integer NOT NULL,
+            #           user_language varchar(20) DEFAULT NULL,
+            #           user_rank varchar(45) NOT NULL DEFAULT 'Beginner',
+            #           user_isbot boolean NOT NULL,
+            #           PRIMARY KEY (id) );
+            #         """
+            #
+            # cursor.execute(query)
+            # bot.send_message(message.chat.id, "success")
 
 
 def checkUser(message):
