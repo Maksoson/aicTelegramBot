@@ -60,16 +60,15 @@ def checkUser(message):
 
 
 def compareUserData(old_userdata, new_userdata):
-    print(str(old_userdata[1]) + ' - pepega')
-    if old_userdata['user_accname'] != new_userdata.from_user.username:
+    if old_userdata[1] != new_userdata.from_user.username:
         return False
-    if old_userdata['user_firstname'] != new_userdata.from_user.first_name:
+    if old_userdata[2] != new_userdata.from_user.first_name:
         return False
-    if old_userdata['user_lastname'] != new_userdata.from_user.last_name:
+    if old_userdata[3] != new_userdata.from_user.last_name:
         return False
-    if old_userdata['user_language'] != new_userdata.from_user.language_code:
+    if old_userdata[5] != new_userdata.from_user.language_code:
         return False
-    if old_userdata['user_isbot'] != new_userdata.from_user.is_bot:
+    if old_userdata[7] != new_userdata.from_user.is_bot:
         return False
 
     return True
