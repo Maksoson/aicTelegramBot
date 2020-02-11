@@ -60,6 +60,7 @@ def checkUser(message):
 
 
 def compareUserData(old_userdata, new_userdata):
+    print(old_userdata)
     if old_userdata['user_accname'] != new_userdata.from_user.username:
         return False
     if old_userdata['user_firstname'] != new_userdata.from_user.first_name:
