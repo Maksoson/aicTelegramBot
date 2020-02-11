@@ -25,7 +25,8 @@ age = 0
 @bot.message_handler(commands=['start', 'help'])
 def sendWelcome(message):
     # checkUser(message)
-    # addUsersTable(message)
+    createSchema()
+    addUsersTable(message)
     bot.send_message(message.chat.id, 'Привет , ' + message.from_user.username + ' (:')
 
 def createSchema():
