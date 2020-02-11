@@ -4,9 +4,8 @@ import config
 import os
 from flask import Flask, request
 
-import botfuncs
-import dbfuncs
-
+# import functions
+from functions import dbfuncs, botfuncs
 
 bot = telebot.TeleBot(config.TOKEN)
 dbfuncs = dbfuncs.DatabaseFuncs(bot)
@@ -40,12 +39,12 @@ def send_text(message):
         bot.send_message(message.chat.id, 'Прощай, ' + message.from_user.first_name)
     elif message.text.lower() == 'я тебя люблю':
         bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAO2Xj1y-l94-VPFiR-cso1Jy9R_QE0AAt8DAAKJ6uUHt_QHFuQiXjgYBA')
-    elif message.text.lower() == 'время':
+    elif message.text.lower() == 'дата':
         now = datetime.datetime.now()
         bot.send_message(message.chat.id, 'Текущее время - ' + str(now.hour) + ':' + str(now.minute))
-    elif message.text.lower() == 'регистрация':
-        bot.send_message(message.from_user.id, "Как тебя зовут?")
-        bot.register_next_step_handler(message, botfuncs.get_name)
+    # elif message.text.lower() == 'регистрация':
+    #     bot.send_message(message.from_user.id, "Как тебя зовут?")
+    #     bot.register_next_step_handler(message, botfuncs.get_name)
 
 
 @bot.message_handler(content_types=['sticker'])
