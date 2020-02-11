@@ -77,11 +77,10 @@ def compareUserData(old_userdata, new_userdata):
 def addUser(message):
     with closing(getConnection()) as connection:
         with connection.cursor() as cursor:
-            default_rank = 'Beginner'
             query = 'INSERT INTO public.users (user_accname, user_firstname, user_lastname, user_id, user_language, user_rank, user_isbot) ' \
                     'VALUES (%s, %s, %s, %s, %s, %s)'
             cursor.execute(query, (message.from_user.username, message.from_user.first_name, message.from_user.last_name,
-                                   message.from_user.id, message.from_user.language_code, default_rank, message.from_user.is_bot))
+                                   message.from_user.id, message.from_user.language_code, message.from_user.is_bot))
             connection.commit()
 
 
