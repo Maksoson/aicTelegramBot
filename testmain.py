@@ -24,39 +24,33 @@ age = 0
 
 @bot.message_handler(commands=['start', 'help'])
 def sendWelcome(message):
-    # checkUser(message)
-    addUsersTable(message)
+    checkUser(message)
+    # addUsersTable(message)
     bot.send_message(message.chat.id, 'Привет , ' + message.from_user.username + ' (:')
 
 
 def addUsersTable(message):
     with closing(getConnection()) as connection:
         with connection.cursor() as cursor:
-            query = """SELECT table_name FROM information_schema.tables
-WHERE table_schema NOT IN ('information_schema','pg_catalog');"""
-            cursor.execute(query)
+            query = """CREATE TABLE IF NOT EXISTS users ( id serial,
+                      user_accname varchar(90) DEFAULT NULL,
+                      user_firstname varchar(90) DEFAULT NULL,
+                      user_lastname varchar(90) DEFAULT NULL,
+                      user_id integer NOT NULL,
+                      user_language varchar(20) DEFAULT NULL,
+                      user_rank varchar(45) NOT NULL DEFAULT 'Beginner',
+                      user_isbot boolean NOT NULL,
+                      PRIMARY KEY (id) );
+                    """
 
-            for row in cursor:
-                print(row)
-            # query = """CREATE TABLE IF NOT EXISTS users ( id serial,
-            #           user_accname varchar(90) DEFAULT NULL,
-            #           user_firstname varchar(90) DEFAULT NULL,
-            #           user_lastname varchar(90) DEFAULT NULL,
-            #           user_id integer NOT NULL,
-            #           user_language varchar(20) DEFAULT NULL,
-            #           user_rank varchar(45) NOT NULL DEFAULT 'Beginner',
-            #           user_isbot boolean NOT NULL,
-            #           PRIMARY KEY (id) );
-            #         """
-            #
-            # cursor.execute(query)
-            # bot.send_message(message.chat.id, "success")
+            cursor.execute(query)
+            bot.send_message(message.chat.id, "success")
 
 
 def checkUser(message):
     with closing(getConnection()) as connection:
         with connection.cursor() as cursor:
-            query = 'SELECT * FROM aicroboticsbot.users WHERE user_id = %s'
+            query = 'SELECT * FROM users WHERE user_id = %s'
             cursor.execute(query, message.from_user.id)
 
             if cursor.rowcount > 0:
