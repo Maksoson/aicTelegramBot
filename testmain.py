@@ -24,8 +24,8 @@ age = 0
 
 @bot.message_handler(commands=['start', 'help'])
 def sendWelcome(message):
-    # checkUser(message)
-    addUsersTable(message)
+    checkUser(message)
+    # addUsersTable(message)
     bot.send_message(message.chat.id, 'Привет , ' + message.from_user.username + ' (:')
 
 def addUsersTable(message):
@@ -48,7 +48,7 @@ def addUsersTable(message):
 def checkUser(message):
     with closing(getConnection()) as connection:
         with connection.cursor() as cursor:
-            query = 'SELECT * FROM users WHERE user_id = %s'
+            query = 'SELECT * FROM public.users WHERE user_id = %s'
             cursor.execute(query, [message.from_user.id])
 
             if cursor.rowcount > 0:
@@ -77,7 +77,7 @@ def compareUserData(old_userdata, new_userdata):
 def addUser(message):
     with closing(getConnection()) as connection:
         with connection.cursor() as cursor:
-            query = 'INSERT INTO aicroboticsbot.users (user_accname, user_firstname, user_lastname, user_id, user_language, user_isbot) ' \
+            query = 'INSERT INTO public.users (user_accname, user_firstname, user_lastname, user_id, user_language, user_isbot) ' \
                     'VALUES (%s, %s, %s, %s, %s, %s)'
             cursor.execute(query, (message.from_user.username, message.from_user.first_name, message.from_user.last_name,
                                    message.from_user.id, message.from_user.language_code, message.from_user.is_bot))
@@ -87,7 +87,7 @@ def addUser(message):
 def updateUser(message):
     with closing(getConnection()) as connection:
         with connection.cursor() as cursor:
-            query = 'UPDATE aicroboticsbot.users ' \
+            query = 'UPDATE public.users ' \
                     'SET user_accname = %s, user_firstname = %s, user_lastname = %s, user_id = %s, user_language = %s, user_isbot = %s'
             cursor.execute(query, (message.from_user.username, message.from_user.first_name, message.from_user.last_name,
                                    message.from_user.id, message.from_user.language_code, message.from_user.is_bot))
