@@ -32,15 +32,14 @@ def sendWelcome(message):
 def addUsersTable(message):
     with closing(getConnection()) as connection:
         with connection.cursor() as cursor:
-            query = """CREATE TABLE IF NOT EXISTS users ( id serial,
+            query = """CREATE TABLE users ( id SERIAL,
                       user_accname varchar(90) DEFAULT NULL,
                       user_firstname varchar(90) DEFAULT NULL,
                       user_lastname varchar(90) DEFAULT NULL,
                       user_id integer NOT NULL,
                       user_language varchar(20) DEFAULT NULL,
                       user_rank varchar(45) NOT NULL DEFAULT 'Beginner',
-                      user_isbot boolean NOT NULL,
-                      PRIMARY KEY (id) );
+                      user_isbot boolean NOT NULL );
                     """
 
             if cursor.execute(query):
