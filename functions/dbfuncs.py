@@ -86,7 +86,8 @@ class DatabaseFuncs:
     def addToTimetable(self, collection, message):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
-                query = 'INSERT INTO public.timetable (user_id, day_use, start_time, end_time, date_create, date_update) VALUES (%s, %s, %s, %s)'
+                query = 'INSERT INTO public.timetable (user_id, day_use, start_time, end_time, date_create, date_update) VALUES (%s, %s, %s, %s, ' \
+                        'to_timestamp(%s,"YYYY/MM/DD HH24:MI:SS"), to_timestamp(%s,"YYYY/MM/DD HH24:MI:SS"))'
                 cursor.execute(query, (self.getUserId(message), datetime.datetime.today().day,
                                        collection['start_time'], collection['end_time'],
                                        str(datetime.datetime.today()), str(datetime.datetime.today())))
