@@ -11,9 +11,3 @@ DBPORT = '5432'
 DBCHARSET = 'utf8mb4'
 DATABASELINK = "postgres://{USER}:{PASSWORD}@{HOST}:{PORT}/{NAME}".format(USER=DBUSER, PASSWORD=DBPASSWORD,
                                                                           HOST=DBHOST, PORT=DBPORT, NAME=DBNAME)
-
-# DBHOST = '127.0.0.1'
-# DBUSER = 'root'
-# DBPASSWORD = ''
-# DBNAME = 'test'
-# DBCHARSET = 'utf8mb4'

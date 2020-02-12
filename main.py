@@ -46,13 +46,12 @@ def send_text(message):
         bot.send_message(message.chat.id, 'Привет, ' + message.from_user.first_name)
     elif message.text.lower() == 'пока':
         bot.send_message(message.chat.id, 'Прощай, ' + message.from_user.first_name)
-    elif message.text.lower() == 'как дела?':
-        bot.send_message(message.chat.id, 'Нормас')
-    elif message.text.lower() == 'я тебя люблю':
-        bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAO2Xj1y-l94-VPFiR-cso1Jy9R_QE0AAt8DAAKJ6uUHt_QHFuQiXjgYBA')
-    elif message.text.lower() == 'дата':
-        now = datetime.datetime.now()
-        bot.send_message(message.chat.id, 'Текущее время - ' + str(now.hour) + ':' + str(now.minute))
+    # elif message.text.lower() == 'я тебя люблю':
+    #     bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAO2Xj1y-l94-VPFiR-cso1Jy9R_QE0AAt8DAAKJ6uUHt_QHFuQiXjgYBA')
+    elif message.text.lower() == 'время':
+        bot.send_message(message.chat.id, 'Текущее время:\n' + str(datetime.datetime.today().strftime("%H:%M - %d.%m.%Y")))
+    elif message.text.lower() == 'занять переговорную':
+        botfuncs.regTime(message)
     # elif message.text.lower() == 'регистрация':
     #     bot.send_message(message.from_user.id, "Как тебя зовут?")
     #     bot.register_next_step_handler(message, botfuncs.get_name)
@@ -63,13 +62,13 @@ def sticker_id(message):
     print(message)
 
 
-@bot.callback_query_handler(func=lambda call: True)
-def callback_worker(call):
-    if call.data == "yes":
-        bot.send_message(call.message.chat.id, 'Запомню :)')
-    elif call.data == "no":
-        bot.send_message(call.message.chat.id, "Повтори, как тебя зовут?")
-        bot.register_next_step_handler(call.message, botfuncs.get_name)
+# @bot.callback_query_handler(func=lambda call: True)
+# def callback_worker(call):
+#     if call.data == "yes":
+#         bot.send_message(call.message.chat.id, 'Запомню :)')
+#     elif call.data == "no":
+#         bot.send_message(call.message.chat.id, "Повтори, как тебя зовут?")
+#         bot.register_next_step_handler(call.message, botfuncs.get_name)
 
 
 # ------------------------------------------------ #
