@@ -2,6 +2,7 @@ import config
 from contextlib import closing
 import dj_database_url
 import psycopg2
+import datetime
 
 
 class DatabaseFuncs:
@@ -74,8 +75,24 @@ class DatabaseFuncs:
                                 message.from_user.id, message.from_user.language_code, message.from_user.is_bot))
                 connection.commit()
 
-    def addToTimetable(self, collection):
-        print(collection)
+    def addToTimetable(self, collection, message):
+        with closing(self.getConnection()) as connection:
+            with connection.cursor() as cursor:
+                query = 'INSERT INTO public.timetable (user_id, day_use, start_time, end_time)' \
+                        'VALUES (%s, %s, %s, %s)'
+                cursor.execute(query, (message.from_user.id, datetime.datetime.today().day,
+                                       datetime.datetime.strptime(collection['start_time'], "%H:%M"),
+                                       datetime.datetime.strptime(collection['end_time'], "%H:%M")))
+                connection.commit()
+
+    def getAllTimes(self, day):
+        with closing(self.getConnection()) as connection:
+            with connection.cursor() as cursor:
+                query = 'SELECT * FROM public.timetable WHERE day_use = %s'
+                result = cursor.execute(query, [day])
+                connection.commit()
+
+                return result
 
     @staticmethod
     def getConnection():

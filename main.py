@@ -52,6 +52,9 @@ def send_text(message):
         bot.send_message(message.chat.id, 'Текущее время:\n' + str(datetime.datetime.today().strftime("%H:%M - %d.%m.%Y")))
     elif message.text.lower() == 'занять переговорную':
         botfuncs.regTime(message)
+    elif message.text.lower() == 'вывести общий список занятости':
+        result = db_funcs.getAllTimes(datetime.datetime.today().day)
+        bot.send_message(message.chat.id, result)
     # elif message.text.lower() == 'регистрация':
     #     bot.send_message(message.from_user.id, "Как тебя зовут?")
     #     bot.register_next_step_handler(message, botfuncs.get_name)

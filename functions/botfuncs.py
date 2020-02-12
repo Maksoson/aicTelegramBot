@@ -42,5 +42,5 @@ class BotFuncs:
     def endRegTime(self, message):
         self.dataReg['end_time'] = message.text
         db_funcs = dbfuncs.DatabaseFuncs(self.bot)
-        db_funcs.addToTimetable(self.dataReg)
+        db_funcs.addToTimetable(self.dataReg, message)
 
