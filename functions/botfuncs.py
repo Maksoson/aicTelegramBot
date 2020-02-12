@@ -3,6 +3,8 @@ from functions import dbfuncs
 
 class BotFuncs:
 
+    data = {'start_time': '', 'end_time': ''}
+
     def __init__(self, bot):
         self.bot = bot
 
@@ -34,9 +36,14 @@ class BotFuncs:
         self.bot.register_next_step_handler(message, self.regEndTime)
 
     def regEndTime(self, message):
-        startTime = message.text
+        global data
+        data['start_time'] = message.text
         self.bot.send_message(message.chat.id, 'До скольки тебе нужна переговорка?')
-        db_funcs = dbfuncs.DatabaseFuncs(self.bot)
-        self.bot.register_next_step_handler(message, db_funcs.addToTimetable)
+        self.bot.register_next_step_handler(message, self.endRegTime)
 
+    def endRegTime(self, message):
+        global data
+        data['end_time'] = message.text
+        db_funcs = dbfuncs.DatabaseFuncs(self.bot)
+        db_funcs.addToTimetable(data)
 

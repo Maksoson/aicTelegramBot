@@ -74,8 +74,8 @@ class DatabaseFuncs:
                                 message.from_user.id, message.from_user.language_code, message.from_user.is_bot))
                 connection.commit()
 
-    def addToTimetable(self, message):
-        print(message)
+    def addToTimetable(self, collection):
+        print(collection)
 
     @staticmethod
     def getConnection():
