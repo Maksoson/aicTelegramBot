@@ -1,3 +1,6 @@
+from functions import dbfuncs
+
+
 class BotFuncs:
 
     def __init__(self, bot):
@@ -28,5 +31,12 @@ class BotFuncs:
 
     def regTime(self, message):
         self.bot.send_message(message.chat.id, 'Когда тебе нужна переговорка?')
-        self.bot.register_next_step_handler(message, self.bot.send_message(message.chat.id, 'Ты ввел - ' + str(message.text)))
+        self.bot.register_next_step_handler(message, self.regEndTime(message))
+
+    def regEndTime(self, message):
+        startTime = message.text
+        self.bot.send_message(message.chat.id, 'До скольки тебе нужна переговорка?')
+        db_funcs = dbfuncs.DatabaseFuncs(self.bot)
+        self.bot.register_next_step_handler(message, db_funcs.addToTimetable(message))
+
 

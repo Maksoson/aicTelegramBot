@@ -7,7 +7,7 @@ from flask import Flask, request
 from functions import dbfuncs, botfuncs
 
 bot = telebot.TeleBot(config.TOKEN)
-dbfuncs = dbfuncs.DatabaseFuncs(bot)
+db_funcs = dbfuncs.DatabaseFuncs(bot)
 botfuncs = botfuncs.BotFuncs(bot)
 
 start_keyboard = telebot.types.ReplyKeyboardMarkup(True)
@@ -19,7 +19,7 @@ start_keyboard.row('Мои данные', 'Дата', 'Помощь')
 # ------------------------------------------------ #
 @bot.message_handler(commands=['start'])
 def startFunc(message):
-    if dbfuncs.checkUser(message):
+    if db_funcs.checkUser(message):
         bot.send_message(message.chat.id, 'Я тебя знаю , ' + message.from_user.username + ' (:', reply_markup=start_keyboard)
     else:
         bot.send_message(message.chat.id, 'Добро пожаловать, ' + message.from_user.username + '. Располагайся как дома! (:', reply_markup=start_keyboard)
@@ -27,7 +27,7 @@ def startFunc(message):
 
 @bot.message_handler(commands=['help'])
 def pleaseHelp(message):
-    dbfuncs.checkUser(message)
+    db_funcs.checkUser(message)
     bot.send_message(message.chat.id, 'Вас приветствует компания AIC Robotics!\n\n'
                                       'Данный бот предназначен для бронирования расписания переговорки.\n'
                                       'На клавиатуре представлен весь функционал.\n'
