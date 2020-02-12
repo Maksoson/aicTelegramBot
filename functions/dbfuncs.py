@@ -81,8 +81,7 @@ class DatabaseFuncs:
                 query = 'INSERT INTO public.timetable (user_id, day_use, start_time, end_time)' \
                         'VALUES (%s, %s, %s, %s)'
                 cursor.execute(query, (message.from_user.id, datetime.datetime.today().day,
-                                       datetime.datetime.strptime(collection['start_time'], "%H:%M"),
-                                       datetime.datetime.strptime(collection['end_time'], "%H:%M")))
+                                       collection['start_time'], collection['end_time']))
                 connection.commit()
 
     def getAllTimes(self, day):
