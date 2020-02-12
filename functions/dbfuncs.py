@@ -79,7 +79,8 @@ class DatabaseFuncs:
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
                 query = 'SELECT id FROM public.users WHERE user_id = %s'
-                user_id = cursor.execute(query, message.from_user.id)
+                user_id = cursor.execute(query, [message.from_user.id])
+                print(user_id)
 
                 return user_id
 
