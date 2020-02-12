@@ -75,12 +75,20 @@ class DatabaseFuncs:
                                 message.from_user.id, message.from_user.language_code, message.from_user.is_bot))
                 connection.commit()
 
+    def getUserId(self, message):
+        with closing(self.getConnection()) as connection:
+            with connection.cursor() as cursor:
+                query = 'SELECT id FROM public.users WHERE user_id = %s'
+                user_id = cursor.execute(query, [message.from_user.id])
+
+                return user_id
+
     def addToTimetable(self, collection, message):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
                 query = 'INSERT INTO public.timetable (user_id, day_use, start_time, end_time)' \
                         'VALUES (%s, %s, %s, %s)'
-                cursor.execute(query, (message.from_user.id, datetime.datetime.today().day,
+                cursor.execute(query, (self.getUserId(message), datetime.datetime.today().day,
                                        collection['start_time'], collection['end_time']))
                 connection.commit()
 
