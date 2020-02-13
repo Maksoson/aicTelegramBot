@@ -13,7 +13,7 @@ bot_funcs = botfuncs.BotFuncs(bot)
 start_keyboard = telebot.types.ReplyKeyboardMarkup(True)
 start_keyboard.row('Занять переговорку', 'Моя занятость')
 start_keyboard.row('Занятость переговорки на сегодня')
-start_keyboard.row('Мои данные', 'Дата', 'Помощь')
+start_keyboard.row('Дата', 'Справка')
 
 
 # ------------------------------------------------ #
@@ -68,12 +68,13 @@ def send_text(message):
     elif user_message == 'дата':
         bot.send_message(chat_id, str(today.strftime("%H:%M - %d.%m.%Y")))
     elif user_message == 'моя занятость':
-        bot.send_message(chat_id, 'Ваш список занятости:\n')
         bot_funcs.printMyTimes(message, today)
     elif user_message == 'занять переговорку':
         bot_funcs.regTime(message)
     elif user_message == 'занятость переговорки на сегодня':
         bot_funcs.printAllTimes(message, today)
+    elif user_message == 'справка':
+        bot_funcs.printHelp(message)
 
 
 @bot.message_handler(content_types=['sticker'])

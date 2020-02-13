@@ -57,28 +57,20 @@ class DatabaseFuncs:
     def addUser(self, message):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
-                user_acc_name = '' if str(message.from_user.username).strip() == 'None' else str(message.from_user.username).strip()
-                user_first_name = '' if str(message.from_user.first_name).strip() == 'None' else str(message.from_user.first_name).strip()
-                user_last_name = '' if str(message.from_user.last_name).strip() == 'None' else str(message.from_user.last_name).strip()
-
                 query = 'INSERT INTO public.users (user_accname, user_firstname, user_lastname, user_id, user_language, user_isbot) ' \
                         'VALUES (%s, %s, %s, %s, %s, %s)'
                 cursor.execute(query,
-                               (user_acc_name, user_first_name, user_last_name,
+                               (self.checkNone(message.from_user.username), self.checkNone(message.from_user.first_name), self.checkNone(message.from_user.last_name),
                                 message.from_user.id, message.from_user.language_code, message.from_user.is_bot))
                 connection.commit()
 
     def updateUser(self, message):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
-                user_acc_name = '' if str(message.from_user.username).strip() == 'None' else str(message.from_user.username).strip()
-                user_first_name = '' if str(message.from_user.first_name).strip() == 'None' else str(message.from_user.first_name).strip()
-                user_last_name = '' if str(message.from_user.last_name).strip() == 'None' else str(message.from_user.last_name).strip()
-
                 query = 'UPDATE public.users ' \
                         'SET user_accname = %s, user_firstname = %s, user_lastname = %s, user_id = %s, user_language = %s, user_isbot = %s'
                 cursor.execute(query,
-                               (user_acc_name, user_first_name, user_last_name,
+                               (self.checkNone(message.from_user.username), self.checkNone(message.from_user.first_name), self.checkNone(message.from_user.last_name),
                                 message.from_user.id, message.from_user.language_code, message.from_user.is_bot))
                 connection.commit()
 
@@ -96,7 +88,7 @@ class DatabaseFuncs:
                 date_create = datetime.datetime.today().date()
                 date_update = date_create
                 query = 'INSERT INTO public.timetable (user_id, day_use, start_time, end_time, date_create, date_update) ' \
-                        'VALUES (%s, %s,  %s, %s, %s::date, %s::date)'
+                        'VALUES (%s, %s, %s, %s, %s::date, %s::date)'
                 cursor.execute(query, [self.getUserId(message)[0], datetime.datetime.today().day,
                                        collection['start_time'], collection['end_time'], date_create, date_update])
                 connection.commit()
@@ -118,6 +110,8 @@ class DatabaseFuncs:
 
                 return cursor.fetchall()
 
+    def checkNone(self, string):
+        return '' if str(string).strip() == 'None' else str(string).strip()
 
     @staticmethod
     def getConnection():

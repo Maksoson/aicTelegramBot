@@ -38,8 +38,16 @@ class BotFuncs:
         result_list = today.strftime('%d.%m.%y') + '\n\n'
         data = self.db_funcs.getAllTimes(today.day)
         counter = 1
+        print(len(data))
+        print('pepegaaa')
         for row in data:
             result_list += str(counter) + '. ' + str(row[11]).strip() + ' - ' + str(row[12]).strip() + '; ' \
                            + str(row[2]).strip() + ' ' + str(row[3]).strip() + ' (@' + str(row[1]).strip() + ')\n'
             counter += 1
         self.bot.send_message(message.chat.id, result_list)
+
+    # Справка
+    def printHelp(self, message):
+        self.bot.send_message(message.chat.id, 'Привет, ' + message.from_user.username + '!\n\n'
+                                               'Список команд:\n'
+                                               '/start\n/keyboard\n/help\n/add\n/delete\n/all\n/my\n/time\n/snow')
