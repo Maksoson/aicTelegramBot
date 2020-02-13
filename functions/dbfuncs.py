@@ -88,8 +88,8 @@ class DatabaseFuncs:
                 date_create = datetime.datetime.today().date()
                 date_update = date_create
                 query = 'INSERT INTO public.timetable (user_id, day_use, start_time, end_time, date_create, date_update) ' \
-                        'VALUES (%s, %s, %s, %s, %s::date, %s::date)' % (self.getUserId(message), datetime.datetime.today().day,
-                                       str(collection['start_time']), str(collection['end_time']), str(date_create), str(date_update))
+                        'VALUES (%s, %s,  "%s", "%s", "%s"::date, "%s"::date)' % (self.getUserId(message), datetime.datetime.today().day,
+                                       collection['start_time'], collection['end_time'], date_create, date_update)
                 cursor.execute(query)
                 connection.commit()
 
