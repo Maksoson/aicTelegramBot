@@ -82,7 +82,6 @@ class DatabaseFuncs:
                 query = 'SELECT id FROM public.users WHERE user_id = %s'
                 cursor.execute(query, [message.from_user.id])
                 if cursor.rowcount > 0:
-                    print(cursor[0])
                     print('cursor')
                     for row in cursor:
                         return row[0]
