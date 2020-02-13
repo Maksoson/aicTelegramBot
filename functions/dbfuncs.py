@@ -93,7 +93,6 @@ class DatabaseFuncs:
                 date_update = date_create
                 query = 'INSERT INTO public.timetable (user_id, day_use, start_time, end_time, date_create, date_update) ' \
                         'VALUES (%s, %s,  %s, %s, %s::date, %s::date)'
-                print('QUERY ---- ' + query)
                 cursor.execute(query, [self.getUserId(message), datetime.datetime.today().day,
                                        collection['start_time'], collection['end_time'], date_create, date_update])
                 connection.commit()
@@ -101,11 +100,11 @@ class DatabaseFuncs:
     def getAllTimes(self, day):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
-                query = 'SELECT * FROM public.timetable WHERE day_use = %s'
-                result = cursor.execute(query, [day])
-                connection.commit()
-
-                return result
+                query = 'SELECT public.users.*, public.timetable.* FROM public.timetable INNER JOIN public.users ON public.users.id = public.timetable.user_id WHERE day_use = %s'
+                cursor.execute(query, [day])
+                if cursor.rowcount > 0:
+                    for row in cursor:
+                        print(row)
 
     @staticmethod
     def getConnection():
