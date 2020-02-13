@@ -3,6 +3,7 @@ from contextlib import closing
 import dj_database_url
 import psycopg2
 import datetime
+import time
 
 
 class DatabaseFuncs:
@@ -85,10 +86,12 @@ class DatabaseFuncs:
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
                 query = 'INSERT INTO public.timetable (user_id, day_use, start_time, end_time, date_create, date_update) ' \
-                        'VALUES (%s, %s, %s, %s, to_timestamp(%s,"YYYY/MM/DD HH24:MI:SS"), to_timestamp(%s,"YYYY/MM/DD HH24:MI:SS"))'
+                        'VALUES (%s, %s, %s, %s, %s, %s)'
+                date_create = time.time()
+                date_update = date_create
                 cursor.execute(query, (self.getUserId(message), datetime.datetime.today().day,
                                        collection['start_time'], collection['end_time'],
-                                       str(datetime.datetime.today()), str(datetime.datetime.today())))
+                                       date_create, date_update))
                 connection.commit()
 
     def getAllTimes(self, day):
