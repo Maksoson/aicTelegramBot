@@ -82,9 +82,10 @@ class DatabaseFuncs:
                 query = 'SELECT id FROM public.users WHERE user_id = %s'
                 cursor.execute(query, [message.from_user.id])
                 if cursor.rowcount > 0:
+                    print(cursor)
+                    print('cursor')
                     for row in cursor:
-                        print('row -- ' + str(row))
-                        return row
+                        return row[0]
 
     def addToTimetable(self, collection, message):
         with closing(self.getConnection()) as connection:
@@ -94,6 +95,7 @@ class DatabaseFuncs:
                 query = 'INSERT INTO public.timetable (user_id, day_use, start_time, end_time, date_create, date_update) ' \
                         'VALUES (%s, %s,  "%s", "%s", "%s"::date, "%s"::date)' % (self.getUserId(message), datetime.datetime.today().day,
                                        collection['start_time'], collection['end_time'], date_create, date_update)
+                print('QUERY ---- ' + query)
                 cursor.execute(query)
                 connection.commit()
 
