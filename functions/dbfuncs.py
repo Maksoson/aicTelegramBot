@@ -57,9 +57,9 @@ class DatabaseFuncs:
     def addUser(self, message):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
-                user_acc_name = str(message.from_user.username).strip()
-                user_first_name = str(message.from_user.first_name).strip()
-                user_last_name = str(message.from_user.last_name).strip()
+                user_acc_name = '' if str(message.from_user.username).strip() == 'None' else str(message.from_user.username).strip()
+                user_first_name = '' if str(message.from_user.first_name).strip() == 'None' else str(message.from_user.first_name).strip()
+                user_last_name = '' if str(message.from_user.last_name).strip() == 'None' else str(message.from_user.last_name).strip()
 
                 query = 'INSERT INTO public.users (user_accname, user_firstname, user_lastname, user_id, user_language, user_isbot) ' \
                         'VALUES (%s, %s, %s, %s, %s, %s)'
@@ -71,10 +71,10 @@ class DatabaseFuncs:
     def updateUser(self, message):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
-                user_acc_name = str(message.from_user.username).strip()
-                user_first_name = str(message.from_user.first_name).strip()
-                user_last_name = str(message.from_user.last_name).strip()
-                
+                user_acc_name = '' if str(message.from_user.username).strip() == 'None' else str(message.from_user.username).strip()
+                user_first_name = '' if str(message.from_user.first_name).strip() == 'None' else str(message.from_user.first_name).strip()
+                user_last_name = '' if str(message.from_user.last_name).strip() == 'None' else str(message.from_user.last_name).strip()
+
                 query = 'UPDATE public.users ' \
                         'SET user_accname = %s, user_firstname = %s, user_lastname = %s, user_id = %s, user_language = %s, user_isbot = %s'
                 cursor.execute(query,
