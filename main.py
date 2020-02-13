@@ -69,7 +69,7 @@ def send_text(message):
         bot.send_message(chat_id, 'Текущее время:\n' + str(today.strftime("%H:%M - %d.%m.%Y")))
     elif user_message == 'моя занятость':
         bot.send_message(chat_id, 'Ваш список занятости:\n')
-        bot_funcs.printMyTimes(message, now_day)
+        bot_funcs.printMyTimes(message, today)
     elif user_message == 'занять переговорку':
         bot_funcs.regTime(message)
     elif user_message == 'занятость переговорки на сегодня':
