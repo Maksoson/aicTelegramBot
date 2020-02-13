@@ -53,7 +53,7 @@ def send_text(message):
     elif message.text.lower() == 'занятость переговорки на сегодня':
         bot.send_message(message.chat.id, "Занятость переговорки на сегодня:\n")
         result = db_funcs.getAllTimes(datetime.datetime.today().day)
-        if result.countrow > 0:
+        if result.rowcount > 0:
             for row in result:
                 bot.send_message(message.chat.id, row)
     # elif message.text.lower() == 'регистрация':
