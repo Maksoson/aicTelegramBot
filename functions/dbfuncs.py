@@ -83,7 +83,7 @@ class DatabaseFuncs:
                 cursor.execute(query, [message.from_user.id])
                 if cursor.rowcount > 0:
                     for row in cursor:
-                        print('row -- ' + row)
+                        print('row -- ' + str(row))
                         return row
 
     def addToTimetable(self, collection, message):
