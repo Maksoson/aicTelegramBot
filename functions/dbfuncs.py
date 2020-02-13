@@ -79,8 +79,8 @@ class DatabaseFuncs:
     def getUserId(self, message):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
-                query = 'SELECT id FROM public.users WHERE user_id = %s::integer'
-                cursor.execute(query, str(message.from_user.id))
+                query = 'SELECT id FROM public.users WHERE user_id = %s'.format(message.from_user.id)
+                cursor.execute(query)
 
     def addToTimetable(self, collection, message):
         with closing(self.getConnection()) as connection:
