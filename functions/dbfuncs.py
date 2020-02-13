@@ -24,7 +24,6 @@ class DatabaseFuncs:
                         """
 
                 cursor.execute(query)
-                self.bot.send_message(message.chat.id, "success")
 
     def checkUser(self, message):
         with closing(self.getConnection()) as connection:
@@ -41,16 +40,16 @@ class DatabaseFuncs:
                     self.addUser(message)
                     return False
 
-    def compareUserData(self, old_userdata, new_userdata):
-        if old_userdata[1] != new_userdata.from_user.username:
+    def compareUserData(self, old_user_data, new_user_data):
+        if old_user_data[1] != new_user_data.from_user.username:
             return False
-        if old_userdata[2] != new_userdata.from_user.first_name:
+        if old_user_data[2] != new_user_data.from_user.first_name:
             return False
-        if old_userdata[3] != new_userdata.from_user.last_name:
+        if old_user_data[3] != new_user_data.from_user.last_name:
             return False
-        if old_userdata[5] != new_userdata.from_user.language_code:
+        if old_user_data[5] != new_user_data.from_user.language_code:
             return False
-        if old_userdata[7] != new_userdata.from_user.is_bot:
+        if old_user_data[7] != new_user_data.from_user.is_bot:
             return False
 
         return True
@@ -61,8 +60,8 @@ class DatabaseFuncs:
                 query = 'INSERT INTO public.users (user_accname, user_firstname, user_lastname, user_id, user_language, user_isbot) ' \
                         'VALUES (%s, %s, %s, %s, %s, %s)'
                 cursor.execute(query,
-                               (message.from_user.username.strip(), message.from_user.first_name.strip(), message.from_user.last_name.strip(),
-                                message.from_user.id, message.from_user.language_code.strip(), message.from_user.is_bot))
+                               (str(message.from_user.username).strip(), str(message.from_user.first_name).strip(), str(message.from_user.last_name).strip(),
+                                message.from_user.id, str(message.from_user.language_code).strip(), message.from_user.is_bot))
                 connection.commit()
 
     def updateUser(self, message):
@@ -71,8 +70,8 @@ class DatabaseFuncs:
                 query = 'UPDATE public.users ' \
                         'SET user_accname = %s, user_firstname = %s, user_lastname = %s, user_id = %s, user_language = %s, user_isbot = %s'
                 cursor.execute(query,
-                               (message.from_user.username.strip(), message.from_user.first_name.strip(), message.from_user.last_name.strip(),
-                                message.from_user.id, message.from_user.language_code.strip(), message.from_user.is_bot))
+                               (str(message.from_user.username).strip(), str(message.from_user.first_name).strip(), str(message.from_user.last_name).strip(),
+                                message.from_user.id, str(message.from_user.language_code).strip(), message.from_user.is_bot))
                 connection.commit()
 
     def getUserId(self, message):
@@ -91,7 +90,8 @@ class DatabaseFuncs:
                 query = 'INSERT INTO public.timetable (user_id, day_use, start_time, end_time, date_create, date_update) ' \
                         'VALUES (%s, %s,  %s, %s, %s::date, %s::date)'
                 cursor.execute(query, [self.getUserId(message)[0], datetime.datetime.today().day,
-                                       collection['start_time'].strip(), collection['end_time'].strip(), date_create, date_update])
+                                       str(collection['start_time']).strip(), str(collection['end_time']).strip(),
+                                       date_create, date_update])
                 connection.commit()
 
     def getMyTimes(self, user_id, day):
