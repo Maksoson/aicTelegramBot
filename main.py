@@ -65,8 +65,8 @@ def send_text(message):
         bot.send_message(chat_id, 'Привет, ' + user_first_name)
     elif user_message == 'пока':
         bot.send_message(chat_id, 'Прощай, ' + user_first_name)
-    elif user_message == 'время':
-        bot.send_message(chat_id, 'Текущее время:\n' + str(today.strftime("%H:%M - %d.%m.%Y")))
+    elif user_message == 'дата':
+        bot.send_message(chat_id, str(today.strftime("%H:%M - %d.%m.%Y")))
     elif user_message == 'моя занятость':
         bot.send_message(chat_id, 'Ваш список занятости:\n')
         bot_funcs.printMyTimes(message, today)

@@ -41,7 +41,9 @@ class BotFuncs:
         for row in data:
             user_name = '' if row[1] is None else row[1]
             first_name = '' if row[2] is None else row[2]
-            last_name = '' if row[3] is None else row[3]
+            last_name = '' if row[3] is 'None' else row[3]
+            print(row[3])
+            print(type(row[3]))
 
             result_list += str(counter) + '. ' + str(row[11]).strip() + ' - ' + str(row[12]).strip() + '; ' \
                            + str(first_name).strip() + ' ' + str(last_name).strip() + ' (@' + str(user_name).strip() + ')\n'
