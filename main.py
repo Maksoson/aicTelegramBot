@@ -5,9 +5,12 @@ import os
 import schedule
 import time
 from flask import Flask, request
+from apscheduler.schedulers.blocking import BlockingScheduler
 
 from functions import dbfuncs, botfuncs
 
+
+scheduler = BlockingScheduler()
 bot = telebot.TeleBot(config.TOKEN)
 db_funcs = dbfuncs.DatabaseFuncs(bot)
 bot_funcs = botfuncs.BotFuncs(bot)
@@ -32,10 +35,10 @@ def startFunc(message):
 @bot.message_handler(commands=['help'])
 def pleaseHelp(message):
     db_funcs.checkUser(message)
-    bot.send_message(message.chat.id, 'Вас приветствует компания AIC Robotics!\n\n'
-                                      'Данный бот предназначен для бронирования расписания переговорки.\n'
-                                      'На клавиатуре представлен весь функционал.\n'
-                                      'Приятного использования!\n\n')
+    bot.send_message(message.chat.id, 'Тебя приветствует бот компании Russian Robotics!\n\n'
+                                      'Я предназначен для бронирования расписания переговорки.\n'
+                                      'Нажми на "Справка" или введите /help, чтобы увидеть мои возможности (:\n'
+                                      'Надеюсь тебе понравится со мной работать!\n\n')
 
 
 @bot.message_handler(commands=['add'])
@@ -128,8 +131,15 @@ def index():
 if __name__ == "__main__":
     server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
 
-schedule.every().day.at('20:10').do(deleteOldTimes)
 
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+@scheduler.scheduled_job('interval', minutes=2)
+def timed_job():
+    db_funcs.deleteOldTimes()
+
+
+@scheduler.scheduled_job('cron', day_of_week='mon-fri', hour=23)
+def scheduled_job():
+    db_funcs.deleteOldTimes()
+
+
+scheduler.start()
