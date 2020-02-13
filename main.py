@@ -11,8 +11,8 @@ db_funcs = dbfuncs.DatabaseFuncs(bot)
 botfuncs = botfuncs.BotFuncs(bot)
 
 start_keyboard = telebot.types.ReplyKeyboardMarkup(True)
-start_keyboard.row('Занять переговорную', 'Моя занятость')
-start_keyboard.row('Вывести общий список занятости')
+start_keyboard.row('Занять переговорку', 'Моя занятость')
+start_keyboard.row('Занятость переговорки на сегодня')
 start_keyboard.row('Мои данные', 'Дата', 'Помощь')
 
 
@@ -48,11 +48,14 @@ def send_text(message):
         bot.send_message(message.chat.id, 'Прощай, ' + message.from_user.first_name)
     elif message.text.lower() == 'время':
         bot.send_message(message.chat.id, 'Текущее время:\n' + str(datetime.datetime.today().strftime("%H:%M - %d.%m.%Y")))
-    elif message.text.lower() == 'занять переговорную':
+    elif message.text.lower() == 'занять переговорку':
         botfuncs.regTime(message)
-    elif message.text.lower() == 'вывести общий список занятости':
-        bot.send_message(message.chat.id, "Занятость переговорки на сегодня:")
-        db_funcs.getAllTimes(datetime.datetime.today().day)
+    elif message.text.lower() == 'занятость переговорки на сегодня':
+        bot.send_message(message.chat.id, "Занятость переговорки на сегодня:\n")
+        result = db_funcs.getAllTimes(datetime.datetime.today().day)
+        if result.countrow > 0:
+            for row in result:
+                bot.send_message(message.chat.id, row)
     # elif message.text.lower() == 'регистрация':
     #     bot.send_message(message.from_user.id, "Как тебя зовут?")
     #     bot.register_next_step_handler(message, botfuncs.get_name)

@@ -98,11 +98,12 @@ class DatabaseFuncs:
     def getAllTimes(self, day):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
-                query = 'SELECT * FROM public.timetable ' \
+                query = 'SELECT public.users.*, public.timetable.* FROM public.timetable ' \
                         'INNER JOIN public.users ON public.users.id = public.timetable.user_id WHERE day_use = %s'
                 cursor.execute(query, [day])
-                result = cursor.fetchall()
-                print(result)
+
+                return cursor
+
 
     @staticmethod
     def getConnection():
