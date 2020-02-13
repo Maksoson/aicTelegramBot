@@ -114,9 +114,9 @@ class DatabaseFuncs:
 
     @staticmethod
     def getConnection():
-        databaselink = config.DATABASELINK
+        database_link = config.DATABASELINK
 
-        db_info = dj_database_url.config(default=databaselink)
+        db_info = dj_database_url.config(default=database_link)
         connection = psycopg2.connect(database=db_info.get('NAME'),
                                       user=db_info.get('USER'),
                                       password=db_info.get('PASSWORD'),

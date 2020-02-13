@@ -28,6 +28,7 @@ class BotFuncs:
         data = self.db_funcs.getMyTimes(self.db_funcs.getUserId(message), today.day)
         counter = 1
         for row in data:
+            print(row)
             result_list += str(counter) + '. ' + row[11] + ' - ' + row[12] + '\n'
             counter += 1
         self.bot.send_message(message.chat.id, result_list)
@@ -42,6 +43,6 @@ class BotFuncs:
             first_name = '' if row[2] is None else row[2]
             last_name = '' if row[3] is None else row[3]
 
-            result_list += str(counter) + '. ' + row[11] + ' - ' + row[12] + '; ' + first_name + ' ' + last_name + ' (' + user_name + ')\n'
+            result_list += str(counter) + '. ' + row[11] + ' - ' + row[12] + '; ' + first_name + ' ' + last_name + ' (@' + user_name + ')\n'
             counter += 1
         self.bot.send_message(message.chat.id, result_list)
