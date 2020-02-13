@@ -133,11 +133,13 @@ if __name__ == "__main__":
 
 @scheduler.scheduled_job('interval', minutes=2)
 def timed_job():
-    db_funcs.deleteOldTimes()
+    print("Otrabotalo")
+    # db_funcs.deleteOldTimes()
 
 
 @scheduler.scheduled_job('cron', day_of_week='mon-fri', hour=21)
 def scheduled_job():
+    print("Cron otrabotal")
     db_funcs.deleteOldTimes()
 
 
