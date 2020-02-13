@@ -79,7 +79,7 @@ class DatabaseFuncs:
     def getUserId(self, message):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
-                query = 'SELECT id FROM public.users WHERE user_id = {0}'.format(message.from_user.id)
+                query = 'SELECT id FROM public.users WHERE user_id = %s' % message.from_user.id
                 cursor.execute(query)
 
     def addToTimetable(self, collection, message):
@@ -88,7 +88,7 @@ class DatabaseFuncs:
                 date_create = datetime.datetime.today().date()
                 date_update = date_create
                 query = 'INSERT INTO public.timetable (user_id, day_use, start_time, end_time, date_create, date_update) ' \
-                        'VALUES (%s, %s, %s, %s, %s::date, %s::date)'.format(self.getUserId(message), datetime.datetime.today().day,
+                        'VALUES (%s, %s, %s, %s, %s::date, %s::date)' % (self.getUserId(message), datetime.datetime.today().day,
                                        collection['start_time'], collection['end_time'], date_create, date_update)
                 cursor.execute(query)
                 connection.commit()
