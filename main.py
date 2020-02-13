@@ -2,6 +2,7 @@ import telebot
 import datetime
 import config
 import os
+import schedule
 from flask import Flask, request
 
 from functions import dbfuncs, botfuncs
@@ -83,6 +84,9 @@ def sticker_id(message):
     print(message)
 
 
+def deleteOldTimes():
+    db_funcs.deleteOldTimes()
+
 # @bot.callback_query_handler(func=lambda call: True)
 # def callback_worker(call):
 #     if call.data == "yes":
@@ -122,3 +126,5 @@ def index():
 # ------------------------------------------------ #
 if __name__ == "__main__":
     server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
+
+schedule.every().day.at('23:59').do(deleteOldTimes)

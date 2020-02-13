@@ -110,6 +110,13 @@ class DatabaseFuncs:
 
                 return cursor.fetchall()
 
+    def deleteOldTimes(self):
+        with closing(self.getConnection()) as connection:
+            with connection.cursor() as cursor:
+                query = 'DELETE FROM public.timetable WHERE day_use = %s'
+                cursor.execute(query, [datetime.datetime.today().day])
+                connection.commit()
+
     @staticmethod
     def checkNone(string):
         return '' if str(string).strip() == 'None' else str(string).strip()
