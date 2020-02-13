@@ -19,3 +19,4 @@ telebot==0.0.3
 urllib3==1.25.8
 virtualenv==16.7.9
 Werkzeug==1.0.0
+APScheduler==3.6.3
