@@ -2,7 +2,6 @@ import telebot
 import datetime
 import config
 import os
-import schedule
 import time
 from flask import Flask, request
 from apscheduler.schedulers.blocking import BlockingScheduler
@@ -137,7 +136,7 @@ def timed_job():
     db_funcs.deleteOldTimes()
 
 
-@scheduler.scheduled_job('cron', day_of_week='mon-fri', hour=23)
+@scheduler.scheduled_job('cron', day_of_week='mon-fri', hour=21)
 def scheduled_job():
     db_funcs.deleteOldTimes()
 
