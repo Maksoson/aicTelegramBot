@@ -82,7 +82,6 @@ class DatabaseFuncs:
                 query = 'SELECT id FROM public.users WHERE user_id = %s'
                 cursor.execute(query, [message.from_user.id])
                 if cursor.rowcount > 0:
-                    print('cursor')
                     for row in cursor:
                         return row[0]
 
@@ -100,11 +99,11 @@ class DatabaseFuncs:
     def getAllTimes(self, day):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
-                query = 'SELECT public.users.*, public.timetable.* FROM public.timetable INNER JOIN public.users ON public.users.id = public.timetable.user_id WHERE day_use = %s'
+                query = 'SELECT public.users.*, public.timetable.* FROM public.timetable ' \
+                        'INNER JOIN public.users ON public.users.id = public.timetable.user_id WHERE day_use = %s'
                 cursor.execute(query, [day])
-                if cursor.rowcount > 0:
-                    for row in cursor:
-                        print(row)
+                result = cursor.fetchall()
+                print(result)
 
     @staticmethod
     def getConnection():
