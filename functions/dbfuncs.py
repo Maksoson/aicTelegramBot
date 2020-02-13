@@ -85,14 +85,12 @@ class DatabaseFuncs:
     def addToTimetable(self, collection, message):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
-                query = 'INSERT INTO public.timetable (user_id, day_use, start_time, end_time, date_create, date_update) ' \
-                        'VALUES (%s, %s, %s, %s, %s::date, %s::date)'
                 date_create = datetime.datetime.today().date()
                 date_update = date_create
-                print("ALO + " + str(self.getUserId(message)))
-                cursor.execute(query, (self.getUserId(message), datetime.datetime.today().day,
-                                       collection['start_time'], collection['end_time'],
-                                       date_create, date_update))
+                query = 'INSERT INTO public.timetable (user_id, day_use, start_time, end_time, date_create, date_update) ' \
+                        'VALUES (%s, %s, %s, %s, %s::date, %s::date)'.format(self.getUserId(message), datetime.datetime.today().day,
+                                       collection['start_time'], collection['end_time'], date_create, date_update)
+                cursor.execute(query)
                 connection.commit()
 
     def getAllTimes(self, day):
