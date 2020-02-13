@@ -33,7 +33,7 @@ class BotFuncs:
                 result_list += str(counter) + '. ' + str(row[3]).strip() + ' - ' + str(row[4]).strip() + '\n'
                 counter += 1
         else:
-            result_list = 'Твой список занятости пуст'
+            result_list += 'Твой список занятости пуст'
 
         self.bot.send_message(message.chat.id, result_list)
 
@@ -44,11 +44,11 @@ class BotFuncs:
         counter = 1
         if len(data) > 0:
             for row in data:
-                result_list += str(counter) + '. ' + str(row[11]).strip() + ' - ' + str(row[12]).strip() + '  ->  ' \
+                result_list += str(counter) + '. ' + str(row[11]).strip() + ' - ' + str(row[12]).strip() + '  ---  ' \
                                + str(row[2]).strip() + ' ' + str(row[3]).strip() + ' (@' + str(row[1]).strip() + ')\n'
                 counter += 1
         else:
-            result_list = 'Cписок занятости пуст, успей занять лучшее время ;)'
+            result_list += 'Cписок занятости пуст, успей занять лучшее время ;)'
 
         self.bot.send_message(message.chat.id, result_list)
 

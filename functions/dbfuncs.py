@@ -110,7 +110,8 @@ class DatabaseFuncs:
 
                 return cursor.fetchall()
 
-    def checkNone(self, string):
+    @staticmethod
+    def checkNone(string):
         return '' if str(string).strip() == 'None' else str(string).strip()
 
     @staticmethod
