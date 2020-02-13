@@ -82,7 +82,7 @@ class DatabaseFuncs:
                 query = 'SELECT id FROM public.users WHERE user_id = %s'
                 cursor.execute(query, [message.from_user.id])
                 if cursor.rowcount > 0:
-                    print(cursor)
+                    print(cursor[0])
                     print('cursor')
                     for row in cursor:
                         return row[0]
@@ -93,10 +93,10 @@ class DatabaseFuncs:
                 date_create = datetime.datetime.today().date()
                 date_update = date_create
                 query = 'INSERT INTO public.timetable (user_id, day_use, start_time, end_time, date_create, date_update) ' \
-                        'VALUES (%s, %s,  "%s", "%s", "%s"::date, "%s"::date)' % (self.getUserId(message), datetime.datetime.today().day,
-                                       collection['start_time'], collection['end_time'], date_create, date_update)
+                        'VALUES (%s, %s,  %s, %s, %s::date, %s::date)'
                 print('QUERY ---- ' + query)
-                cursor.execute(query)
+                cursor.execute(query, [self.getUserId(message), datetime.datetime.today().day,
+                                       collection['start_time'], collection['end_time'], date_create, date_update])
                 connection.commit()
 
     def getAllTimes(self, day):
