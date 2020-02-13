@@ -79,7 +79,7 @@ class DatabaseFuncs:
     def getUserId(self, message):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
-                query = 'SELECT id FROM public.users WHERE user_id = %s'
+                query = 'SELECT id FROM public.users WHERE user_id = %s::integer'
                 print("USER_ID -> " + str(message.from_user.id))
                 cursor.execute(query, [message.from_user.id])
 
@@ -87,7 +87,7 @@ class DatabaseFuncs:
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
                 query = 'INSERT INTO public.timetable (user_id, day_use, start_time, end_time, date_create, date_update) ' \
-                        'VALUES (%s, %s, %s, %s, %s, %s)'
+                        'VALUES (%s, %s, %s, %s, %s::timestamp , %s::timestamp)'
                 date_create = datetime.datetime.today().timestamp()
                 date_update = date_create
                 print("ALO + " + str(self.getUserId(message)))
