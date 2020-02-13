@@ -11,7 +11,7 @@ class BotFuncs:
 
     # Занять переговорку
     def regTime(self, message):
-        self.bot.send_message(message.chat.id, 'Когда тебе нужна переговорка?')
+        self.bot.send_message(message.chat.id, 'Во сколько тебе нужна переговорка?')
         self.bot.register_next_step_handler(message, self.regEndTime)
 
     def regEndTime(self, message):
@@ -25,29 +25,36 @@ class BotFuncs:
 
     # Моя занятость
     def printMyTimes(self, message, today):
-        result_list = '@' + message.from_user.username + ', ' + today.strftime('%d.%m.%y') + '\n\n'
+        result_list = '@' + message.from_user.username + ', занятость на ' + today.strftime('%d.%m.%y') + '\n\n'
         data = self.db_funcs.getMyTimes(self.db_funcs.getUserId(message), today.day)
         counter = 1
-        for row in data:
-            result_list += str(counter) + '. ' + str(row[3]).strip() + ' - ' + str(row[4]).strip() + '\n'
-            counter += 1
+        if len(data) > 0:
+            for row in data:
+                result_list += str(counter) + '. ' + str(row[3]).strip() + ' - ' + str(row[4]).strip() + '\n'
+                counter += 1
+        else:
+            result_list = 'Твой список занятости пуст'
+
         self.bot.send_message(message.chat.id, result_list)
 
     # Занятость переговорки на сегодня
     def printAllTimes(self, message, today):
-        result_list = today.strftime('%d.%m.%y') + '\n\n'
+        result_list = 'Занятость на ' + today.strftime('%d.%m.%y') + '\n\n'
         data = self.db_funcs.getAllTimes(today.day)
         counter = 1
-        print(len(data))
-        print('pepegaaa')
-        for row in data:
-            result_list += str(counter) + '. ' + str(row[11]).strip() + ' - ' + str(row[12]).strip() + '; ' \
-                           + str(row[2]).strip() + ' ' + str(row[3]).strip() + ' (@' + str(row[1]).strip() + ')\n'
-            counter += 1
+        if len(data) > 0:
+            for row in data:
+                result_list += str(counter) + '. ' + str(row[11]).strip() + ' - ' + str(row[12]).strip() + '  ->  ' \
+                               + str(row[2]).strip() + ' ' + str(row[3]).strip() + ' (@' + str(row[1]).strip() + ')\n'
+                counter += 1
+        else:
+            result_list = 'Cписок занятости пуст, успей занять лучшее время ;)'
+
         self.bot.send_message(message.chat.id, result_list)
 
     # Справка
     def printHelp(self, message):
         self.bot.send_message(message.chat.id, 'Привет, ' + message.from_user.username + '!\n\n'
                                                'Список команд:\n'
-                                               '/start\n/keyboard\n/help\n/add\n/delete\n/all\n/my\n/time\n/snow')
+                                               '/start\n/keyboard\n/help\n/add\n/delete\n/all\n/my\n/time\n/snow\n\n'
+                                               'Версия бота: 0.7.11, 13.02.2020\n')
