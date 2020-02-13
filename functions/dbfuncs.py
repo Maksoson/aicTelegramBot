@@ -3,7 +3,6 @@ from contextlib import closing
 import dj_database_url
 import psycopg2
 import datetime
-import time
 
 
 class DatabaseFuncs:
@@ -99,7 +98,7 @@ class DatabaseFuncs:
     def getAllTimes(self, day):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
-                query = 'SELECT public.users.*, public.timetable.* FROM public.timetable ' \
+                query = 'SELECT * FROM public.timetable ' \
                         'INNER JOIN public.users ON public.users.id = public.timetable.user_id WHERE day_use = %s'
                 cursor.execute(query, [day])
                 result = cursor.fetchall()

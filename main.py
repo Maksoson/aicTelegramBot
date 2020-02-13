@@ -46,14 +46,12 @@ def send_text(message):
         bot.send_message(message.chat.id, 'Привет, ' + message.from_user.first_name)
     elif message.text.lower() == 'пока':
         bot.send_message(message.chat.id, 'Прощай, ' + message.from_user.first_name)
-    # elif message.text.lower() == 'я тебя люблю':
-    #     bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAO2Xj1y-l94-VPFiR-cso1Jy9R_QE0AAt8DAAKJ6uUHt_QHFuQiXjgYBA')
     elif message.text.lower() == 'время':
         bot.send_message(message.chat.id, 'Текущее время:\n' + str(datetime.datetime.today().strftime("%H:%M - %d.%m.%Y")))
     elif message.text.lower() == 'занять переговорную':
         botfuncs.regTime(message)
     elif message.text.lower() == 'вывести общий список занятости':
-        bot.send_message(message.chat.id, "Занятость переговрки на сегоня:")
+        bot.send_message(message.chat.id, "Занятость переговорки на сегодня:")
         db_funcs.getAllTimes(datetime.datetime.today().day)
     # elif message.text.lower() == 'регистрация':
     #     bot.send_message(message.from_user.id, "Как тебя зовут?")
