@@ -4,12 +4,10 @@ import config
 import os
 import time
 from flask import Flask, request
-from apscheduler.schedulers.blocking import BlockingScheduler
 
 from functions import dbfuncs, botfuncs
 
 
-scheduler = BlockingScheduler()
 bot = telebot.TeleBot(config.TOKEN)
 db_funcs = dbfuncs.DatabaseFuncs(bot)
 bot_funcs = botfuncs.BotFuncs(bot)
@@ -129,18 +127,3 @@ def index():
 # ------------------------------------------------ #
 if __name__ == "__main__":
     server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
-
-
-@scheduler.scheduled_job('interval', minutes=2)
-def timed_job():
-    print("Otrabotalo")
-    # db_funcs.deleteOldTimes()
-
-
-@scheduler.scheduled_job('cron', day_of_week='mon-fri', hour=21)
-def scheduled_job():
-    print("Cron otrabotal")
-    db_funcs.deleteOldTimes()
-
-
-scheduler.start()
