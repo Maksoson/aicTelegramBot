@@ -24,7 +24,7 @@ class BotFuncs:
 
     # Моя занятость
     def printMyTimes(self, message, today):
-        result_list = message.from_user.user_name + ', ' + today.strftime('%d.%m.%y') + '\n\n'
+        result_list = message.from_user.username + ', ' + today.strftime('%d.%m.%y') + '\n\n'
         data = self.db_funcs.getMyTimes(self.db_funcs.getUserId(message), today.day)
         counter = 1
         for row in data:

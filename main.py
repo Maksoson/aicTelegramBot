@@ -53,6 +53,8 @@ def command_url(message):
 
 @bot.message_handler(content_types=['text'])
 def send_text(message):
+    print(message)
+
     user_message = message.text.lower()
     chat_id = message.chat.id
     user_first_name = message.from_user.first_name
