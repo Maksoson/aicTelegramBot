@@ -71,8 +71,7 @@ def send_text(message):
     elif user_message == 'занять переговорку':
         bot_funcs.regTime(message)
     elif user_message == 'занятость переговорки на сегодня':
-        bot.send_message(chat_id, "Занятость переговорки на сегодня:\n")
-        bot_funcs.printAllTimes(message, now_day)
+        bot_funcs.printAllTimes(message, today)
 
 
 @bot.message_handler(content_types=['sticker'])

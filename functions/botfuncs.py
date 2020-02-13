@@ -23,17 +23,25 @@ class BotFuncs:
         self.db_funcs.addToTimetable(message, self.dataReg)
 
     # Моя занятость
-    def printMyTimes(self, message, day):
-        result_list = ''
-        data = self.db_funcs.getMyTimes(self.db_funcs.getUserId(message.from_user.id), day)
+    def printMyTimes(self, message, today):
+        result_list = message.from_user.user_name + ', ' + today.strftime('%d.%m.%y') + '\n\n'
+        data = self.db_funcs.getMyTimes(self.db_funcs.getUserId(message), today.day)
+        counter = 1
         for row in data:
-            result_list += str(row) + ';\n'
+            result_list += str(counter) + '. ' + row[11] + ' - ' + row[12] + '\n'
+            counter += 1
         self.bot.send_message(message.chat.id, result_list)
 
     # Занятость переговорки на сегодня
-    def printAllTimes(self, message, day):
-        result_list = ''
-        data = self.db_funcs.getAllTimes(day)
+    def printAllTimes(self, message, today):
+        result_list = today.strftime('%d.%m.%y') + '\n\n'
+        data = self.db_funcs.getAllTimes(today.day)
+        counter = 1
         for row in data:
-            result_list += str(row) + ';\n'
+            user_name = '' if row[1] is None else row[1]
+            first_name = '' if row[2] is None else row[2]
+            last_name = '' if row[3] is None else row[3]
+
+            result_list += str(counter) + '. ' + row[11] + ' - ' + row[12] + '; ' + first_name + ' ' + last_name + ' (' + user_name + ')\n'
+            counter += 1
         self.bot.send_message(message.chat.id, result_list)
