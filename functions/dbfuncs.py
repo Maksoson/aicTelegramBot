@@ -10,7 +10,7 @@ class DatabaseFuncs:
     def __init__(self, bot):
         self.bot = bot
 
-    def createUsersTable(self, message):
+    def createUsersTable(self):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
                 query = """CREATE TABLE public.users ( id SERIAL PRIMARY KEY,

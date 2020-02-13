@@ -1,12 +1,15 @@
+import telebot
+import config
 from apscheduler.schedulers.blocking import BlockingScheduler
 from functions import dbfuncs, botfuncs
 
-
+bot = telebot.TeleBot(config.TOKEN)
 scheduler = BlockingScheduler()
+db_funcs = dbfuncs.DatabaseFuncs(bot)
 
 @scheduler.scheduled_job('interval', minutes=2)
 def timed_job():
-    # print("Otrabotalo")
+    print("Otrabotalo")
     db_funcs.deleteOldTimes()
 
 
