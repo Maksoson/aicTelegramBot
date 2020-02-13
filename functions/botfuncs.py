@@ -43,13 +43,13 @@ class BotFuncs:
             first_name = '' if row[2] is None else row[2]
             last_name = '' if row[3] is None else row[3]
 
-            if last_name is None:
+            if str(row[3]) == 'None':
                 last_name = ''
                 print('wwwwwwwwwwwwwww')
-            elif last_name == 'None':
+            elif str(row[3]) is None:
                 last_name = ''
                 print('qqqqqqqqqqqqqqqq')
-            elif last_name == 'none':
+            elif str(row[3]) == 'none':
                 last_name = ''
                 print('eeeeeeeeeeeeeeee')
 
