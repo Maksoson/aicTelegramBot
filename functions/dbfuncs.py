@@ -57,20 +57,28 @@ class DatabaseFuncs:
     def addUser(self, message):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
+                user_acc_name = '' if message.from_user.username == 'None' else message.from_user.username
+                user_first_name = '' if message.from_user.first_name == 'None' else message.from_user.first_name
+                user_last_name = '' if message.from_user.last_name == 'None' else message.from_user.last_name
+
                 query = 'INSERT INTO public.users (user_accname, user_firstname, user_lastname, user_id, user_language, user_isbot) ' \
                         'VALUES (%s, %s, %s, %s, %s, %s)'
                 cursor.execute(query,
-                               (message.from_user.username, message.from_user.first_name, message.from_user.last_name,
+                               (user_acc_name, user_first_name, user_last_name,
                                 message.from_user.id, message.from_user.language_code, message.from_user.is_bot))
                 connection.commit()
 
     def updateUser(self, message):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
+                user_acc_name = '' if message.from_user.username == 'None' else message.from_user.username
+                user_first_name = '' if message.from_user.first_name == 'None' else message.from_user.first_name
+                user_last_name = '' if message.from_user.last_name == 'None' else message.from_user.last_name
+
                 query = 'UPDATE public.users ' \
                         'SET user_accname = %s, user_firstname = %s, user_lastname = %s, user_id = %s, user_language = %s, user_isbot = %s'
                 cursor.execute(query,
-                               (message.from_user.username, message.from_user.first_name, message.from_user.last_name,
+                               (user_acc_name, user_first_name, user_last_name,
                                 message.from_user.id, message.from_user.language_code, message.from_user.is_bot))
                 connection.commit()
 
