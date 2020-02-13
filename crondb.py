@@ -1,9 +1,13 @@
 import telebot
 import config
 from apscheduler.schedulers.blocking import BlockingScheduler
+
+import bothome
 from functions import dbfuncs, botfuncs
 
-bot = telebot.TeleBot(config.TOKEN)
+
+bot_home = bothome.BotHome()
+bot = telebot.TeleBot(bot_home.getBot)
 scheduler = BlockingScheduler()
 db_funcs = dbfuncs.DatabaseFuncs(bot)
 

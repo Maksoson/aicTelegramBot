@@ -5,10 +5,14 @@ import os
 import time
 from flask import Flask, request
 
+import bothome
 from functions import dbfuncs, botfuncs
 
 
 bot = telebot.TeleBot(config.TOKEN)
+bot_home = bothome.BotHome()
+bot_home.setBot(bot)
+
 db_funcs = dbfuncs.DatabaseFuncs(bot)
 bot_funcs = botfuncs.BotFuncs(bot)
 
