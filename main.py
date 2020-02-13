@@ -8,7 +8,7 @@ from functions import dbfuncs, botfuncs
 
 bot = telebot.TeleBot(config.TOKEN)
 db_funcs = dbfuncs.DatabaseFuncs(bot)
-botfuncs = botfuncs.BotFuncs(bot)
+bot_funcs = botfuncs.BotFuncs(bot)
 
 start_keyboard = telebot.types.ReplyKeyboardMarkup(True)
 start_keyboard.row('Занять переговорку', 'Моя занятость')
@@ -20,9 +20,11 @@ start_keyboard.row('Мои данные', 'Дата', 'Помощь')
 @bot.message_handler(commands=['start'])
 def startFunc(message):
     if db_funcs.checkUser(message):
-        bot.send_message(message.chat.id, 'Я тебя знаю , ' + message.from_user.username + ' (:', reply_markup=start_keyboard)
+        bot.send_message(message.chat.id, 'Я тебя знаю , ' + message.from_user.username + ' (:',
+                         reply_markup=start_keyboard)
     else:
-        bot.send_message(message.chat.id, 'Добро пожаловать, ' + message.from_user.username + '. Располагайся как дома! (:', reply_markup=start_keyboard)
+        bot.send_message(message.chat.id, 'Добро пожаловать, ' + message.from_user.username + '.\n '
+                                          'Располагайся как дома! (:', reply_markup=start_keyboard)
 
 
 @bot.message_handler(commands=['help'])
@@ -34,6 +36,16 @@ def pleaseHelp(message):
                                       'Приятного использования!\n\n')
 
 
+@bot.message_handler(commands=['add'])
+def addUserTime(message):
+    bot_funcs.regTime(message)
+
+
+@bot.message_handler(commands=['delete'])
+def deleteUserTime(message):
+    bot.send_message(message.chat.id, 'Эта функция пока что не доступна :(')
+
+
 @bot.message_handler(regexp='((https?):((//)|(\\\\))+([\w\d:#@%/;$()~_?\+-=\\\.&](#!)?)*)')
 def command_url(message):
     bot.reply_to(message, "I shouldn't open that url, should I?")
@@ -41,24 +53,26 @@ def command_url(message):
 
 @bot.message_handler(content_types=['text'])
 def send_text(message):
-    print(message)
-    if message.text.lower() == 'привет':
-        bot.send_message(message.chat.id, 'Привет, ' + message.from_user.first_name)
-    elif message.text.lower() == 'пока':
-        bot.send_message(message.chat.id, 'Прощай, ' + message.from_user.first_name)
-    elif message.text.lower() == 'время':
-        bot.send_message(message.chat.id, 'Текущее время:\n' + str(datetime.datetime.today().strftime("%H:%M - %d.%m.%Y")))
-    elif message.text.lower() == 'занять переговорку':
-        botfuncs.regTime(message)
-    elif message.text.lower() == 'занятость переговорки на сегодня':
-        bot.send_message(message.chat.id, "Занятость переговорки на сегодня:\n")
-        result = db_funcs.getAllTimes(datetime.datetime.today().day)
-        if result.rowcount > 0:
-            for row in result:
-                bot.send_message(message.chat.id, row)
-    # elif message.text.lower() == 'регистрация':
-    #     bot.send_message(message.from_user.id, "Как тебя зовут?")
-    #     bot.register_next_step_handler(message, botfuncs.get_name)
+    user_message = message.text.lower()
+    chat_id = message.chat.id
+    user_first_name = message.from_user.first_name
+    today = datetime.datetime.today()
+    now_day = today.day
+
+    if user_message == 'привет':
+        bot.send_message(chat_id, 'Привет, ' + user_first_name)
+    elif user_message == 'пока':
+        bot.send_message(chat_id, 'Прощай, ' + user_first_name)
+    elif user_message == 'время':
+        bot.send_message(chat_id, 'Текущее время:\n' + str(today.strftime("%H:%M - %d.%m.%Y")))
+    elif user_message == 'моя занятость':
+        bot.send_message(chat_id, 'Ваш список занятости:\n')
+        bot_funcs.printMyTimes(message, now_day)
+    elif user_message == 'занять переговорку':
+        bot_funcs.regTime(message)
+    elif user_message == 'занятость переговорки на сегодня':
+        bot.send_message(chat_id, "Занятость переговорки на сегодня:\n")
+        bot_funcs.printAllTimes(message, now_day)
 
 
 @bot.message_handler(content_types=['sticker'])
@@ -72,7 +86,7 @@ def sticker_id(message):
 #         bot.send_message(call.message.chat.id, 'Запомню :)')
 #     elif call.data == "no":
 #         bot.send_message(call.message.chat.id, "Повтори, как тебя зовут?")
-#         bot.register_next_step_handler(call.message, botfuncs.get_name)
+#         bot.register_next_step_handler(call.message, bot_funcs.get_name)
 
 
 # ------------------------------------------------ #

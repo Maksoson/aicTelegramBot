@@ -6,6 +6,7 @@ class BotFuncs:
     def __init__(self, bot):
         self.bot = bot
         self.dataReg = {'start_time': '', 'end_time': ''}
+        self.db_funcs = dbfuncs.DatabaseFuncs(self.bot)
 
     # def get_name(self, message):
     #     global name
@@ -41,6 +42,23 @@ class BotFuncs:
 
     def endRegTime(self, message):
         self.dataReg['end_time'] = message.text
-        db_funcs = dbfuncs.DatabaseFuncs(self.bot)
-        db_funcs.addToTimetable(self.dataReg, message)
+        # db_funcs = dbfuncs.DatabaseFuncs(self.bot)
+        self.db_funcs.addToTimetable(self.db_funcs.getUserId(message.from_user.id), self.dataReg)
+
+    def printMyTimes(self, message, day):
+        result_list = ''
+        data = self.db_funcs.getMyTimes(message, day)
+        for row in data:
+            result_list += str(row) + ';\n'
+        self.bot.send_message(message.chat.id, result_list)
+
+    def printAllTimes(self, message, day):
+        result_list = ''
+        # db_funcs = dbfuncs.DatabaseFuncs(self.bot)
+        data = self.db_funcs.getAllTimes(day)
+        for row in data:
+            result_list += str(row) + ';\n'
+        self.bot.send_message(message.chat.id, result_list)
+
+
 

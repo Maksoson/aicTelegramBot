@@ -83,7 +83,7 @@ class DatabaseFuncs:
 
                 return cursor.fetchone()
 
-    def addToTimetable(self, collection, message):
+    def addToTimetable(self, message, collection):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
                 date_create = datetime.datetime.today().date()
@@ -94,6 +94,14 @@ class DatabaseFuncs:
                                        collection['start_time'], collection['end_time'], date_create, date_update])
                 connection.commit()
 
+    def getMyTimes(self, user_id, day):
+        with closing(self.getConnection()) as connection:
+            with connection.cursor() as cursor:
+                query = 'SELECT * FROM public.timetable WHERE user_id = %s AND day_use = %s'
+                cursor.execute(query, [user_id, day])
+
+                return cursor.fetchall()
+
     def getAllTimes(self, day):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
@@ -101,7 +109,7 @@ class DatabaseFuncs:
                         'INNER JOIN public.users ON public.users.id = public.timetable.user_id WHERE day_use = %s'
                 cursor.execute(query, [day])
 
-                return cursor
+                return cursor.fetchall()
 
 
     @staticmethod
