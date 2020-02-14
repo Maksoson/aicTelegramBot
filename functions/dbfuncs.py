@@ -128,11 +128,11 @@ class DatabaseFuncs:
     @staticmethod
     def sortTimes(times_data, type_func):
         new_times_data = []
-        for row in times_data:
-            if type_func == 1:
-                row[3] = datetime.datetime.strftime(row[3], '%H:%M')
-            elif type_func == 2:
-                row[11] = datetime.datetime.strftime(row[11], '%H:%M')
+        # for row in times_data:
+        #     if type_func == 1:
+        #         row[3] = datetime.datetime.strftime(row[3], '%H:%M')
+        #     elif type_func == 2:
+        #         row[11] = datetime.datetime.strftime(row[11], '%H:%M')
 
         if type_func == 1:
             new_times_data = sorted(times_data, key=lambda row: datetime.datetime.strftime(row[3], '%H:%M'), reverse=False)
