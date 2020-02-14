@@ -130,27 +130,14 @@ class DatabaseFuncs:
 
     @staticmethod
     def sortTimes(times_data, type_func):
-        new_times_data = list(times_data)
-        print(new_times_data)
-        for row in new_times_data:
+        new_times_data = []
+        for row in times_data:
             if type_func == 1:
-                time_test = str(list(row[3])).strip()
-                time_test = datetime.datetime.strptime(time_test, '%H:%M')
-                row[3] = time_test
-                # row[3] = \
-                #     datetime.datetime.strptime(
-                #         str(row[3]).strip(), '%H:%M')
+                print(row[3])
+                print(type(row[3]))
+                row[3] = datetime.datetime.strptime(str(row[3]).strip(), '%H:%M')
             elif type_func == 2:
-                time_test = str(list(row[11])).strip()
-                time_test = datetime.datetime.strptime(time_test, '%H:%M')
-                row[11] = time_test
-                # row[11] = \
-                #     datetime.datetime.strptime(
-                #         str(row[11]).strip(), '%H:%M')
-
-
-        print('-------')
-        print(new_times_data)
+                row[11] = datetime.datetime.strptime(str(row[11]).strip(), '%H:%M')
         # if type_func == 1:
         #     new_times_data = sorted(
         #         times_data,
@@ -165,9 +152,9 @@ class DatabaseFuncs:
         #     )
 
         if type_func == 1:
-            new_times_data = sorted(new_times_data, key=lambda row: row[3], reverse=False)
+            new_times_data = sorted(times_data, key=lambda row: row[3], reverse=False)
         elif type_func == 2:
-            new_times_data = sorted(new_times_data, key=lambda row: row[11], reverse=False)
+            new_times_data = sorted(times_data, key=lambda row: row[11], reverse=False)
 
         return new_times_data
 
