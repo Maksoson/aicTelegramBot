@@ -3,6 +3,7 @@ from contextlib import closing
 import dj_database_url
 import psycopg2
 import datetime
+from datetime import datetime
 import re
 
 
@@ -139,13 +140,13 @@ class DatabaseFuncs:
         if type_func == 1:
             new_times_data = sorted(
                 times_data,
-                key=lambda row: datetime.datetime.strftime(datetime.datetime.strptime(row[3], '%H:%M'), '%H:%M'),
+                key=lambda row: datetime.strftime(datetime.strptime(row[3], '%H:%M'), '%H:%M'),
                 reverse=False
             )
         elif type_func == 2:
             new_times_data = sorted(
                 times_data,
-                key=lambda row: datetime.datetime.strftime(datetime.datetime.strptime(row[3], '%H:%M'), '%H:%M'),
+                key=lambda row: datetime.strftime(datetime.strptime(row[11], '%H:%M'), '%H:%M'),
                 reverse=False
             )
 
