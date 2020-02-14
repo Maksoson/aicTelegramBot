@@ -62,7 +62,7 @@ class DatabaseFuncs:
                         'VALUES (%s, %s, %s, %s, %s, %s)'
                 cursor.execute(query,
                                (self.checkNone(message.from_user.username), self.checkNone(message.from_user.first_name), self.checkNone(message.from_user.last_name),
-                                message.from_user.id, message.from_user.language_code, message.from_user.is_bot))
+                                message.from_user.id, str(message.from_user.language_code).strip(), message.from_user.is_bot))
                 connection.commit()
 
     def updateUser(self, message):
@@ -72,7 +72,7 @@ class DatabaseFuncs:
                         'SET user_accname = %s, user_firstname = %s, user_lastname = %s, user_id = %s, user_language = %s, user_isbot = %s'
                 cursor.execute(query,
                                (self.checkNone(message.from_user.username), self.checkNone(message.from_user.first_name), self.checkNone(message.from_user.last_name),
-                                message.from_user.id, message.from_user.language_code, message.from_user.is_bot))
+                                message.from_user.id, str(message.from_user.language_code).strip(), message.from_user.is_bot))
                 connection.commit()
 
     def getUserId(self, message):
@@ -94,7 +94,7 @@ class DatabaseFuncs:
                 query = 'INSERT INTO public.timetable (user_id, day_use, start_time, end_time, date_create, date_update) ' \
                         'VALUES (%s, %s, %s, %s, %s::date, %s::date)'
                 cursor.execute(query, [self.getUserId(message)[0], datetime.datetime.today().day,
-                                       start_time, end_time, date_create, date_update])
+                                       str(start_time).strip(), str(end_time).strip(), date_create, date_update])
                 connection.commit()
 
     def getMyTimes(self, user_id, day):
@@ -127,16 +127,17 @@ class DatabaseFuncs:
 
     @staticmethod
     def sortTimes(times_data, type_func):
-        new_times_data = []
+        new_times_data = list(times_data)
+        print(new_times_data)
         for row in times_data:
             if type_func == 1:
-                print(row[3])
-                row[3] = datetime.datetime.strptime(str(row[3]).strip(), '%H:%M')
-                print(row[3])
+                row[3] = \
+                    datetime.datetime.strptime(
+                        str(row[3]).strip(), '%H:%M')
             elif type_func == 2:
-                print(row[11])
-                row[11] = datetime.datetime.strptime(str(row[11]).strip(), '%H:%M')
-                print(row[11])
+                row[11] = \
+                    datetime.datetime.strptime(
+                        str(row[11]).strip(), '%H:%M')
 
         # if type_func == 1:
         #     new_times_data = sorted(
