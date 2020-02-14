@@ -3,7 +3,6 @@ from contextlib import closing
 import dj_database_url
 import psycopg2
 import datetime
-from datetime import datetime
 import re
 
 
@@ -129,26 +128,31 @@ class DatabaseFuncs:
     @staticmethod
     def sortTimes(times_data, type_func):
         new_times_data = []
-        # for row in times_data:
-        #     if type_func == 1:
-        #         print(row[3])
-        #         row[3] = datetime.datetime.strptime(row[3], '%H:%M')
-        #         print(row[3])
-        #     elif type_func == 2:
-        #         row[11] = datetime.datetime.strptime(row[11], '%H:%M')
+        for row in times_data:
+            if type_func == 1:
+                print(row[3])
+                row[3] = datetime.datetime.strptime(row[3], '%H:%M')
+                print(row[3])
+            elif type_func == 2:
+                row[11] = datetime.datetime.strptime(row[11], '%H:%M')
+
+        # if type_func == 1:
+        #     new_times_data = sorted(
+        #         times_data,
+        #         key=lambda row: datetime.datetime.strftime(datetime.datetime.strptime(row[3], '%H:%M'), '%H:%M'),
+        #         reverse=False
+        #     )
+        # elif type_func == 2:
+        #     new_times_data = sorted(
+        #         times_data,
+        #         key=lambda row: datetime.datetime.strftime(datetime.datetime.strptime(row[3], '%H:%M'), '%H:%M'),
+        #         reverse=False
+        #     )
 
         if type_func == 1:
-            new_times_data = sorted(
-                times_data,
-                key=lambda row: datetime.strftime(datetime.strptime(row[3], '%H:%M')),
-                reverse=False
-            )
+            new_times_data = sorted(times_data, key=lambda row: datetime.datetime.strftime(row[3], '%H:%M'), reverse=False)
         elif type_func == 2:
-            new_times_data = sorted(
-                times_data,
-                key=lambda row: datetime.strftime(datetime.strptime(row[11], '%H:%M')),
-                reverse=False
-            )
+            new_times_data = sorted(times_data, key=lambda row: datetime.datetime.strftime(row[11], '%H:%M'), reverse=False)
 
         return new_times_data
 
