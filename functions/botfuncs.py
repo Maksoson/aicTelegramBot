@@ -57,6 +57,7 @@ class BotFuncs:
         result_list = 'Занятость на ' + today.strftime('%d.%m.%y') + '\n\n'
         data = self.db_funcs.getAllTimes(today.day)
         counter = 1
+        print(data)
         if len(data) > 0:
             for row in data:
                 result_list += str(counter) + '. ' + str(row[11]).strip() + ' - ' + str(row[12]).strip() + '  ---  ' \

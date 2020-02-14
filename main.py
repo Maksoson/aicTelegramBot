@@ -28,7 +28,7 @@ def startFunc(message):
         bot.send_message(message.chat.id, 'Я тебя знаю , ' + message.from_user.username + ' (:',
                          reply_markup=start_keyboard)
     else:
-        bot.send_message(message.chat.id, 'Добро пожаловать, ' + message.from_user.username + '.\n '
+        bot.send_message(message.chat.id, 'Добро пожаловать, ' + message.from_user.username + '.\n'
                                           'Располагайся как дома! (:', reply_markup=start_keyboard)
 
 

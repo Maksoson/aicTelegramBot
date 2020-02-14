@@ -42,6 +42,8 @@ class DatabaseFuncs:
                     return False
 
     def compareUserData(self, old_user_data, new_user_data):
+        for row in old_user_data:
+            print(row)
         if str(old_user_data[1]).strip() != new_user_data.from_user.username:
             return False
         if str(old_user_data[2]).strip() != new_user_data.from_user.first_name:
@@ -69,7 +71,8 @@ class DatabaseFuncs:
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
                 query = 'UPDATE public.users ' \
-                        'SET user_accname = %s, user_firstname = %s, user_lastname = %s, user_id = %s, user_language = %s, user_isbot = %s WHERE user_id = %s'
+                        'SET user_accname = %s, user_firstname = %s, user_lastname = %s, user_id = %s, user_language = %s, user_isbot = %s ' \
+                        'WHERE user_id = %s'
                 cursor.execute(query,
                                (self.checkNone(message.from_user.username), self.checkNone(message.from_user.first_name), self.checkNone(message.from_user.last_name),
                                 message.from_user.id, str(message.from_user.language_code).strip(), message.from_user.is_bot, message.from_user.id))
