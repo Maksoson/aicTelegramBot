@@ -41,6 +41,7 @@ class BotFuncs:
     def printMyTimes(self, message, today):
         result_list = '@' + message.from_user.username + ', занятость на ' + today.strftime('%d.%m.%y') + '\n\n'
         data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message), today.day), 1)
+        print(str(len(data)) + ' LEN')
         counter = 1
         if len(data) > 0:
             for row in data:

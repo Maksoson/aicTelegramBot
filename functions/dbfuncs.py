@@ -131,11 +131,11 @@ class DatabaseFuncs:
         for row in times_data:
             if type_func == 1:
                 print(row[3])
-                row[3] = datetime.datetime.strptime(row[3], '%H:%M')
+                row[3] = datetime.datetime.strptime(str(row[3]).strip(), '%H:%M')
                 print(row[3])
             elif type_func == 2:
                 print(row[11])
-                row[11] = datetime.datetime.strptime(row[11], '%H:%M')
+                row[11] = datetime.datetime.strptime(str(row[11]).strip(), '%H:%M')
                 print(row[11])
 
         # if type_func == 1:
