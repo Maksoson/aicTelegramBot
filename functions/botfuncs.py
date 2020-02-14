@@ -12,21 +12,24 @@ class BotFuncs:
 
     # Занять переговорку
     def regTime(self, message):
-        self.bot.send_message(message.chat.id, 'Во сколько тебе нужна переговорка?')
-        message_text = str(input())
-        while not re.match(r'^[0-9]{0,2}(:|\s)[0-9]{2}', message_text.lower()) or not re.match(r'^[0-9]{1,2}', message_text.lower()):
-            self.bot.send_message(message.chat.id, 'Не понял тебя, повтори пожалуйста')
-        else:
-            self.bot.register_next_step_handler(message, self.regEndTime)
-
+        msg = self.bot.reply_to(message, 'Во сколько тебе нужна переговорка?')
+        self.bot.register_next_step_handler(msg, self.regEndTime)
 
     def regEndTime(self, message):
         self.dataReg['start_time'] = message.text
-        self.bot.send_message(message.chat.id, 'До скольки тебе нужна переговорка?')
+        if not re.match(r'^[0-9]{0,2}(:|\s)[0-9]{2}', self.dataReg['start_time'].lower()) or not re.match(r'^[0-9]{1,2}', self.dataReg['start_time'].lower()):
+            msg = self.bot.reply_to(message, 'Не понял тебя, повтори пожалуйста')
+            self.bot.register_next_step_handler(msg, self.regEndTime)
+        self.bot.reply_to(message.chat.id, 'До скольки тебе нужна переговорка?')
         self.bot.register_next_step_handler(message, self.endRegTime)
 
     def endRegTime(self, message):
         self.dataReg['end_time'] = message.text
+        if not re.match(r'^[0-9]{0,2}(:|\s)[0-9]{2}', self.dataReg['start_end'].lower()) or not re.match(r'^[0-9]{1,2}', self.dataReg['start_end'].lower()):
+            msg = self.bot.reply_to(message, 'Не понял тебя, повтори пожалуйста')
+            self.bot.register_next_step_handler(msg, self.regEndTime)
+
+        self.bot.send_message(message.chat.id, 'Добавил запись на ' + self.dataReg['start_time'] + " - " + self.dataReg['end_time'])
         self.db_funcs.addToTimetable(message, self.dataReg)
 
     # Моя занятость

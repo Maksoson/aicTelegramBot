@@ -12,6 +12,7 @@ from functions import dbfuncs, botfuncs
 bot = telebot.TeleBot(config.TOKEN)
 bot_home = bothome.BotHome()
 bot_home.setBot(bot)
+bot.
 
 db_funcs = dbfuncs.DatabaseFuncs(bot)
 bot_funcs = botfuncs.BotFuncs(bot)
