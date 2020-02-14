@@ -126,6 +126,22 @@ class DatabaseFuncs:
         return '' if str(string).strip() == 'None' else str(string).strip()
 
     @staticmethod
+    def sortTimes(times_data, type_func):
+        new_times_data = []
+        for row in times_data:
+            if type_func == 1:
+                row[3] = datetime.datetime.strftime(row[3], '%H:%M')
+            elif type_func == 2:
+                row[11] = datetime.datetime.strftime(row[11], '%H:%M')
+
+        if type_func == 1:
+            new_times_data = sorted(times_data, key=lambda row: datetime.datetime.strftime(row[3], '%H:%M'), reverse=False)
+        elif type_func == 2:
+            new_times_data = sorted(times_data, key=lambda row: datetime.datetime.strftime(row[11], '%H:%M'), reverse=False)
+
+        return new_times_data
+
+    @staticmethod
     def checkTimeBefore(data_time):
         if len(data_time) == 5:
             if re.match(r'^[0-9]{0,2}(:|\s)[0-9]{2}$', data_time):

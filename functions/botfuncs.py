@@ -40,7 +40,7 @@ class BotFuncs:
     # Моя занятость
     def printMyTimes(self, message, today):
         result_list = '@' + message.from_user.username + ', занятость на ' + today.strftime('%d.%m.%y') + '\n\n'
-        data = self.db_funcs.getMyTimes(self.db_funcs.getUserId(message), today.day)
+        data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message), today.day), 1)
         counter = 1
         if len(data) > 0:
             for row in data:
@@ -54,7 +54,7 @@ class BotFuncs:
     # Занятость переговорки на сегодня
     def printAllTimes(self, message, today):
         result_list = 'Занятость на ' + today.strftime('%d.%m.%y') + '\n\n'
-        data = self.db_funcs.getAllTimes(today.day)
+        data = self.db_funcs.sortTimes(self.db_funcs.getAllTimes(today.day), 2)
         counter = 1
         if len(data) > 0:
             for row in data:
