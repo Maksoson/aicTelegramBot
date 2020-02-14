@@ -58,7 +58,12 @@ def printAll(message):
 
 @bot.message_handler(commands=['delete'])
 def deleteTime(message):
-    bot_funcs.whatTimeDelete(message, datetime.datetime.today())
+    bot_funcs.seeTimesListFor(message, datetime.datetime.today(), 1)
+
+
+# @bot.message_handler(commands=['update'])
+# def updateTime(message):
+#     bot_funcs.seeTimesListFor(message, datetime.datetime.today(), 2)
 
 
 @bot.message_handler(commands=['my'])
@@ -110,14 +115,6 @@ def sticker_id(message):
 
 def deleteOldTimes():
     db_funcs.deleteOldTimes()
-
-# @bot.callback_query_handler(func=lambda call: True)
-# def callback_worker(call):
-#     if call.data == "yes":
-#         bot.send_message(call.message.chat.id, 'Запомню :)')
-#     elif call.data == "no":
-#         bot.send_message(call.message.chat.id, "Повтори, как тебя зовут?")
-#         bot.register_next_step_handler(call.message, bot_funcs.get_name)
 
 
 # ------------------------------------------------ #

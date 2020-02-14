@@ -11,6 +11,7 @@ class DatabaseFuncs:
     def __init__(self, bot):
         self.bot = bot
 
+    # Создание таблицы пользователей (не совсем актуально, позже изменю)
     def createUsersTable(self):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
@@ -26,6 +27,7 @@ class DatabaseFuncs:
 
                 cursor.execute(query)
 
+    # Проверка данных о пользователе из БД на актуальность
     def checkUser(self, message):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
@@ -41,6 +43,7 @@ class DatabaseFuncs:
                     self.addUser(message)
                     return False
 
+    # Сравнение старых и текущих данных о пользователе
     def compareUserData(self, old_user_data, new_user_data):
         for row in old_user_data:
             print(row)
@@ -57,6 +60,7 @@ class DatabaseFuncs:
 
         return True
 
+    # Добавить пользователя
     def addUser(self, message):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
@@ -67,6 +71,7 @@ class DatabaseFuncs:
                                 message.from_user.id, str(message.from_user.language_code).strip(), message.from_user.is_bot))
                 connection.commit()
 
+    # Обновить данные о пользователе
     def updateUser(self, message):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
@@ -78,6 +83,7 @@ class DatabaseFuncs:
                                 message.from_user.id, str(message.from_user.language_code).strip(), message.from_user.is_bot, message.from_user.id))
                 connection.commit()
 
+    # Получить id пользователя по telegram_id (user_id)
     def getUserId(self, message):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
@@ -86,6 +92,7 @@ class DatabaseFuncs:
 
                 return cursor.fetchone()
 
+    # Добавить запись на переговорку
     def addToTimetable(self, message, collection):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
@@ -100,6 +107,7 @@ class DatabaseFuncs:
                                        start_time, end_time, date_create, date_update])
                 connection.commit()
 
+    # Удаление записи (разрешено удалять только свои записи)
     def deleteFromTimetable(self, time_id):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
@@ -107,6 +115,7 @@ class DatabaseFuncs:
                 cursor.execute(query, [time_id])
                 connection.commit()
 
+    # Получить мои сегодняшние записи на переговорку
     def getMyTimes(self, user_id, day):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
@@ -115,6 +124,7 @@ class DatabaseFuncs:
 
                 return cursor.fetchall()
 
+    # Получить все сегодняшни записи на переговорку
     def getAllTimes(self, day):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
@@ -124,6 +134,7 @@ class DatabaseFuncs:
 
                 return cursor.fetchall()
 
+    # Удалить все записи за прошедший день из БД
     def deleteOldTimes(self):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
@@ -131,10 +142,12 @@ class DatabaseFuncs:
                 cursor.execute(query, [datetime.datetime.today().day])
                 connection.commit()
 
+    # Замена None на пустую строку
     @staticmethod
     def checkNone(string):
         return '' if str(string).strip() == 'None' else str(string).strip()
 
+    # Сортировка списка записей по времени по возрастанию
     @staticmethod
     def sortTimes(times_data, type_func):
         new_times_data = []
@@ -146,6 +159,7 @@ class DatabaseFuncs:
 
         return new_times_data
 
+    # Преобразование к формату ЦЦ:ЦЦ
     @staticmethod
     def checkTimeBefore(data_time):
         if len(data_time) == 5:
@@ -161,6 +175,7 @@ class DatabaseFuncs:
         elif len(data_time) == 1:
             return '0' + data_time + ':00'
 
+    # Связь с БД
     @staticmethod
     def getConnection():
         database_link = config.DATABASELINK

@@ -38,37 +38,54 @@ class BotFuncs:
         self.bot.send_message(message.chat.id, 'Записал тебя на ' + self.db_funcs.checkTimeBefore(self.dataReg['start_time']) + " - " + self.db_funcs.checkTimeBefore(self.dataReg['end_time']))
         self.db_funcs.addToTimetable(message, self.dataReg)
 
-    # Удалить запись
-    def whatTimeDelete(self, message, today):
+    # Вывод списка на удаление/изменение
+    def seeTimesListFor(self, message, today, func_type):
         result_list = ''
         chat_id = message.chat.id
         self.data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message), today.day), 1)
         counter = 1
         if len(self.data) > 0:
-            result_list += 'Введи номер записи, которую хочешь отменить:\n\n'
+            if func_type == 1:
+                result_list += 'Введи номер записи, которую хочешь отменить:\n\n'
+            elif func_type == 2:
+                result_list += 'Введи номер записи, которую хочешь изменить:\n\n'
             for row in self.data:
                 result_list += str(counter) + '. ' + row[3] + ' - ' + row[4] + '\n'
                 counter += 1
             self.bot.send_message(chat_id, result_list)
-            self.bot.register_next_step_handler(message, self.deleteTime)
+            if func_type == 1:
+                self.bot.register_next_step_handler(message, self.deleteTime)
+            elif func_type == 2:
+                self.bot.register_next_step_handler(message, self.updateTime)
         else:
             result_list += 'Сегодня переговорку ты не занимал'
             self.bot.send_message(chat_id, result_list)
 
+    # Удаление записи
     def deleteTime(self, message):
         delete_time_id = str(message.text).strip()
         if not delete_time_id.isdigit():
-            self.bot.send_message(message.chat.id, 'Неверно, введи номер записи снова')
+            self.bot.send_message(message.chat.id, 'Неверно, введи номер еще раз')
             self.bot.register_next_step_handler(message, self.deleteTime)
         counter = 1
         for row in self.data:
-            print(row)
             if counter == int(delete_time_id):
                 self.db_funcs.deleteFromTimetable(row[0])
-                self.bot.send_message(message.chat.id, 'Запись на ' + row[11] + " - " + row[12] + " удалена!")
+                self.bot.send_message(message.chat.id, 'Запись на ' + row[3] + " - " + row[4] + " удалена!")
                 self.data = []
                 break
             counter += 1
+
+    # # Изменение записи
+    # def updateTime(self, message):
+    #     update_time_id = str(message.text).strip()
+    #     if not update_time_id.isdigit():
+    #         self.bot.send_message(message.chat.id, 'Неверно, введи номер еще раз')
+    #         self.bot.register_next_step_handler(message, self.updateTime)
+    #     counter = 1
+    #     for row in self.data:
+    #         if counter == int(update_time_id):
+    #             self.db_funcs.updateTimetable()
 
     # Моя занятость
     def printMyTimes(self, message, today):
@@ -96,7 +113,7 @@ class BotFuncs:
                                + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                 counter += 1
         else:
-            result_list += 'Сегодня переговорку еще никто не занял! Успей занять лучшее время ;)'
+            result_list += 'Сегодня переговорку еще никто не занимал! Успей забрать лучшее время ;)'
 
         self.bot.send_message(message.chat.id, result_list)
 
@@ -112,9 +129,10 @@ class BotFuncs:
                                                '/add - занять переговорку:\n'
                                                '-- Тебе нужно будет 2 раза ввести время.\n'
                                                '-- Примеры ввода времени: 15, 15 00, 15 30, 15:30\n'
-                                               '/update - перейти в режим правки своей занятости. (off)\n'
+                                               '/delete - перейти в режим удаления своей записи.'
+                                               '/update - перейти в режим правки своих записей. (off)\n'
                                                '/all - вывести весь список забронированного времени.\n'
-                                               '/my - вывести только твое забронированное время.\n'
+                                               '/my - вывести только твои забронированное время.\n'
                                                '/time - вывести текущую дату и время.\n'
                                                '/cat - вывести случайную гифку с котом. (off)\n\n'
                                                'Версия бота: 0.7.13\n'
