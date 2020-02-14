@@ -134,14 +134,14 @@ class DatabaseFuncs:
         print(new_times_data)
         for row in new_times_data:
             if type_func == 1:
-                time_test = str(row[3]).strip()
+                time_test = str(list(row[3])).strip()
                 time_test = datetime.datetime.strptime(time_test, '%H:%M')
                 row[3] = time_test
                 # row[3] = \
                 #     datetime.datetime.strptime(
                 #         str(row[3]).strip(), '%H:%M')
             elif type_func == 2:
-                time_test = str(row[11]).strip()
+                time_test = str(list(row[11])).strip()
                 time_test = datetime.datetime.strptime(time_test, '%H:%M')
                 row[11] = time_test
                 # row[11] = \
