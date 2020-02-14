@@ -46,17 +46,17 @@ def addUserTime(message):
     bot_funcs.regTime(message)
 
 
-@bot.message_handlers(commands=['time'])
+@bot.message_handler(commands=['time'])
 def printTime(message):
     bot_funcs.printToday(message.chat.id, datetime.datetime.today())
 
 
-@bot.message_handlers(commands=['all'])
+@bot.message_handler(commands=['all'])
 def printAll(message):
     bot_funcs.printAllTimes(message, datetime.datetime.today())
 
 
-@bot.message_handlers(commands=['my'])
+@bot.message_handler(commands=['my'])
 def printAllMy(message):
     bot_funcs.printMyTimes(message, datetime.datetime.today())
 
