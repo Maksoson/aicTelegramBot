@@ -9,6 +9,7 @@ class BotFuncs:
         self.bot = bot
         self.dataReg = {'start_time': '', 'end_time': ''}
         self.db_funcs = dbfuncs.DatabaseFuncs(self.bot)
+        self.data = []
 
     # Занять переговорку
     def regTime(self, message):
@@ -41,29 +42,31 @@ class BotFuncs:
     def whatTimeDelete(self, message, today):
         result_list = ''
         chat_id = message.chat.id
-        data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message), today.day), 1)
+        self.data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message), today.day), 1)
         counter = 1
-        if len(data) > 0:
+        if len(self.data) > 0:
             result_list += 'Введи номер записи, которую хочешь отменить:\n\n'
-            for row in data:
+            for row in self.data:
                 result_list += str(counter) + '. ' + row[3] + ' - ' + row[4] + '\n'
                 counter += 1
             self.bot.send_message(chat_id, result_list)
-            self.bot.register_next_step_handler(message, data, self.deleteTime)
+            self.bot.register_next_step_handler(message, self.deleteTime)
         else:
             result_list += 'Сегодня переговорку ты не занимал'
             self.bot.send_message(chat_id, result_list)
 
-    def deleteTime(self, message, data):
+    def deleteTime(self, message):
         delete_time_id = str(message.text).strip()
         if not delete_time_id.isdigit():
             self.bot.send_message(message.chat.id, 'Неверно, введи номер записи снова')
             self.bot.register_next_step_handler(message, self.deleteTime)
         counter = 1
-        for row in data:
+        # self.data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message), today.day), 1)
+        for row in self.data:
             if counter == int(delete_time_id):
                 self.db_funcs.deleteFromTimetable(row[8])
                 self.bot.send_message(message.chat.id, 'Запись на ' + row[11] + " - " + row[12] + " удалена!")
+                self.data = []
                 break
             counter += 1
 
