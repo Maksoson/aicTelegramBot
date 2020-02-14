@@ -135,9 +135,9 @@ class DatabaseFuncs:
         #         row[11] = datetime.datetime.strftime(row[11], '%H:%M')
 
         if type_func == 1:
-            new_times_data = sorted(times_data, key=lambda row: datetime.datetime.strftime(row[3], '%H:%M'), reverse=False)
+            new_times_data = sorted(times_data, key=lambda row: datetime.datetime.strftime(row[3], '%I:%M'), reverse=False)
         elif type_func == 2:
-            new_times_data = sorted(times_data, key=lambda row: datetime.datetime.strftime(row[11], '%H:%M'), reverse=False)
+            new_times_data = sorted(times_data, key=lambda row: datetime.datetime.strftime(row[11], '%I:%M'), reverse=False)
 
         return new_times_data
 
