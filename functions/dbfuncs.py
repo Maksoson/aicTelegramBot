@@ -97,7 +97,7 @@ class DatabaseFuncs:
                 query = 'INSERT INTO public.timetable (user_id, day_use, start_time, end_time, date_create, date_update) ' \
                         'VALUES (%s, %s, %s, %s, %s::date, %s::date)'
                 cursor.execute(query, [self.getUserId(message)[0], datetime.datetime.today().day,
-                                       str(start_time).strip(), str(end_time).strip(), date_create, date_update])
+                                       start_time, end_time, date_create, date_update])
                 connection.commit()
 
     def getMyTimes(self, user_id, day):
@@ -131,26 +131,6 @@ class DatabaseFuncs:
     @staticmethod
     def sortTimes(times_data, type_func):
         new_times_data = []
-        # for row in times_data:
-        #     if type_func == 1:
-        #         test_time = str(row[3]).strip()
-        #         print(row[3])
-        #         print(type(row[3]))
-        #         row[3] = datetime.datetime.strptime(test_time, '%H:%M')
-        #     elif type_func == 2:
-        #         row[11] = datetime.datetime.strptime(str(row[11]).strip(), '%H:%M')
-        # # if type_func == 1:
-        # #     new_times_data = sorted(
-        # #         times_data,
-        # #         key=lambda row: datetime.datetime.strftime(datetime.datetime.strptime(row[3], '%H:%M'), '%H:%M'),
-        # #         reverse=False
-        # #     )
-        # # elif type_func == 2:
-        # #     new_times_data = sorted(
-        # #         times_data,
-        # #         key=lambda row: datetime.datetime.strftime(datetime.datetime.strptime(row[3], '%H:%M'), '%H:%M'),
-        # #         reverse=False
-        # #     )
 
         if type_func == 1:
             new_times_data = sorted(times_data, key=lambda row: row[3], reverse=False)
