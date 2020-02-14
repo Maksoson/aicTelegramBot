@@ -1,5 +1,6 @@
 from functions import dbfuncs
 import datetime
+import re
 
 
 class BotFuncs:
@@ -12,7 +13,11 @@ class BotFuncs:
     # Занять переговорку
     def regTime(self, message):
         self.bot.send_message(message.chat.id, 'Во сколько тебе нужна переговорка?')
-        self.bot.register_next_step_handler(message, self.regEndTime)
+        while not re.match(r'^[0-9]{0,2}(:|\s)[0-9]{2}', message.text.lower()) or not re.match(r'^[0-9]{1,2}'):
+            self.bot.send_message(message.chat.id, 'Не понял тебя, повтори пожалуйста')
+        else:
+            self.bot.register_next_step_handler(message, self.regEndTime)
+
 
     def regEndTime(self, message):
         self.dataReg['start_time'] = message.text
