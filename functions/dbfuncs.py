@@ -42,15 +42,15 @@ class DatabaseFuncs:
                     return False
 
     def compareUserData(self, old_user_data, new_user_data):
-        if old_user_data[1] != new_user_data.from_user.username:
+        if str(old_user_data[1]).strip() != new_user_data.from_user.username:
             return False
-        if old_user_data[2] != new_user_data.from_user.first_name:
+        if str(old_user_data[2]).strip() != new_user_data.from_user.first_name:
             return False
-        if old_user_data[3] != new_user_data.from_user.last_name:
+        if str(old_user_data[3]).strip() != new_user_data.from_user.last_name:
             return False
-        if old_user_data[5] != new_user_data.from_user.language_code:
+        if str(old_user_data[5]).strip() != new_user_data.from_user.language_code:
             return False
-        if old_user_data[7] != new_user_data.from_user.is_bot:
+        if str(old_user_data[7]).strip() != new_user_data.from_user.is_bot:
             return False
 
         return True
