@@ -13,7 +13,8 @@ class BotFuncs:
     # Занять переговорку
     def regTime(self, message):
         self.bot.send_message(message.chat.id, 'Во сколько тебе нужна переговорка?')
-        while not re.match(r'^[0-9]{0,2}(:|\s)[0-9]{2}', message.text.lower()) or not re.match(r'^[0-9]{1,2}'):
+        message_text = str(input())
+        while not re.match(r'^[0-9]{0,2}(:|\s)[0-9]{2}', message_text.lower()) or not re.match(r'^[0-9]{1,2}', message_text.lower()):
             self.bot.send_message(message.chat.id, 'Не понял тебя, повтори пожалуйста')
         else:
             self.bot.register_next_step_handler(message, self.regEndTime)
