@@ -2,10 +2,9 @@ import telebot
 import datetime
 import config
 import os
-import time
+import bothome
 from flask import Flask, request
 
-import bothome
 from functions import dbfuncs, botfuncs
 
 

@@ -1,6 +1,6 @@
-from functions import dbfuncs
-import datetime
 import re
+import datetime
+from functions import dbfuncs
 
 
 class BotFuncs:
@@ -34,7 +34,7 @@ class BotFuncs:
                 self.bot.register_next_step_handler(message, self.endRegTime)
                 return
 
-        self.bot.send_message(message.chat.id, 'Добавил запись на ' + self.dataReg['start_time'] + " - " + self.dataReg['end_time'])
+        self.bot.send_message(message.chat.id, 'Добавил запись на ' + self.db_funcs.checkTimeBefore(self.dataReg['start_time']) + " - " + self.db_funcs.checkTimeBefore(self.dataReg['end_time']))
         self.db_funcs.addToTimetable(message, self.dataReg)
 
     # Моя занятость
