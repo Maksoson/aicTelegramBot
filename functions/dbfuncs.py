@@ -100,11 +100,11 @@ class DatabaseFuncs:
                                        start_time, end_time, date_create, date_update])
                 connection.commit()
 
-    def deleteFromTimetable(self, message):
+    def deleteFromTimetable(self, time_id):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
                 query = 'DELETE FROM public.timetable WHERE id = %s'
-                cursor.execute(query)
+                cursor.execute(query, [time_id])
                 connection.commit()
 
     def getMyTimes(self, user_id, day):

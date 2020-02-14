@@ -56,6 +56,11 @@ def printAll(message):
     bot_funcs.printAllTimes(message, datetime.datetime.today())
 
 
+@bot.message_handler(commands=['delete'])
+def deleteTime(message):
+    bot_funcs.whatTimeDelete(message, datetime.datetime.today())
+
+
 @bot.message_handler(commands=['my'])
 def printAllMy(message):
     bot_funcs.printMyTimes(message, datetime.datetime.today())

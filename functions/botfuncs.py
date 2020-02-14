@@ -37,11 +37,40 @@ class BotFuncs:
         self.bot.send_message(message.chat.id, 'Записал тебя на ' + self.db_funcs.checkTimeBefore(self.dataReg['start_time']) + " - " + self.db_funcs.checkTimeBefore(self.dataReg['end_time']))
         self.db_funcs.addToTimetable(message, self.dataReg)
 
+    # Удалить запись
+    def whatTimeDelete(self, message, today):
+        result_list = ''
+        chat_id = message.chat.id
+        data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message), today.day), 1)
+        counter = 1
+        if len(data) > 0:
+            result_list += 'Введи номер записи, которую хочешь отменить:\n\n'
+            for row in data:
+                result_list += str(counter) + '. ' + row[3] + ' - ' + row[4] + '\n'
+                counter += 1
+            self.bot.send_message(chat_id, result_list)
+            self.bot.register_next_step_handler(message, data, self.deleteTime)
+        else:
+            result_list += 'Сегодня переговорку ты не занимал'
+            self.bot.send_message(chat_id, result_list)
+
+    def deleteTime(self, message, data):
+        delete_time_id = str(message.text).strip()
+        if not delete_time_id.isdigit():
+            self.bot.send_message(message.chat.id, 'Неверно, введи номер записи снова')
+            self.bot.register_next_step_handler(message, self.deleteTime)
+        counter = 1
+        for row in data:
+            if counter == int(delete_time_id):
+                self.db_funcs.deleteFromTimetable(row[8])
+                self.bot.send_message(message.chat.id, 'Запись на ' + row[11] + " - " + row[12] + " удалена!")
+                break
+            counter += 1
+
     # Моя занятость
     def printMyTimes(self, message, today):
         result_list = '@' + message.from_user.username + ', занятость на ' + today.strftime('%d.%m.%y') + '\n\n'
         data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message), today.day), 1)
-        print(str(len(data)) + ' LEN')
         counter = 1
         if len(data) > 0:
             for row in data:
