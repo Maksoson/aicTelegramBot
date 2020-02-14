@@ -70,7 +70,14 @@ class BotFuncs:
 
     # Справка
     def printHelp(self, message):
-        self.bot.send_message(message.chat.id, 'Привет, ' + message.from_user.username + '!\n\n'
-                                               'Список команд:\n'
-                                               '/start\n/keyboard\n/help\n/add\n/delete\n/all\n/my\n/time\n/snow\n\n'
-                                               'Версия бота: 0.7.11, 13.02.2020\n')
+        self.bot.send_message(message.chat.id, 'Список команд:\n'
+                                               '/keyboard - вызвать/убрать клавиатуру\n'
+                                               '/help - вывести список команд\n'
+                                               '/add - занять переговорку\n'
+                                               '/update - перейти в режим правки своей занятости\n'
+                                               '/all - вывести весь список забронированного времени\n'
+                                               '/my - вывести только твое забронированное время\n'
+                                               '/time - вывести текущую дату и время\n'
+                                               '/cat - вывести случайную гифку с котом\n\n'
+                                               'Версия бота: 0.7.13\n'
+                                               'Последнее обновление: 14.02.2020\n')

@@ -28,17 +28,17 @@ def startFunc(message):
         bot.send_message(message.chat.id, 'Я тебя знаю , ' + message.from_user.username + ' (:',
                          reply_markup=start_keyboard)
     else:
-        bot.send_message(message.chat.id, 'Добро пожаловать, ' + message.from_user.username + '.\n'
-                                          'Располагайся как дома! (:', reply_markup=start_keyboard)
+        bot.send_message(message.chat.id, 'Привет, ' + message.from_user.username + '!\n'
+                                          'Я - бот компании Russian Robotics, предназначенный для ведения расписания переговорки!\n\n'
+                                          'Нажми на "Справка" или введи /help, чтобы увидеть мои возможности (:\n'
+                                          'Надеюсь тебе понравится со мной работать!\n\n', reply_markup=start_keyboard)
+        bot_funcs.printHelp(message)
 
 
 @bot.message_handler(commands=['help'])
 def pleaseHelp(message):
     db_funcs.checkUser(message)
-    bot.send_message(message.chat.id, 'Тебя приветствует бот компании Russian Robotics!\n\n'
-                                      'Я предназначен для бронирования расписания переговорки.\n'
-                                      'Нажми на "Справка" или введите /help, чтобы увидеть мои возможности (:\n'
-                                      'Надеюсь тебе понравится со мной работать!\n\n')
+    bot_funcs.printHelp(message)
 
 
 @bot.message_handler(commands=['add'])
