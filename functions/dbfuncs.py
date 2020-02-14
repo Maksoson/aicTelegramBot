@@ -69,10 +69,10 @@ class DatabaseFuncs:
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
                 query = 'UPDATE public.users ' \
-                        'SET user_accname = %s, user_firstname = %s, user_lastname = %s, user_id = %s, user_language = %s, user_isbot = %s'
+                        'SET user_accname = %s, user_firstname = %s, user_lastname = %s, user_id = %s, user_language = %s, user_isbot = %s WHERE user_id = %s'
                 cursor.execute(query,
                                (self.checkNone(message.from_user.username), self.checkNone(message.from_user.first_name), self.checkNone(message.from_user.last_name),
-                                message.from_user.id, str(message.from_user.language_code).strip(), message.from_user.is_bot))
+                                message.from_user.id, str(message.from_user.language_code).strip(), message.from_user.is_bot, message.from_user.id))
                 connection.commit()
 
     def getUserId(self, message):
