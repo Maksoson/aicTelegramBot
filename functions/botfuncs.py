@@ -61,11 +61,10 @@ class BotFuncs:
             self.bot.send_message(message.chat.id, 'Неверно, введи номер записи снова')
             self.bot.register_next_step_handler(message, self.deleteTime)
         counter = 1
-        # self.data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message), today.day), 1)
         for row in self.data:
             print(row)
             if counter == int(delete_time_id):
-                self.db_funcs.deleteFromTimetable(row[8])
+                self.db_funcs.deleteFromTimetable(row[0])
                 self.bot.send_message(message.chat.id, 'Запись на ' + row[11] + " - " + row[12] + " удалена!")
                 self.data = []
                 break
