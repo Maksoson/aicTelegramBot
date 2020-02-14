@@ -131,26 +131,26 @@ class DatabaseFuncs:
     @staticmethod
     def sortTimes(times_data, type_func):
         new_times_data = []
-        for row in times_data:
-            if type_func == 1:
-                test_time = str(row[3]).strip()
-                print(row[3])
-                print(type(row[3]))
-                row[3] = datetime.datetime.strptime(test_time, '%H:%M')
-            elif type_func == 2:
-                row[11] = datetime.datetime.strptime(str(row[11]).strip(), '%H:%M')
-        # if type_func == 1:
-        #     new_times_data = sorted(
-        #         times_data,
-        #         key=lambda row: datetime.datetime.strftime(datetime.datetime.strptime(row[3], '%H:%M'), '%H:%M'),
-        #         reverse=False
-        #     )
-        # elif type_func == 2:
-        #     new_times_data = sorted(
-        #         times_data,
-        #         key=lambda row: datetime.datetime.strftime(datetime.datetime.strptime(row[3], '%H:%M'), '%H:%M'),
-        #         reverse=False
-        #     )
+        # for row in times_data:
+        #     if type_func == 1:
+        #         test_time = str(row[3]).strip()
+        #         print(row[3])
+        #         print(type(row[3]))
+        #         row[3] = datetime.datetime.strptime(test_time, '%H:%M')
+        #     elif type_func == 2:
+        #         row[11] = datetime.datetime.strptime(str(row[11]).strip(), '%H:%M')
+        # # if type_func == 1:
+        # #     new_times_data = sorted(
+        # #         times_data,
+        # #         key=lambda row: datetime.datetime.strftime(datetime.datetime.strptime(row[3], '%H:%M'), '%H:%M'),
+        # #         reverse=False
+        # #     )
+        # # elif type_func == 2:
+        # #     new_times_data = sorted(
+        # #         times_data,
+        # #         key=lambda row: datetime.datetime.strftime(datetime.datetime.strptime(row[3], '%H:%M'), '%H:%M'),
+        # #         reverse=False
+        # #     )
 
         if type_func == 1:
             new_times_data = sorted(times_data, key=lambda row: row[3], reverse=False)
