@@ -3,6 +3,7 @@ from contextlib import closing
 import dj_database_url
 import psycopg2
 import datetime
+import re
 
 
 class DatabaseFuncs:
@@ -85,12 +86,15 @@ class DatabaseFuncs:
     def addToTimetable(self, message, collection):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
+                start_time = self.checkTimeBefore(collection['start_time'])
+                end_time = self.checkTimeBefore(collection['end_time'])
                 date_create = datetime.datetime.today().date()
                 date_update = date_create
+
                 query = 'INSERT INTO public.timetable (user_id, day_use, start_time, end_time, date_create, date_update) ' \
                         'VALUES (%s, %s, %s, %s, %s::date, %s::date)'
                 cursor.execute(query, [self.getUserId(message)[0], datetime.datetime.today().day,
-                                       collection['start_time'], collection['end_time'], date_create, date_update])
+                                       start_time, end_time, date_create, date_update])
                 connection.commit()
 
     def getMyTimes(self, user_id, day):
@@ -120,6 +124,21 @@ class DatabaseFuncs:
     @staticmethod
     def checkNone(string):
         return '' if str(string).strip() == 'None' else str(string).strip()
+
+    @staticmethod
+    def checkTimeBefore(data_time):
+        if len(data_time) == 5:
+            if re.match(r'^[0-9]{0,2}(:|\s)[0-9]{2}$', data_time):
+                return data_time.replace(' ', ':')
+            return data_time
+        elif len(data_time) == 4:
+            if re.match(r'^[0-9]{0,2}(:|\s)[0-9]{2}$', data_time):
+                return '0' + data_time.replace(' ', ':')
+            return '0' + data_time
+        elif len(data_time) == 2:
+            return data_time + ':00'
+        elif len(data_time) == 1:
+            return '0' + data_time + ':00'
 
     @staticmethod
     def getConnection():
