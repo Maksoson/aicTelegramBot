@@ -34,7 +34,7 @@ class BotFuncs:
                 self.bot.register_next_step_handler(message, self.endRegTime)
                 return
 
-        self.bot.send_message(message.chat.id, 'Добавил запись на ' + self.db_funcs.checkTimeBefore(self.dataReg['start_time']) + " - " + self.db_funcs.checkTimeBefore(self.dataReg['end_time']))
+        self.bot.send_message(message.chat.id, 'Записал тебя на ' + self.db_funcs.checkTimeBefore(self.dataReg['start_time']) + " - " + self.db_funcs.checkTimeBefore(self.dataReg['end_time']))
         self.db_funcs.addToTimetable(message, self.dataReg)
 
     # Моя занятость
@@ -48,7 +48,7 @@ class BotFuncs:
                 result_list += str(counter) + '. ' + row[3] + ' - ' + row[4] + '\n'
                 counter += 1
         else:
-            result_list += 'Твой список занятости пуст'
+            result_list += 'Сегодня переговорку ты не занимал'
 
         self.bot.send_message(message.chat.id, result_list)
 
@@ -64,20 +64,26 @@ class BotFuncs:
                                + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                 counter += 1
         else:
-            result_list += 'Cписок занятости пуст, успей занять лучшее время ;)'
+            result_list += 'Сегодня переговорку еще никто не занял! Успей занять лучшее время ;)'
 
         self.bot.send_message(message.chat.id, result_list)
 
+    # Время
+    def printToday(self, chat_id, today):
+        self.bot.send_message(chat_id, str(today.strftime("%H:%M  %d.%m.%Y")))
+
     # Справка
     def printHelp(self, message):
-        self.bot.send_message(message.chat.id, 'Список команд:\n'
-                                               '/keyboard - вызвать/убрать клавиатуру\n'
-                                               '/help - вывести список команд\n'
-                                               '/add - занять переговорку\n'
-                                               '/update - перейти в режим правки своей занятости\n'
-                                               '/all - вывести весь список забронированного времени\n'
-                                               '/my - вывести только твое забронированное время\n'
-                                               '/time - вывести текущую дату и время\n'
-                                               '/cat - вывести случайную гифку с котом\n\n'
+        self.bot.send_message(message.chat.id, 'Список команд:\n\n'
+                                               '/keyboard - вызвать/убрать клавиатуру.\n'
+                                               '/help - вывести список команд.\n'
+                                               '/add - занять переговорку:\n'
+                                               '-- Тебе нужно будет 2 раза ввести время.\n'
+                                               '-- Примеры ввода времени: 15, 15 00, 15 30, 15:30\n'
+                                               '/update - перейти в режим правки своей занятости. (off)\n'
+                                               '/all - вывести весь список забронированного времени.\n'
+                                               '/my - вывести только твое забронированное время.\n'
+                                               '/time - вывести текущую дату и время.\n'
+                                               '/cat - вывести случайную гифку с котом. (off)\n\n'
                                                'Версия бота: 0.7.13\n'
                                                'Последнее обновление: 14.02.2020\n')

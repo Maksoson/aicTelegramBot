@@ -46,14 +46,29 @@ def addUserTime(message):
     bot_funcs.regTime(message)
 
 
-@bot.message_handler(commands=['delete'])
+@bot.message_handlers(commands=['time'])
+def printTime(message):
+    bot_funcs.printToday(message.chat.id, datetime.datetime.today())
+
+
+@bot.message_handlers(commands=['all'])
+def printAll(message):
+    bot_funcs.printAllTimes(message, datetime.datetime.today())
+
+
+@bot.message_handlers(commands=['my'])
+def printAllMy(message):
+    bot_funcs.printMyTimes(message, datetime.datetime.today())
+
+
+@bot.message_handler(commands=['keyboard, update, cat'])
 def deleteUserTime(message):
     bot.send_message(message.chat.id, 'Эта функция пока что не доступна :(')
 
 
 @bot.message_handler(regexp='((https?):((//)|(\\\\))+([\w\d:#@%/;$()~_?\+-=\\\.&](#!)?)*)')
 def command_url(message):
-    bot.reply_to(message, "I shouldn't open that url, should I?")
+    bot.reply_to(message, "По ссылкам, пока что, переходить я не умею :(")
 
 
 @bot.message_handler(content_types=['text'])
@@ -71,7 +86,7 @@ def send_text(message):
     elif user_message == 'пока':
         bot.send_message(chat_id, 'Удачи тебе, ' + user_first_name)
     elif user_message == 'дата':
-        bot.send_message(chat_id, str(today.strftime("%H:%M  %d.%m.%Y")))
+        bot_funcs.printToday(chat_id, today)
     elif user_message == 'моя занятость':
         bot_funcs.printMyTimes(message, today)
     elif user_message == 'занять переговорку':
