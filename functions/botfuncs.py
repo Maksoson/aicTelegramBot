@@ -21,7 +21,7 @@ class BotFuncs:
             self.bot.send_message(message.chat.id, 'Не понял тебя, повтори пожалуйста')
             self.bot.register_next_step_handler(message, self.regEndTime)
             return
-        self.bot.reply_to(message.chat.id, 'До скольки тебе нужна переговорка?')
+        self.bot.send_message(message.chat.id, 'До скольки тебе нужна переговорка?')
         self.bot.register_next_step_handler(message, self.endRegTime)
 
     def endRegTime(self, message):
