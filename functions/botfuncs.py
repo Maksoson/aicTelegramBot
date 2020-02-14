@@ -11,7 +11,7 @@ class BotFuncs:
         self.db_funcs = dbfuncs.DatabaseFuncs(self.bot)
         self.data = []
 
-    # Занять переговорку
+    # Занять переговорку (следующие 3 функции)
     def regTime(self, message):
         self.bot.send_message(message.chat.id, 'Во сколько тебе нужна переговорка?')
         self.bot.register_next_step_handler(message, self.regEndTime)
@@ -55,8 +55,8 @@ class BotFuncs:
             self.bot.send_message(chat_id, result_list)
             if func_type == 1:
                 self.bot.register_next_step_handler(message, self.deleteTime)
-            elif func_type == 2:
-                self.bot.register_next_step_handler(message, self.updateTime)
+            # elif func_type == 2:
+            #     self.bot.register_next_step_handler(message, self.updateTime)
         else:
             result_list += 'Сегодня переговорку ты не занимал'
             self.bot.send_message(chat_id, result_list)
@@ -77,6 +77,7 @@ class BotFuncs:
             counter += 1
 
     # # Изменение записи
+    # Не забудь раскомментить вызов функции выше!
     # def updateTime(self, message):
     #     update_time_id = str(message.text).strip()
     #     if not update_time_id.isdigit():
