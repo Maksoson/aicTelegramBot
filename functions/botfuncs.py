@@ -68,8 +68,9 @@ class BotFuncs:
         else:
             self.bot.send_message(message.chat.id, 'Ввод отменен')
 
+    # Проверка введенного времени на пересечение с уже существующими записями
     def checkTimesIntersection(self, time):
-        data = self.db_funcs.sortTimes(self.db_funcs.getAllTimes(datetime.datetime.today()), 2)
+        data = self.db_funcs.sortTimes(self.db_funcs.getAllTimes(datetime.datetime.today().day), 2)
         intersect_times = []
         if len(data) > 0:
             for row in data:
