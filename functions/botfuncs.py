@@ -44,7 +44,7 @@ class BotFuncs:
 
     def endRegTime(self, message):
         self.dataReg['end_time'] = str(message.text).strip()
-        if self.dataReg['start_time'] != '-':
+        if self.dataReg['end_time'] != '-':
             if not re.match(r'^[0-9]{0,2}(:|\s)[0-9]{2}$', self.dataReg['end_time'].lower()):
                 if not re.match(r'^[0-9]{1,2}$', self.dataReg['end_time'].lower()):
                     self.bot.send_message(message.chat.id, 'Не понял тебя, повтори пожалуйста')
