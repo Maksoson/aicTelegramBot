@@ -14,7 +14,7 @@ class BotFuncs:
 
     # Занять переговорку (следующие 3 функции)
     def regTime(self, message):
-        self.bot.send_message(message.chat.id, 'Во сколько тебе нужна переговорка? (Отмени ввод символом `-`)')
+        self.bot.send_message(message.chat.id, 'Во сколько тебе нужна переговорка?\n(Отмени ввод символом `-`)')
         self.bot.register_next_step_handler(message, self.regEndTime)
 
     def regEndTime(self, message):
@@ -25,7 +25,7 @@ class BotFuncs:
                     self.bot.send_message(message.chat.id, 'Не понял тебя, повтори пожалуйста')
                     self.bot.register_next_step_handler(message, self.regEndTime)
                     return
-            intersection_times = self.checkTimesIntersection(self.dataReg['start_time'])
+            intersection_times = self.checkTimesIntersection(self.db_funcs.checkTimeBefore(self.dataReg['start_time']))
             if len(intersection_times) > 0:
                 answer = 'Ваше время пересекается с:\n\n'
                 counter = 1
@@ -37,7 +37,7 @@ class BotFuncs:
                 self.bot.send_message(answer)
                 self.bot.register_next_step_handler(message, self.regEndTime)
                 return
-            self.bot.send_message(message.chat.id, 'До скольки тебе нужна переговорка? (Отмени ввод символом `-`)')
+            self.bot.send_message(message.chat.id, 'До скольки тебе нужна переговорка?\n(Отмени ввод символом `-`)')
             self.bot.register_next_step_handler(message, self.endRegTime)
         else:
             self.bot.send_message(message.chat.id, 'Ввод отменен')
@@ -50,7 +50,7 @@ class BotFuncs:
                     self.bot.send_message(message.chat.id, 'Не понял тебя, повтори пожалуйста')
                     self.bot.register_next_step_handler(message, self.endRegTime)
                     return
-            intersection_times = self.checkTimesIntersection(self.dataReg['end_time'])
+            intersection_times = self.checkTimesIntersection(self.db_funcs.checkTimeBefore(self.dataReg['end_time']))
             if len(intersection_times) > 0:
                 answer = 'Ваше время пересекается с:\n\n'
                 counter = 1
