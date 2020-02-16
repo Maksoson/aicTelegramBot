@@ -18,6 +18,7 @@ class BotFuncs:
         self.bot.register_next_step_handler(message, self.regEndTime)
 
     def regEndTime(self, message):
+        self.first_time = ''
         self.dataReg['start_time'] = str(message.text).strip()
         if self.dataReg['start_time'] != '-':
             if not re.match(r'^[0-9]{0,2}(:|\s)[0-9]{2}$', self.dataReg['start_time'].lower()):
