@@ -34,7 +34,7 @@ class BotFuncs:
                                    + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                     counter += 1
                 answer += '\nПоменяй время или отмени ввод символом `-`'
-                self.bot.send_message(answer)
+                self.bot.send_message(message.chat.id, answer)
                 self.bot.register_next_step_handler(message, self.regEndTime)
                 return
             self.bot.send_message(message.chat.id, 'До скольки тебе нужна переговорка?\n(Отмени ввод символом `-`)')
@@ -59,7 +59,7 @@ class BotFuncs:
                                    + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                     counter += 1
                 answer += '\nПоменяй время или отмени ввод символом `-`'
-                self.bot.send_message(answer)
+                self.bot.send_message(message.chat.id, answer)
                 self.bot.register_next_step_handler(message, self.endRegTime)
                 return
             self.bot.send_message(message.chat.id, 'Записал тебя на ' + self.db_funcs.checkTimeBefore(self.dataReg['start_time']) + " - " + self.db_funcs.checkTimeBefore(self.dataReg['end_time']))
