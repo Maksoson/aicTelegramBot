@@ -23,7 +23,7 @@ class BotFuncs:
         if self.dataReg['start_time'] != '-':
             if not re.match(r'^[0-9]{0,2}(:|\s)[0-9]{2}$', self.dataReg['start_time'].lower()):
                 if not re.match(r'^[0-9]{1,2}$', self.dataReg['start_time'].lower()):
-                    self.bot.send_message(message.chat.id, 'Не понял тебя, повтори пожалуйста')
+                    self.bot.send_message(message.chat.id, 'Не понял тебя, пожалуйста повтори')
                     self.bot.register_next_step_handler(message, self.regEndTime)
                     return
             self.dataReg['start_time'] = self.db_funcs.checkTimeBefore(self.dataReg['start_time'])
@@ -50,25 +50,30 @@ class BotFuncs:
         if self.dataReg['end_time'] != '-':
             if not re.match(r'^[0-9]{0,2}(:|\s)[0-9]{2}$', self.dataReg['end_time'].lower()):
                 if not re.match(r'^[0-9]{1,2}$', self.dataReg['end_time'].lower()):
-                    self.bot.send_message(message.chat.id, 'Не понял тебя, повтори пожалуйста')
+                    self.bot.send_message(message.chat.id, 'Не понял тебя, пожалуйста повтори')
                     self.bot.register_next_step_handler(message, self.endRegTime)
                     return
             self.dataReg['end_time'] = self.db_funcs.checkTimeBefore(self.dataReg['end_time'])
-            intersection_times = self.checkTimesIntersection(self.dataReg['end_time'])
-            if len(intersection_times) > 0:
-                answer = 'Ваше время пересекается с:\n\n'
-                counter = 1
-                for row in intersection_times:
-                    answer += str(counter) + '. ' + row[11] + ' - ' + row[12] + '  ---  ' \
-                                   + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
-                    counter += 1
-                answer += '\nПоменяй время или отмени ввод символом `-`'
-                self.bot.send_message(message.chat.id, answer)
+            if self.dataReg['end_time'] > self.dataReg['start_time']:
+                intersection_times = self.checkTimesIntersection(self.dataReg['end_time'])
+                if len(intersection_times) > 0:
+                    answer = 'Ваше время пересекается с:\n\n'
+                    counter = 1
+                    for row in intersection_times:
+                        answer += str(counter) + '. ' + row[11] + ' - ' + row[12] + '  ---  ' \
+                                       + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
+                        counter += 1
+                    answer += '\nПоменяй время или отмени ввод символом `-`'
+                    self.bot.send_message(message.chat.id, answer)
+                    self.bot.register_next_step_handler(message, self.endRegTime)
+                    return
+                self.bot.send_message(message.chat.id, 'Записал тебя на ' + self.dataReg['start_time'] + " - " + self.dataReg['end_time'])
+                self.first_time = ''
+                self.db_funcs.addToTimetable(message, self.dataReg)
+            else:
+                self.bot.send_message(message.chat.id, 'Кажется, ты ошибся. Пожалуйста, повтори ввод')
                 self.bot.register_next_step_handler(message, self.endRegTime)
                 return
-            self.bot.send_message(message.chat.id, 'Записал тебя на ' + self.dataReg['start_time'] + " - " + self.dataReg['end_time'])
-            self.first_time = ''
-            self.db_funcs.addToTimetable(message, self.dataReg)
         else:
             self.first_time = ''
             self.bot.send_message(message.chat.id, 'Ввод отменен')
@@ -83,7 +88,7 @@ class BotFuncs:
                     if time <= row[12]:
                         intersect_times.append(row)
                 if self.first_time != '':
-                    if self.first_time < row[11] and time >= row[12]:
+                    if self.first_time < row[11] and time > row[12]:
                         intersect_times.append(row)
             if self.first_time == '':
                 self.first_time = time
