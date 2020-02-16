@@ -74,11 +74,11 @@ class BotFuncs:
         intersect_times = []
         if len(data) > 0:
             for row in data:
-                if time > row[11]:
-                    if time < row[12]:
+                if time >= row[11]:
+                    if time <= row[12]:
                         intersect_times.append(row)
                 if self.first_time != '':
-                    if time > row[12]:
+                    if time >= row[12]:
                         intersect_times.append(row)
             if self.first_time == '':
                 self.first_time = time
