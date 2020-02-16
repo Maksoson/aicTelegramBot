@@ -16,7 +16,7 @@ db_funcs = dbfuncs.DatabaseFuncs(bot)
 bot_funcs = botfuncs.BotFuncs(bot)
 
 start_keyboard = telebot.types.ReplyKeyboardMarkup(True)
-start_keyboard.row('Занять переговорку', 'Моя занятость')
+start_keyboard.row('Занять переговорку', 'Моя занятость', 'Удалить запись')
 start_keyboard.row('Занятость переговорки на сегодня')
 start_keyboard.row('Дата', 'Справка')
 
@@ -71,7 +71,7 @@ def printAllMy(message):
     bot_funcs.printMyTimes(message, datetime.datetime.today())
 
 
-@bot.message_handler(commands=['keyboard, update, cat'])
+@bot.message_handler(commands=['update, cat'])
 def deleteUserTime(message):
     bot.send_message(message.chat.id, 'Эта функция пока что не доступна :(')
 
@@ -99,6 +99,8 @@ def send_text(message):
         bot_funcs.printToday(chat_id, today)
     elif user_message == 'моя занятость':
         bot_funcs.printMyTimes(message, today)
+    elif user_message == 'удалить запись':
+        bot_funcs.seeTimesListFor(message, datetime.datetime.today(), 1)
     elif user_message == 'занять переговорку':
         bot_funcs.regTime(message)
     elif user_message == 'занятость переговорки на сегодня':
