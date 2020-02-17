@@ -127,7 +127,7 @@ class BotFuncs:
     def seeTimesListFor(self, message, today, func_type):
         result_list = ''
         chat_id = message.chat.id
-        self.data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message), today.day), 1)
+        self.data = self.db_funcs.sortTimes(self.db_funcs.getMyTimesToday(self.db_funcs.getUserId(message), today.day), 1)
         counter = 1
         if len(self.data) > 0:
             if func_type == 1:
@@ -178,8 +178,14 @@ class BotFuncs:
         result_list = '@' + message.from_user.username + ', занятость на ' + today.strftime('%d.%m.%y') + '\n\n'
         data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message)), 1)
         counter = 1
+        last_day = 0
         if len(data) > 0:
             for row in data:
+                if last_day != row[10]:
+                    last_day = row[10]
+                    if last_day != 0:
+                        result_list += '\n'
+                    result_list += 'Занятость на ' + str(last_day) + '.' + str(datetime.datetime.today().month ) + '.' + str(datetime.datetime.today().year) + ' число:\n\n'
                 result_list += str(counter) + '. ' + row[3] + ' - ' + row[4] + '\n'
                 counter += 1
         else:
@@ -189,7 +195,6 @@ class BotFuncs:
 
     # Занятость переговорки на сегодня
     def printAllTimes(self, message):
-        # result_list = 'Занятость на ' + today.strftime('%d.%m.%y') + '\n\n'
         result_list = ''
         data = self.db_funcs.sortTimes(self.db_funcs.getAllTimes(), 2)
         counter = 1
@@ -202,7 +207,7 @@ class BotFuncs:
                     counter = 1
                     if last_day != 0:
                         result_list += '\n'
-                    result_list += 'Занятость на ' + str(last_day) + ' число:\n\n'
+                    result_list += 'Занятость на ' + str(last_day) + '.' + str(datetime.datetime.today().month ) + '.' + str(datetime.datetime.today().year) + ' число:\n\n'
                 result_list += str(counter) + '. ' + row[11] + ' - ' + row[12] + '  ---  ' \
                                + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                 counter += 1
