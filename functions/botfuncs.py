@@ -74,10 +74,11 @@ class BotFuncs:
                 row_width = 7
                 buttons_added = []
                 today = datetime.datetime.today().day
-                for num in range(today, today+14):
+                for num in range(today, today + 14):
                     buttons_added.append(telebot.types.KeyboardButton(text=num))
                     if len(buttons_added) == row_width:
-                        keyboard.row(keyboard.add(*buttons_added))
+                        print(len(buttons_added))
+                        keyboard.add(*buttons_added)
                         buttons_added = []
                 self.bot.send_message(message.chat.id, 'Выбери или введи число из предложенных:', reply_markup=keyboard)
                 self.bot.register_next_step_handler(message, self.regDayTime)
@@ -100,10 +101,10 @@ class BotFuncs:
                 row_width = 7
                 buttons_added = []
                 today = datetime.datetime.today().day
-                for num in range(today, today+14):
+                for num in range(today, today + 14):
                     buttons_added.append(telebot.types.KeyboardButton(text=num))
                     if len(buttons_added) == row_width:
-                        keyboard.row(keyboard.add(*buttons_added))
+                        keyboard.add(*buttons_added)
                         buttons_added = []
                 self.bot.send_message(message.chat.id, 'Не понял тебя, пожалуйста повтори', reply_markup=keyboard)
                 self.bot.register_next_step_handler(message, self.regDayTime)
@@ -119,8 +120,12 @@ class BotFuncs:
         if len(data) > 0:
             for row in data:
                 if time >= row[11]:
-                    if time <= row[12]:
-                        intersect_times.append(row)
+                    if self.first_time != '':
+                        if time <= row[12]:
+                            intersect_times.append(row)
+                    else:
+                        if time < row[12]:
+                            intersect_times.append(row)
                 if self.first_time != '':
                     if self.first_time < row[11] and time > row[12]:
                         intersect_times.append(row)
