@@ -1,5 +1,6 @@
 import re
 import datetime
+import telebot
 from functions import dbfuncs
 
 
@@ -7,7 +8,7 @@ class BotFuncs:
 
     def __init__(self, bot):
         self.bot = bot
-        self.dataReg = {'start_time': '', 'end_time': ''}
+        self.dataReg = {'start_time': '', 'end_time': '', 'day_reg': ''}
         self.db_funcs = dbfuncs.DatabaseFuncs(self.bot)
         self.data = []
         self.first_time = ''
@@ -67,9 +68,17 @@ class BotFuncs:
                     self.bot.send_message(message.chat.id, answer)
                     self.bot.register_next_step_handler(message, self.endRegTime)
                     return
-                self.bot.send_message(message.chat.id, 'Записал тебя на ' + self.dataReg['start_time'] + " - " + self.dataReg['end_time'])
-                self.first_time = ''
-                self.db_funcs.addToTimetable(message, self.dataReg)
+                keyboard = telebot.types.InlineKeyboardMarkup()
+                keyboard.row_width = 7
+                today = datetime.datetime.today().day
+                for num in range(today+14):
+                    keyboard.add(telebot.types.InlineKeyboardButton(text=num, callback_data=num))
+                keyboard.add(telebot.types.InlineKeyboardButton(text='-', callback_data='-'))
+                self.bot.send_message(message.chat.id, 'Выбери или введи число из предложенных:', reply_markup=keyboard)
+                self.bot.register_next_step_handler(message, self.regDayTime)
+                # self.bot.send_message(message.chat.id, 'Записал тебя на ' + self.dataReg['start_time'] + " - " + self.dataReg['end_time'])
+                # self.first_time = ''
+                # self.db_funcs.addToTimetable(message, self.dataReg)
             else:
                 self.bot.send_message(message.chat.id, 'Кажется, ты ошибся. Пожалуйста, повтори ввод')
                 self.bot.register_next_step_handler(message, self.endRegTime)
@@ -77,6 +86,23 @@ class BotFuncs:
         else:
             self.first_time = ''
             self.bot.send_message(message.chat.id, 'Ввод отменен')
+
+    def regDayTime(self, message):
+        self.dataReg['day_reg'] = str(message.text).strip()
+        if self.dataReg['day_reg'] != '-':
+            if not re.match(r'^[0-9]{1,2}$', self.dataReg['day_reg'].lower()):
+                keyboard = telebot.types.InlineKeyboardMarkup()
+                keyboard.row_width = 7
+                today = datetime.datetime.today().day
+                for num in range(today + 14):
+                    keyboard.add(telebot.types.InlineKeyboardButton(text=num, callback_data=num))
+                keyboard.add(telebot.types.InlineKeyboardButton(text='-', callback_data='-'))
+                self.bot.send_message(message.chat.id, 'Не понял тебя, пожалуйста повтори', reply_markup=keyboard)
+                self.bot.register_next_step_handler(message, self.regDayTime)
+                return
+        self.bot.send_message(message.chat.id, 'Записал тебя на ' + self.dataReg['start_time'] + " - " + self.dataReg['end_time'] + ", " + self.dataReg['day_reg'] + " число")
+        self.first_time = ''
+        self.db_funcs.addToTimetable(message, self.dataReg)
 
     # Проверка введенного времени на пересечение с уже существующими записями
     def checkTimesIntersection(self, time):

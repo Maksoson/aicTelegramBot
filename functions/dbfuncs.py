@@ -98,12 +98,13 @@ class DatabaseFuncs:
             with connection.cursor() as cursor:
                 start_time = self.checkTimeBefore(collection['start_time'])
                 end_time = self.checkTimeBefore(collection['end_time'])
+                day_reg = collection['day_reg']
                 date_create = datetime.datetime.today().date()
                 date_update = date_create
 
                 query = 'INSERT INTO public.timetable (user_id, day_use, start_time, end_time, date_create, date_update) ' \
                         'VALUES (%s, %s, %s, %s, %s::date, %s::date)'
-                cursor.execute(query, [self.getUserId(message)[0], datetime.datetime.today().day,
+                cursor.execute(query, [self.getUserId(message)[0], day_reg,
                                        start_time, end_time, date_create, date_update])
                 connection.commit()
 
