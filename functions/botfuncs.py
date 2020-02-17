@@ -15,22 +15,40 @@ class BotFuncs:
         self.data = []
         self.first_time = ''
 
-    # Занять переговорку (следующие 3 функции)
+    # Занять переговорку (следующие 4 функции)
     def regTime(self, message):
-        self.bot.send_message(message.chat.id, 'Во сколько тебе нужна переговорка?\n(Отмени ввод символом `-`)')
-        self.bot.register_next_step_handler(message, self.regEndTime)
+        self.bot.send_message(message.chat.id, 'Выбери или введи число из предложенных:\n'
+                                               '(Отмени ввод символом `-`)',
+                              reply_markup=self.getDaysKeyboard())
+        self.bot.register_next_step_handler(message, self.regDayTime)
 
-    def regEndTime(self, message):
+    def regDayTime(self, message):
+        self.dataReg['day_reg'] = str(message.text).strip()
+        if self.dataReg['day_reg'] != '-':
+            if not re.match(r'^[0-9]{1,2}$', self.dataReg['day_reg'].lower()):
+                self.bot.send_message(message.chat.id, 'Выбери или введи число из предложенных:\n'
+                                                       '(Отмени ввод символом `-`)',
+                                      reply_markup=self.getDaysKeyboard())
+                self.bot.register_next_step_handler(message, self.regDayTime)
+                return
+            self.bot.send_message(message.chat.id, 'Во сколько тебе нужна переговорка?\n'
+                                                   '(Отмени ввод символом `-`)')
+            self.bot.register_next_step_handler(message, self.regStartTime)
+        else:
+            self.first_time = ''
+            self.bot.send_message(message.chat.id, 'Ввод отменен')
+
+    def regStartTime(self, message):
         self.first_time = ''
         self.dataReg['start_time'] = str(message.text).strip()
         if self.dataReg['start_time'] != '-':
             if not re.match(r'^[0-9]{0,2}(:|\s)[0-9]{2}$', self.dataReg['start_time'].lower()):
                 if not re.match(r'^[0-9]{1,2}$', self.dataReg['start_time'].lower()):
                     self.bot.send_message(message.chat.id, 'Не понял тебя, пожалуйста повтори')
-                    self.bot.register_next_step_handler(message, self.regEndTime)
+                    self.bot.register_next_step_handler(message, self.regStartTime)
                     return
             self.dataReg['start_time'] = self.db_funcs.checkTimeBefore(self.dataReg['start_time'])
-            intersection_times = self.checkTimesIntersection(self.dataReg['start_time'])
+            intersection_times = self.checkTimesIntersection(self.dataReg['day_reg'], self.dataReg['start_time'])
             if len(intersection_times) > 0:
                 answer = 'Ваше время пересекается с:\n\n'
                 counter = 1
@@ -40,7 +58,7 @@ class BotFuncs:
                     counter += 1
                 answer += '\nПоменяй время или отмени ввод символом `-`'
                 self.bot.send_message(message.chat.id, answer)
-                self.bot.register_next_step_handler(message, self.regEndTime)
+                self.bot.register_next_step_handler(message, self.regStartTime)
                 return
             self.bot.send_message(message.chat.id, 'До скольки тебе нужна переговорка?\n(Отмени ввод символом `-`)')
             self.bot.register_next_step_handler(message, self.endRegTime)
@@ -58,7 +76,7 @@ class BotFuncs:
                     return
             self.dataReg['end_time'] = self.db_funcs.checkTimeBefore(self.dataReg['end_time'])
             if self.dataReg['end_time'] > self.dataReg['start_time']:
-                intersection_times = self.checkTimesIntersection(self.dataReg['end_time'])
+                intersection_times = self.checkTimesIntersection(self.dataReg['day_reg'], self.dataReg['end_time'])
                 if len(intersection_times) > 0:
                     answer = 'Ваше время пересекается с:\n\n'
                     counter = 1
@@ -70,12 +88,11 @@ class BotFuncs:
                     self.bot.send_message(message.chat.id, answer)
                     self.bot.register_next_step_handler(message, self.endRegTime)
                     return
-                self.bot.send_message(message.chat.id, 'Выбери или введи число из предложенных:\n'
-                                                       '(Отмени ввод символом `-`)', reply_markup=self.getDaysKeyboard())
-                self.bot.register_next_step_handler(message, self.regDayTime)
-                # self.bot.send_message(message.chat.id, 'Записал тебя на ' + self.dataReg['start_time'] + " - " + self.dataReg['end_time'])
-                # self.first_time = ''
-                # self.db_funcs.addToTimetable(message, self.dataReg)
+
+                self.bot.send_message(message.chat.id, 'Записал тебя на ' + self.dataReg['start_time'] + " - " + self.dataReg[
+                                      'end_time'] + ", " + self.dataReg['day_reg'] + " число", reply_markup=self.getStartKeyboard())
+                self.first_time = ''
+                self.db_funcs.addToTimetable(message, self.dataReg)
             else:
                 self.bot.send_message(message.chat.id, 'Кажется, ты ошибся. Пожалуйста, повтори ввод')
                 self.bot.register_next_step_handler(message, self.endRegTime)
@@ -84,34 +101,23 @@ class BotFuncs:
             self.first_time = ''
             self.bot.send_message(message.chat.id, 'Ввод отменен')
 
-    def regDayTime(self, message):
-        self.dataReg['day_reg'] = str(message.text).strip()
-        if self.dataReg['day_reg'] != '-':
-            if not re.match(r'^[0-9]{1,2}$', self.dataReg['day_reg'].lower()):
-                self.bot.send_message(message.chat.id, 'Не понял тебя, пожалуйста повтори', reply_markup=self.getDaysKeyboard())
-                self.bot.register_next_step_handler(message, self.regDayTime)
-                return
-        self.bot.send_message(message.chat.id, 'Записал тебя на ' + self.dataReg['start_time'] + " - " + self.dataReg[
-            'end_time'] + ", " + self.dataReg['day_reg'] + " число", reply_markup=self.getStartKeyboard())
-        self.first_time = ''
-        self.db_funcs.addToTimetable(message, self.dataReg)
-
     # Проверка введенного времени на пересечение с уже существующими записями
-    def checkTimesIntersection(self, time):
-        data = self.db_funcs.sortTimes(self.db_funcs.getAllTimes(datetime.datetime.today().day), 2)
+    def checkTimesIntersection(self, day, time):
+        data = self.db_funcs.sortTimes(self.db_funcs.getAllTimes(), 2)
         intersect_times = []
         if len(data) > 0:
             for row in data:
-                if time >= row[11]:
+                if day == row[10]:
+                    if time >= row[11]:
+                        if self.first_time != '':
+                            if time <= row[12]:
+                                intersect_times.append(row)
+                        else:
+                            if time < row[12]:
+                                intersect_times.append(row)
                     if self.first_time != '':
-                        if time <= row[12]:
+                        if self.first_time < row[11] and time > row[12]:
                             intersect_times.append(row)
-                    else:
-                        if time < row[12]:
-                            intersect_times.append(row)
-                if self.first_time != '':
-                    if self.first_time < row[11] and time > row[12]:
-                        intersect_times.append(row)
             if self.first_time == '':
                 self.first_time = time
 
@@ -170,7 +176,7 @@ class BotFuncs:
     # Моя занятость
     def printMyTimes(self, message, today):
         result_list = '@' + message.from_user.username + ', занятость на ' + today.strftime('%d.%m.%y') + '\n\n'
-        data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message), today.day), 1)
+        data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message)), 1)
         counter = 1
         if len(data) > 0:
             for row in data:
@@ -184,7 +190,7 @@ class BotFuncs:
     # Занятость переговорки на сегодня
     def printAllTimes(self, message, today):
         result_list = 'Занятость на ' + today.strftime('%d.%m.%y') + '\n\n'
-        data = self.db_funcs.sortTimes(self.db_funcs.getAllTimes(today.day), 2)
+        data = self.db_funcs.sortTimes(self.db_funcs.getAllTimes(), 2)
         counter = 1
         print(data)
         if len(data) > 0:

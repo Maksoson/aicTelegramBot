@@ -116,8 +116,17 @@ class DatabaseFuncs:
                 cursor.execute(query, [time_id])
                 connection.commit()
 
+    # Получить мои записи на переговорку
+    def getMyTimes(self, user_id):
+        with closing(self.getConnection()) as connection:
+            with connection.cursor() as cursor:
+                query = 'SELECT * FROM public.timetable WHERE user_id = %s'
+                cursor.execute(query, [user_id])
+
+                return cursor.fetchall()
+
     # Получить мои сегодняшние записи на переговорку
-    def getMyTimes(self, user_id, day):
+    def getMyTimesToday(self, user_id, day):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
                 query = 'SELECT * FROM public.timetable WHERE user_id = %s AND day_use = %s'
@@ -125,8 +134,18 @@ class DatabaseFuncs:
 
                 return cursor.fetchall()
 
-    # Получить все сегодняшни записи на переговорку
-    def getAllTimes(self, day):
+    # Получить все записи на переговорку
+    def getAllTimes(self):
+        with closing(self.getConnection()) as connection:
+            with connection.cursor() as cursor:
+                query = 'SELECT public.users.*, public.timetable.* FROM public.timetable ' \
+                        'INNER JOIN public.users ON public.users.id = public.timetable.user_id'
+                cursor.execute(query)
+
+                return cursor.fetchall()
+
+    # Получить все сегодняшние записи на переговорку
+    def getAllTimesToday(self, day):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
                 query = 'SELECT public.users.*, public.timetable.* FROM public.timetable ' \
@@ -154,9 +173,9 @@ class DatabaseFuncs:
         new_times_data = []
 
         if type_func == 1:
-            new_times_data = sorted(times_data, key=lambda row: row[3], reverse=False)
+            new_times_data = sorted(times_data, key=lambda row: (row[2], row[3]), reverse=False)
         elif type_func == 2:
-            new_times_data = sorted(times_data, key=lambda row: row[11], reverse=False)
+            new_times_data = sorted(times_data, key=lambda row: (row[10], row[11]), reverse=False)
 
         return new_times_data
 
