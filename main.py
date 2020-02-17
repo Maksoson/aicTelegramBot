@@ -53,12 +53,12 @@ def printTime(message):
 
 @bot.message_handler(commands=['all'])
 def printAll(message):
-    bot_funcs.printAllTimes(message, datetime.datetime.today())
+    bot_funcs.printAllTimes(message)
 
 
 @bot.message_handler(commands=['delete'])
 def deleteTime(message):
-    bot_funcs.seeTimesListFor(message, datetime.datetime.today(), 1)
+    bot_funcs.seeTimesListFor(message, 1)
 
 
 # @bot.message_handler(commands=['update'])
@@ -68,7 +68,7 @@ def deleteTime(message):
 
 @bot.message_handler(commands=['my'])
 def printAllMy(message):
-    bot_funcs.printMyTimes(message, datetime.datetime.today())
+    bot_funcs.printMyTimes(message)
 
 
 @bot.message_handler(commands=['update, cat'])
@@ -98,13 +98,13 @@ def send_text(message):
     elif user_message == 'дата':
         bot_funcs.printToday(chat_id, today)
     elif user_message == 'моя занятость':
-        bot_funcs.printMyTimes(message, today)
+        bot_funcs.printMyTimes(message)
     elif user_message == 'удалить запись':
-        bot_funcs.seeTimesListFor(message, datetime.datetime.today(), 1)
+        bot_funcs.seeTimesListFor(message, 1)
     elif user_message == 'занять переговорку':
         bot_funcs.regTime(message)
     elif user_message == 'занятость переговорки на сегодня':
-        bot_funcs.printAllTimes(message, today)
+        bot_funcs.printAllTimes(message)
     elif user_message == 'справка':
         db_funcs.checkUser(message)
         bot_funcs.printHelp(message)
