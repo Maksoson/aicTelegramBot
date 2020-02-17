@@ -31,6 +31,12 @@ class BotFuncs:
                                       reply_markup=self.getDaysKeyboard())
                 self.bot.register_next_step_handler(message, self.regDayTime)
                 return
+            if int(self.dataReg['day_reg']) < datetime.datetime.today().day:
+                self.bot.send_message(message.chat.id, 'Неверно, повтори ввод:\n'
+                                                       '(Отмени ввод символом `-`)',
+                                      reply_markup=self.getDaysKeyboard())
+                self.bot.register_next_step_handler(message, self.regDayTime)
+                return
             self.bot.send_message(message.chat.id, 'Во сколько тебе нужна переговорка?\n'
                                                    '(Отмени ввод символом `-`)')
             self.bot.register_next_step_handler(message, self.regStartTime)
@@ -181,8 +187,8 @@ class BotFuncs:
         last_day = 0
         if len(data) > 0:
             for row in data:
-                if last_day != row[10]:
-                    last_day = row[10]
+                if last_day != row[2]:
+                    last_day = row[2]
                     if last_day != 0:
                         result_list += '\n'
                     result_list += 'Занятость на ' + str(last_day) + '.' + str(datetime.datetime.today().month ) + '.' + str(datetime.datetime.today().year) + ' число:\n\n'
