@@ -113,6 +113,7 @@ class BotFuncs:
         intersect_times = []
         if len(data) > 0:
             for row in data:
+                print(row)
                 if day == row[10]:
                     if time >= row[11]:
                         if self.first_time != '':
@@ -135,12 +136,13 @@ class BotFuncs:
         chat_id = message.chat.id
         self.data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message)), 1)
         counter = 1
+        last_day = 0
+        now_month = datetime.datetime.today().month
         if len(self.data) > 0:
             if func_type == 1:
                 result_list += 'Введи номер записи, которую хочешь отменить:\n\n'
             elif func_type == 2:
                 result_list += 'Введи номер записи, которую хочешь изменить:\n\n'
-            now_month = datetime.datetime.today().month
             if now_month < 10:
                 now_month = '0' + str(now_month)
             for row in self.data:
