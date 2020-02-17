@@ -72,8 +72,8 @@ class BotFuncs:
                 keyboard.row_width = 7
                 today = datetime.datetime.today().day
                 for num in range(today+14):
-                    keyboard.add(telebot.types.InlineKeyboardButton(text=num, callback_data=num))
-                keyboard.add(telebot.types.InlineKeyboardButton(text='-', callback_data='-'))
+                    keyboard.add(telebot.types.InlineKeyboardButton(text=num))
+                # keyboard.add(telebot.types.InlineKeyboardButton(text='-', callback_data='-'))
                 self.bot.send_message(message.chat.id, 'Выбери или введи число из предложенных:', reply_markup=keyboard)
                 self.bot.register_next_step_handler(message, self.regDayTime)
                 # self.bot.send_message(message.chat.id, 'Записал тебя на ' + self.dataReg['start_time'] + " - " + self.dataReg['end_time'])
