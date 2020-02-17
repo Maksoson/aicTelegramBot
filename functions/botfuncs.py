@@ -73,7 +73,7 @@ class BotFuncs:
                 buttons_added = []
                 today = datetime.datetime.today().day
                 for num in range(today, today+14):
-                    buttons_added.append(telebot.types.InlineKeyboardButton(text=num, callback_data=str(num)))
+                    buttons_added.append(telebot.types.KeyboardButton(text=num))
                     if len(buttons_added) == row_width:
                         keyboard.add(*buttons_added)
                         buttons_added = []
