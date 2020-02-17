@@ -58,7 +58,7 @@ def printAll(message):
 
 @bot.message_handler(commands=['delete'])
 def deleteTime(message):
-    bot_funcs.seeTimesListFor(message, datetime.datetime.today(), 1)
+    bot_funcs.seeTimesListFor(message, 1)
 
 
 # @bot.message_handler(commands=['update'])
@@ -100,7 +100,7 @@ def send_text(message):
     elif user_message == 'моя занятость':
         bot_funcs.printMyTimes(message, today)
     elif user_message == 'удалить запись':
-        bot_funcs.seeTimesListFor(message, datetime.datetime.today(), 1)
+        bot_funcs.seeTimesListFor(message, 1)
     elif user_message == 'занять переговорку':
         bot_funcs.regTime(message)
     elif user_message == 'занятость переговорки на сегодня':
