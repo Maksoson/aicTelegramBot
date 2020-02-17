@@ -202,7 +202,7 @@ class BotFuncs:
                     counter = 1
                     if last_day != 0:
                         result_list += '\n'
-                    result_list += 'Занятость на ' + last_day + ' число:\n\n'
+                    result_list += 'Занятость на ' + str(last_day) + ' число:\n\n'
                 result_list += str(counter) + '. ' + row[11] + ' - ' + row[12] + '  ---  ' \
                                + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                 counter += 1
