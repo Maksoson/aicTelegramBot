@@ -114,7 +114,6 @@ class BotFuncs:
         intersect_times = []
         if len(data) > 0:
             for row in data:
-                print(row)
                 if int(day) == int(row[10]):
                     if time >= row[11]:
                         if self.first_time != '':
