@@ -19,6 +19,7 @@ start_keyboard = telebot.types.ReplyKeyboardMarkup(True)
 start_keyboard.row('Занять переговорку', 'Моя занятость', 'Удалить запись')
 start_keyboard.row('Занятость переговорки на сегодня')
 start_keyboard.row('Дата', 'Справка')
+bot_home.setKeyboard(start_keyboard)
 
 
 # ------------------------------------------------ #

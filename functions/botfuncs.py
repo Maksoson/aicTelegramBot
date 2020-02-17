@@ -1,6 +1,7 @@
 import re
 import datetime
 import telebot
+import bothome
 from functions import dbfuncs
 
 
@@ -10,6 +11,7 @@ class BotFuncs:
         self.bot = bot
         self.dataReg = {'start_time': '', 'end_time': '', 'day_reg': ''}
         self.db_funcs = dbfuncs.DatabaseFuncs(self.bot)
+        self.bot_home = bothome.BotHome()
         self.data = []
         self.first_time = ''
 
@@ -75,9 +77,8 @@ class BotFuncs:
                 for num in range(today, today+14):
                     buttons_added.append(telebot.types.KeyboardButton(text=num))
                     if len(buttons_added) == row_width:
-                        keyboard.add(*buttons_added)
+                        keyboard.row(keyboard.add(*buttons_added))
                         buttons_added = []
-                # keyboard.add(telebot.types.InlineKeyboardButton(text='-', callback_data='-'))
                 self.bot.send_message(message.chat.id, 'Выбери или введи число из предложенных:', reply_markup=keyboard)
                 self.bot.register_next_step_handler(message, self.regDayTime)
                 # self.bot.send_message(message.chat.id, 'Записал тебя на ' + self.dataReg['start_time'] + " - " + self.dataReg['end_time'])
@@ -100,14 +101,14 @@ class BotFuncs:
                 buttons_added = []
                 today = datetime.datetime.today().day
                 for num in range(today, today+14):
-                    buttons_added.append(telebot.types.InlineKeyboardButton(text=num, callback_data=str(num)))
+                    buttons_added.append(telebot.types.KeyboardButton(text=num))
                     if len(buttons_added) == row_width:
-                        keyboard.add(*buttons_added)
+                        keyboard.row(keyboard.add(*buttons_added))
                         buttons_added = []
                 self.bot.send_message(message.chat.id, 'Не понял тебя, пожалуйста повтори', reply_markup=keyboard)
                 self.bot.register_next_step_handler(message, self.regDayTime)
                 return
-        self.bot.send_message(message.chat.id, 'Записал тебя на ' + self.dataReg['start_time'] + " - " + self.dataReg['end_time'] + ", " + self.dataReg['day_reg'] + " число")
+        self.bot.send_message(message.chat.id, 'Записал тебя на ' + self.dataReg['start_time'] + " - " + self.dataReg['end_time'] + ", " + self.dataReg['day_reg'] + " число", reply_markup=self.bot_home.getKeyboard())
         self.first_time = ''
         self.db_funcs.addToTimetable(message, self.dataReg)
 
