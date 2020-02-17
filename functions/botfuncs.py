@@ -36,7 +36,7 @@ class BotFuncs:
                 counter = 1
                 for row in intersection_times:
                     answer += str(counter) + '. ' + row[11] + ' - ' + row[12] + '  ---  ' \
-                                   + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
+                              + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                     counter += 1
                 answer += '\nПоменяй время или отмени ввод символом `-`'
                 self.bot.send_message(message.chat.id, answer)
@@ -64,23 +64,14 @@ class BotFuncs:
                     counter = 1
                     for row in intersection_times:
                         answer += str(counter) + '. ' + row[11] + ' - ' + row[12] + '  ---  ' \
-                                       + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
+                                  + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                         counter += 1
                     answer += '\nПоменяй время или отмени ввод символом `-`'
                     self.bot.send_message(message.chat.id, answer)
                     self.bot.register_next_step_handler(message, self.endRegTime)
                     return
-                keyboard = telebot.types.ReplyKeyboardMarkup()
-                row_width = 7
-                buttons_added = []
-                today = datetime.datetime.today().day
-                for num in range(today, today + 14):
-                    buttons_added.append(telebot.types.KeyboardButton(text=num))
-                    if len(buttons_added) == row_width:
-                        keyboard.row(*buttons_added)
-                        buttons_added = []
                 self.bot.send_message(message.chat.id, 'Выбери или введи число из предложенных:\n'
-                                                       '(Отмени ввод символом `-`)', reply_markup=keyboard)
+                                                       '(Отмени ввод символом `-`)', reply_markup=self.getDaysKeyboard())
                 self.bot.register_next_step_handler(message, self.regDayTime)
                 # self.bot.send_message(message.chat.id, 'Записал тебя на ' + self.dataReg['start_time'] + " - " + self.dataReg['end_time'])
                 # self.first_time = ''
@@ -97,19 +88,11 @@ class BotFuncs:
         self.dataReg['day_reg'] = str(message.text).strip()
         if self.dataReg['day_reg'] != '-':
             if not re.match(r'^[0-9]{1,2}$', self.dataReg['day_reg'].lower()):
-                keyboard = telebot.types.ReplyKeyboardMarkup()
-                row_width = 7
-                buttons_added = []
-                today = datetime.datetime.today().day
-                for num in range(today, today + 14):
-                    buttons_added.append(telebot.types.KeyboardButton(text=num))
-                    if len(buttons_added) == row_width:
-                        keyboard.add(*buttons_added)
-                        buttons_added = []
-                self.bot.send_message(message.chat.id, 'Не понял тебя, пожалуйста повтори', reply_markup=keyboard)
+                self.bot.send_message(message.chat.id, 'Не понял тебя, пожалуйста повтори', reply_markup=self.getDaysKeyboard())
                 self.bot.register_next_step_handler(message, self.regDayTime)
                 return
-        self.bot.send_message(message.chat.id, 'Записал тебя на ' + self.dataReg['start_time'] + " - " + self.dataReg['end_time'] + ", " + self.dataReg['day_reg'] + " число", reply_markup=self.bot_home.getKeyboard())
+        self.bot.send_message(message.chat.id, 'Записал тебя на ' + self.dataReg['start_time'] + " - " + self.dataReg[
+            'end_time'] + ", " + self.dataReg['day_reg'] + " число", reply_markup=self.getStartKeyboard())
         self.first_time = ''
         self.db_funcs.addToTimetable(message, self.dataReg)
 
@@ -233,3 +216,26 @@ class BotFuncs:
                                                '/cat - вывести случайную гифку с котом. (offed)\n\n'
                                                'Версия бота: 0.7.13\n'
                                                'Последнее обновление: 14.02.2020\n')
+
+    @staticmethod
+    def getStartKeyboard():
+        start_keyboard = telebot.types.ReplyKeyboardMarkup(True)
+        start_keyboard.row('Занять переговорку', 'Моя занятость', 'Удалить запись')
+        start_keyboard.row('Занятость переговорки на сегодня')
+        start_keyboard.row('Дата', 'Справка')
+
+        return start_keyboard
+
+    @staticmethod
+    def getDaysKeyboard():
+        keyboard = telebot.types.ReplyKeyboardMarkup(True, True)
+        row_width = 7
+        buttons_added = []
+        today = datetime.datetime.today().day
+        for num in range(today, today + 14):
+            buttons_added.append(telebot.types.KeyboardButton(text=num))
+            if len(buttons_added) == row_width:
+                keyboard.row(*buttons_added)
+                buttons_added = []
+
+        return keyboard
