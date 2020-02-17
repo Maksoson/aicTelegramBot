@@ -68,7 +68,7 @@ class BotFuncs:
                     self.bot.send_message(message.chat.id, answer)
                     self.bot.register_next_step_handler(message, self.endRegTime)
                     return
-                keyboard = telebot.types.InlineKeyboardMarkup()
+                keyboard = telebot.types.ReplyKeyboardMarkup()
                 row_width = 7
                 buttons_added = []
                 today = datetime.datetime.today().day
@@ -95,7 +95,7 @@ class BotFuncs:
         self.dataReg['day_reg'] = str(message.text).strip()
         if self.dataReg['day_reg'] != '-':
             if not re.match(r'^[0-9]{1,2}$', self.dataReg['day_reg'].lower()):
-                keyboard = telebot.types.InlineKeyboardMarkup()
+                keyboard = telebot.types.ReplyKeyboardMarkup()
                 row_width = 7
                 buttons_added = []
                 today = datetime.datetime.today().day
