@@ -173,9 +173,9 @@ class DatabaseFuncs:
         new_times_data = []
 
         if type_func == 1:
-            new_times_data = sorted(times_data, key=lambda row: (row[2], row[3]), reverse=False)
+            new_times_data = sorted(times_data, key=lambda row: (row[3], row[2]), reverse=False)
         elif type_func == 2:
-            new_times_data = sorted(times_data, key=lambda row: (row[10], row[11]), reverse=False)
+            new_times_data = sorted(times_data, key=lambda row: (row[11], row[10]), reverse=False)
 
         return new_times_data
 

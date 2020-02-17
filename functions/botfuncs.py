@@ -188,13 +188,21 @@ class BotFuncs:
         self.bot.send_message(message.chat.id, result_list)
 
     # Занятость переговорки на сегодня
-    def printAllTimes(self, message, today):
-        result_list = 'Занятость на ' + today.strftime('%d.%m.%y') + '\n\n'
+    def printAllTimes(self, message):
+        # result_list = 'Занятость на ' + today.strftime('%d.%m.%y') + '\n\n'
+        result_list = ''
         data = self.db_funcs.sortTimes(self.db_funcs.getAllTimes(), 2)
         counter = 1
+        last_day = 0
         print(data)
         if len(data) > 0:
             for row in data:
+                if last_day != row[10]:
+                    last_day = row[10]
+                    counter = 1
+                    if last_day != 0:
+                        result_list += '\n'
+                    result_list += 'Занятость на ' + last_day + ' число:\n\n'
                 result_list += str(counter) + '. ' + row[11] + ' - ' + row[12] + '  ---  ' \
                                + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                 counter += 1

@@ -53,7 +53,7 @@ def printTime(message):
 
 @bot.message_handler(commands=['all'])
 def printAll(message):
-    bot_funcs.printAllTimes(message, datetime.datetime.today())
+    bot_funcs.printAllTimes(message)
 
 
 @bot.message_handler(commands=['delete'])
