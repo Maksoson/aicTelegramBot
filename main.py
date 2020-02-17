@@ -68,7 +68,7 @@ def deleteTime(message):
 
 @bot.message_handler(commands=['my'])
 def printAllMy(message):
-    bot_funcs.printMyTimes(message, datetime.datetime.today())
+    bot_funcs.printMyTimes(message)
 
 
 @bot.message_handler(commands=['update, cat'])
@@ -98,7 +98,7 @@ def send_text(message):
     elif user_message == 'дата':
         bot_funcs.printToday(chat_id, today)
     elif user_message == 'моя занятость':
-        bot_funcs.printMyTimes(message, today)
+        bot_funcs.printMyTimes(message)
     elif user_message == 'удалить запись':
         bot_funcs.seeTimesListFor(message, 1)
     elif user_message == 'занять переговорку':

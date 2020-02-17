@@ -140,7 +140,15 @@ class BotFuncs:
                 result_list += 'Введи номер записи, которую хочешь отменить:\n\n'
             elif func_type == 2:
                 result_list += 'Введи номер записи, которую хочешь изменить:\n\n'
+            now_month = datetime.datetime.today().month
+            if now_month < 10:
+                now_month = '0' + str(now_month)
             for row in self.data:
+                if last_day != row[2]:
+                    last_day = row[2]
+                    if last_day != 0:
+                        result_list += '\n'
+                    result_list += str(last_day) + '.' + now_month + '.' + str(datetime.datetime.today().year) + ':\n\n'
                 result_list += str(counter) + '. ' + row[3] + ' - ' + row[4] + '\n'
                 counter += 1
             self.bot.send_message(chat_id, result_list)
@@ -155,17 +163,21 @@ class BotFuncs:
     # Удаление записи
     def deleteTime(self, message):
         delete_time_id = str(message.text).strip()
-        if not delete_time_id.isdigit():
-            self.bot.send_message(message.chat.id, 'Неверно, введи номер еще раз')
-            self.bot.register_next_step_handler(message, self.deleteTime)
-        counter = 1
-        for row in self.data:
-            if counter == int(delete_time_id):
-                self.db_funcs.deleteFromTimetable(row[0])
-                self.bot.send_message(message.chat.id, 'Запись на ' + row[3] + " - " + row[4] + " удалена!")
-                self.data = []
-                break
-            counter += 1
+        if delete_time_id != '-':
+            if not delete_time_id.isdigit():
+                self.bot.send_message(message.chat.id, 'Неверно, введи номер еще раз')
+                self.bot.register_next_step_handler(message, self.deleteTime)
+            counter = 1
+            for row in self.data:
+                if counter == int(delete_time_id):
+                    self.db_funcs.deleteFromTimetable(row[0])
+                    self.bot.send_message(message.chat.id, 'Запись на ' + row[3] + " - " + row[4] + " удалена!")
+                    self.data = []
+                    break
+                counter += 1
+        else:
+            self.first_time = ''
+            self.bot.send_message(message.chat.id, 'Ввод отменен')
 
     # # Изменение записи
     # Не забудь раскомментить вызов функции выше!
@@ -180,8 +192,8 @@ class BotFuncs:
     #             self.db_funcs.updateTimetable()
 
     # Моя занятость
-    def printMyTimes(self, message, today):
-        result_list = '@' + message.from_user.username + ', занятость на:\n\n'
+    def printMyTimes(self, message):
+        result_list = '@' + message.from_user.username + ', занятость на:\n'
         data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message)), 1)
         counter = 1
         last_day = 0
@@ -192,6 +204,7 @@ class BotFuncs:
             for row in data:
                 if last_day != row[2]:
                     last_day = row[2]
+                    counter = 1
                     if last_day != 0:
                         result_list += '\n'
                     result_list += str(last_day) + '.' + now_month + '.' + str(datetime.datetime.today().year) + ':\n\n'
@@ -204,7 +217,7 @@ class BotFuncs:
 
     # Занятость переговорки на сегодня
     def printAllTimes(self, message):
-        result_list = 'Занятость на:\n\n'
+        result_list = 'Занятость на:\n'
         data = self.db_funcs.sortTimes(self.db_funcs.getAllTimes(), 2)
         counter = 1
         last_day = 0
