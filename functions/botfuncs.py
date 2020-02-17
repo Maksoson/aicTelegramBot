@@ -69,10 +69,14 @@ class BotFuncs:
                     self.bot.register_next_step_handler(message, self.endRegTime)
                     return
                 keyboard = telebot.types.InlineKeyboardMarkup()
-                keyboard.row_width = 7
+                row_width = 7
+                buttons_added = []
                 today = datetime.datetime.today().day
                 for num in range(today, today+14):
-                    keyboard.add(telebot.types.InlineKeyboardButton(text=num, callback_data=num))
+                    buttons_added.append(telebot.types.InlineKeyboardButton(text=num, callback_data=str(num)))
+                    if len(buttons_added) == row_width:
+                        keyboard.add(*buttons_added)
+                        buttons_added = []
                 # keyboard.add(telebot.types.InlineKeyboardButton(text='-', callback_data='-'))
                 self.bot.send_message(message.chat.id, 'Выбери или введи число из предложенных:', reply_markup=keyboard)
                 self.bot.register_next_step_handler(message, self.regDayTime)
@@ -92,10 +96,14 @@ class BotFuncs:
         if self.dataReg['day_reg'] != '-':
             if not re.match(r'^[0-9]{1,2}$', self.dataReg['day_reg'].lower()):
                 keyboard = telebot.types.InlineKeyboardMarkup()
-                keyboard.row_width = 7
+                row_width = 7
+                buttons_added = []
                 today = datetime.datetime.today().day
-                for num in range(today + 14):
-                    keyboard.add(telebot.types.InlineKeyboardButton(text=num, callback_data=num))
+                for num in range(today, today+14):
+                    buttons_added.append(telebot.types.InlineKeyboardButton(text=num, callback_data=str(num)))
+                    if len(buttons_added) == row_width:
+                        keyboard.add(*buttons_added)
+                        buttons_added = []
                 self.bot.send_message(message.chat.id, 'Не понял тебя, пожалуйста повтори', reply_markup=keyboard)
                 self.bot.register_next_step_handler(message, self.regDayTime)
                 return
