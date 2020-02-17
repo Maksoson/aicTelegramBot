@@ -77,10 +77,10 @@ class BotFuncs:
                 for num in range(today, today + 14):
                     buttons_added.append(telebot.types.KeyboardButton(text=num))
                     if len(buttons_added) == row_width:
-                        print(len(buttons_added))
-                        keyboard.add(*buttons_added)
+                        keyboard.row(*buttons_added)
                         buttons_added = []
-                self.bot.send_message(message.chat.id, 'Выбери или введи число из предложенных:', reply_markup=keyboard)
+                self.bot.send_message(message.chat.id, 'Выбери или введи число из предложенных:\n'
+                                                       '(Отмени ввод символом `-`)', reply_markup=keyboard)
                 self.bot.register_next_step_handler(message, self.regDayTime)
                 # self.bot.send_message(message.chat.id, 'Записал тебя на ' + self.dataReg['start_time'] + " - " + self.dataReg['end_time'])
                 # self.first_time = ''
