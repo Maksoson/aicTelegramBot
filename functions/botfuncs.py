@@ -42,7 +42,7 @@ class BotFuncs:
             self.bot.register_next_step_handler(message, self.regStartTime)
         else:
             self.first_time = ''
-            self.bot.send_message(message.chat.id, 'Ввод отменен')
+            self.bot.send_message(message.chat.id, 'Ввод отменен', reply_markup=self.getStartKeyboard())
 
     def regStartTime(self, message):
         self.first_time = ''
@@ -55,6 +55,7 @@ class BotFuncs:
                     return
             self.dataReg['start_time'] = self.db_funcs.checkTimeBefore(self.dataReg['start_time'])
             intersection_times = self.checkTimesIntersection(self.dataReg['day_reg'], self.dataReg['start_time'])
+            print("LEN + " + str(len(intersection_times)))
             if len(intersection_times) > 0:
                 answer = 'Ваше время пересекается с:\n\n'
                 counter = 1
@@ -70,7 +71,7 @@ class BotFuncs:
             self.bot.register_next_step_handler(message, self.endRegTime)
         else:
             self.first_time = ''
-            self.bot.send_message(message.chat.id, 'Ввод отменен')
+            self.bot.send_message(message.chat.id, 'Ввод отменен', reply_markup=self.getStartKeyboard())
 
     def endRegTime(self, message):
         self.dataReg['end_time'] = str(message.text).strip()
@@ -105,7 +106,7 @@ class BotFuncs:
                 return
         else:
             self.first_time = ''
-            self.bot.send_message(message.chat.id, 'Ввод отменен')
+            self.bot.send_message(message.chat.id, 'Ввод отменен', reply_markup=self.getStartKeyboard())
 
     # Проверка введенного времени на пересечение с уже существующими записями
     def checkTimesIntersection(self, day, time):
@@ -116,12 +117,12 @@ class BotFuncs:
                 print(row)
                 if day == row[10]:
                     if time >= row[11]:
-                        if self.first_time != '':
-                            if time <= row[12]:
-                                intersect_times.append(row)
-                        else:
-                            if time < row[12]:
-                                intersect_times.append(row)
+                        # if self.first_time != '':
+                        if time <= row[12]:
+                            intersect_times.append(row)
+                        # else:
+                        #     if time < row[12]:
+                        #         intersect_times.append(row)
                     if self.first_time != '':
                         if self.first_time < row[11] and time > row[12]:
                             intersect_times.append(row)
@@ -140,9 +141,11 @@ class BotFuncs:
         now_month = datetime.datetime.today().month
         if len(self.data) > 0:
             if func_type == 1:
-                result_list += 'Введи номер записи, которую хочешь отменить:\n\n'
+                result_list += 'Введи номер записи, которую хочешь отменить:\n' \
+                               '(Отмени ввод символом `-`)\n'
             elif func_type == 2:
-                result_list += 'Введи номер записи, которую хочешь изменить:\n\n'
+                result_list += 'Введи номер записи, которую хочешь изменить:\n' \
+                               '(Отмени ввод символом `-`)\n'
             if now_month < 10:
                 now_month = '0' + str(now_month)
             for row in self.data:
@@ -179,7 +182,7 @@ class BotFuncs:
                 counter += 1
         else:
             self.first_time = ''
-            self.bot.send_message(message.chat.id, 'Ввод отменен')
+            self.bot.send_message(message.chat.id, 'Ввод отменен', reply_markup=self.getStartKeyboard())
 
     # # Изменение записи
     # Не забудь раскомментить вызов функции выше!
