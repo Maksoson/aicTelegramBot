@@ -21,8 +21,8 @@ class BotFuncs:
         self.data = []
         self.first_time = ''
         self.added_days = []
-        self.error = u'\xE2\x9D\x8C'
-        self.success = u'\xE2\x9C\x85'
+        self.error = '\xE2\x9D\x8C'
+        self.success = '\xE2\x9C\x85'
 
     # Занять переговорку (следующие 4 функции)
     def regTime(self, message):
@@ -32,7 +32,7 @@ class BotFuncs:
 
     def regDayTime(self, message):
         self.dataReg['day_reg'] = str(message.text[0:2]).strip()
-        if self.dataReg['day_reg'] != '-':
+        if self.dataReg['day_reg'].lower() != 'отмена':
             if not re.match(r'^[0-9]{1,2}$', self.dataReg['day_reg'].lower()):
                 self.bot.send_message(message.chat.id, self.error + '\nНеверно, выбери снова:',
                                       reply_markup=self.getDaysKeyboard())
@@ -60,7 +60,7 @@ class BotFuncs:
     def regStartTime(self, message):
         self.first_time = ''
         self.dataReg['start_time'] = str(message.text).strip()
-        if self.dataReg['start_time'] != '-':
+        if self.dataReg['start_time'].lower() != 'отмена':
             if not re.match(r'^[0-9]{0,2}(:|\s)[0-9]{2}$', self.dataReg['start_time'].lower()):
                 if not re.match(r'^[0-9]{1,2}$', self.dataReg['start_time'].lower()):
                     self.bot.send_message(message.chat.id, self.error + '\nНеверные данные, повтори ввод',
@@ -89,7 +89,7 @@ class BotFuncs:
 
     def endRegTime(self, message):
         self.dataReg['end_time'] = str(message.text).strip()
-        if self.dataReg['end_time'] != '-':
+        if self.dataReg['end_time'].lower() != 'отмена':
             if not re.match(r'^[0-9]{0,2}(:|\s)[0-9]{2}$', self.dataReg['end_time'].lower()):
                 if not re.match(r'^[0-9]{1,2}$', self.dataReg['end_time'].lower()):
                     self.bot.send_message(message.chat.id, self.error + '\nНеверные данные, повтори ввод',
