@@ -194,9 +194,9 @@ class BotFuncs:
         last_day = 0
         if len(self.data) > 0:
             if func_type == 1:
-                result_list += 'Введи номер записи, которую хочешь отменить:'
+                result_list += 'Введи номер записи, которую хочешь отменить:\n\n'
             elif func_type == 2:
-                result_list += 'Введи номер записи, которую хочешь изменить:'
+                result_list += 'Введи номер записи, которую хочешь изменить:\n\n'
             for row in self.data:
                 now_month = self.checkDateFormat(row[3])
                 if last_day != row[2]:
@@ -218,7 +218,7 @@ class BotFuncs:
     # Удаление записи
     def deleteTime(self, message):
         delete_time_id = str(message.text).strip()
-        if delete_time_id != '-':
+        if delete_time_id.lower() != 'отмена':
             if not delete_time_id.isdigit():
                 self.bot.send_message(message.chat.id, 'Неверно, введи номер еще раз')
                 self.bot.register_next_step_handler(message, self.deleteTime, reply_markup=self.getCancelButton())
