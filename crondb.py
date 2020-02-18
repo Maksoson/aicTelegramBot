@@ -10,7 +10,7 @@ scheduler = BlockingScheduler()
 db_funcs = dbfuncs.DatabaseFuncs(bot)
 
 
-@scheduler.scheduled_job('cron', day_of_week='mon-fri', hour=23, minute=59)
+@scheduler.scheduled_job('cron', day_of_week='mon-fri', hour=10, minute=4)
 def scheduled_job():
     db_funcs.deleteOldTimes()
 
