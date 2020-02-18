@@ -158,7 +158,7 @@ class BotFuncs:
                 if last_day != row[2]:
                     last_day = row[2]
                     if int(last_day) < 10:
-                        last_day = '0' + last_day
+                        last_day = '0' + str(last_day)
                     if last_day != 0:
                         result_list += '\n'
                     result_list += str(last_day) + '.' + str(now_month) + '.' + str(datetime.today().year) + ':\n\n'
@@ -219,7 +219,7 @@ class BotFuncs:
                 if last_day != row[2]:
                     last_day = row[2]
                     if int(last_day) < 10:
-                        last_day = '0' + last_day
+                        last_day = '0' + str(last_day)
                     counter = 1
                     if last_day != 0:
                         result_list += '\n'
@@ -245,7 +245,7 @@ class BotFuncs:
                 if last_day != row[11]:
                     last_day = row[11]
                     if int(last_day) < 10:
-                        last_day = '0' + last_day
+                        last_day = '0' + str(last_day)
                     counter = 1
                     if last_day != 0:
                         result_list += '\n'
@@ -257,6 +257,26 @@ class BotFuncs:
             result_list = 'Сегодня переговорку еще никто не занимал! Успей забрать лучшее время ;)'
 
         self.bot.send_message(message.chat.id, result_list, reply_markup=self.getStartKeyboard())
+
+    def getDaysKeyboard(self):
+        self.added_days = []
+        keyboard = telebot.types.ReplyKeyboardMarkup(True, True)
+        row_width = 7
+        buttons_added = []
+        now = datetime.today()
+        days_in_month = calendar.monthrange(now.year, now.month)[1]
+        for num in range(now.day, now.day + 14):
+            if num > days_in_month:
+                day_num = num - days_in_month
+            else:
+                day_num = num
+            self.added_days.append(day_num)
+            buttons_added.append(telebot.types.KeyboardButton(text=day_num))
+            if len(buttons_added) == row_width:
+                keyboard.row(*buttons_added)
+                buttons_added = []
+
+        return keyboard
 
     # Время
     def printToday(self, chat_id, today):
@@ -278,25 +298,6 @@ class BotFuncs:
                                                'Версия бота: 0.7.13\n'
                                                'Последнее обновление: 14.02.2020\n')
 
-    def getDaysKeyboard(self):
-        self.added_days = []
-        keyboard = telebot.types.ReplyKeyboardMarkup(True, True)
-        row_width = 7
-        buttons_added = []
-        now = datetime.today()
-        days_in_month = calendar.monthrange(now.year, now.month)[1]
-        for num in range(now.day, now.day + 14):
-            if num > days_in_month:
-                day_num = num - days_in_month
-            else:
-                day_num = num
-            self.added_days.append(day_num)
-            buttons_added.append(telebot.types.KeyboardButton(text=day_num))
-            if len(buttons_added) == row_width:
-                keyboard.row(*buttons_added)
-                buttons_added = []
-
-        return keyboard
 
     @staticmethod
     def getStartKeyboard():
