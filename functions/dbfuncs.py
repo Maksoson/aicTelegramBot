@@ -128,15 +128,6 @@ class DatabaseFuncs:
 
                 return cursor.fetchall()
 
-    # Получить мои сегодняшние записи на переговорку
-    def getTimesDay(self, day):
-        with closing(self.getConnection()) as connection:
-            with connection.cursor() as cursor:
-                query = 'SELECT * FROM public.timetable WHERE day_use = %s'
-                cursor.execute(query, [day])
-
-                return cursor.fetchall()
-
     # Получить все записи на переговорку
     def getAllTimes(self):
         with closing(self.getConnection()) as connection:
@@ -147,8 +138,8 @@ class DatabaseFuncs:
 
                 return cursor.fetchall()
 
-    # Получить все сегодняшние записи на переговорку
-    def getAllTimesToday(self, day):
+    # Получить мои сегодняшние записи на переговорку
+    def getTimesDay(self, day):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
                 query = 'SELECT public.users.*, public.timetable.* FROM public.timetable ' \

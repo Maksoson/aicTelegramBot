@@ -28,7 +28,7 @@ class BotFuncs:
 
     # Записи за выбранный день
     def getDayList(self, day_data):
-        data = self.db_funcs.sortTimes(self.db_funcs.getTimesDay(day_data))
+        data = self.db_funcs.sortTimes(self.db_funcs.getTimesDay(day_data), 2)
         counter = 1
         result_list = self.memo + ' '
         if len(data) > 0:
