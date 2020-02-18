@@ -358,7 +358,7 @@ class BotFuncs:
         if int(date_data) < 10:
             return '0' + str(date_data)
         else:
-            return date_data
+            return str(date_data)
 
     @staticmethod
     def getCancelButton():
