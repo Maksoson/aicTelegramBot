@@ -32,7 +32,7 @@ class BotFuncs:
                                                        '(Отмени ввод символом `-`)',
                                       reply_markup=self.getDaysKeyboard())
                 self.bot.register_next_step_handler(message, self.regDayTime)
-            print(self.added_days)
+                return
             if int(self.dataReg['day_reg']) in self.added_days:
                 if int(self.dataReg['day_reg']) < datetime.today().day:
                     if datetime.today().month != 12:
@@ -88,6 +88,7 @@ class BotFuncs:
                 if not re.match(r'^[0-9]{1,2}$', self.dataReg['end_time'].lower()):
                     self.bot.send_message(message.chat.id, 'Не понял тебя, пожалуйста повтори')
                     self.bot.register_next_step_handler(message, self.endRegTime)
+                    return
             self.dataReg['end_time'] = self.db_funcs.checkTimeBefore(self.dataReg['end_time'])
             if self.dataReg['end_time'] > self.dataReg['start_time']:
                 intersection_times = self.checkTimesIntersection(self.dataReg['day_reg'], self.dataReg['month_reg'], self.dataReg['end_time'])
@@ -101,7 +102,7 @@ class BotFuncs:
                     answer += '\nПоменяй время или отмени ввод символом `-`'
                     self.bot.send_message(message.chat.id, answer)
                     self.bot.register_next_step_handler(message, self.endRegTime)
-
+                    return
                 self.bot.send_message(message.chat.id, 'Записал тебя на ' + self.dataReg['start_time'] + " - " + self.dataReg[
                                       'end_time'] + ", " + self.dataReg['day_reg'] + " число", reply_markup=self.getStartKeyboard())
                 self.first_time = ''
@@ -110,7 +111,6 @@ class BotFuncs:
             else:
                 self.bot.send_message(message.chat.id, 'Кажется, ты ошибся. Пожалуйста, повтори ввод')
                 self.bot.register_next_step_handler(message, self.endRegTime)
-                return
         else:
             self.first_time = ''
             self.bot.send_message(message.chat.id, 'Ввод отменен', reply_markup=self.getStartKeyboard())
