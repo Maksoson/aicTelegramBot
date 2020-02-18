@@ -236,6 +236,7 @@ class BotFuncs:
         last_day = 0
         if len(data) > 0:
             for row in data:
+                print(row)
                 now_month = row[11]
                 if now_month < 10:
                     now_month = '0' + str(now_month)
