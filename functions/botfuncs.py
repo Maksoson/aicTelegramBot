@@ -15,6 +15,7 @@ class BotFuncs:
         self.bot_home = bothome.BotHome()
         self.data = []
         self.first_time = ''
+        self.added_days = []
 
     # Занять переговорку (следующие 4 функции)
     def regTime(self, message):
@@ -31,23 +32,22 @@ class BotFuncs:
                                                        '(Отмени ввод символом `-`)',
                                       reply_markup=self.getDaysKeyboard())
                 self.bot.register_next_step_handler(message, self.regDayTime)
-                return
-            if int(self.dataReg['day_reg']) < datetime.today().day:
+            if int(self.dataReg['day_reg']) in self.added_days:
+                if int(self.dataReg['day_reg']) < datetime.today().day:
+                    if datetime.today().month != 12:
+                        self.dataReg['month_reg'] = str(datetime.today().month + 1)
+                    else:
+                        self.dataReg['month_reg'] = '1'
+                else:
+                    self.dataReg['month_reg'] = str(datetime.today().month)
+                self.bot.send_message(message.chat.id, 'Во сколько тебе нужна переговорка?\n'
+                                                       '(Отмени ввод символом `-`)')
+                self.bot.register_next_step_handler(message, self.regStartTime)
+            else:
                 self.bot.send_message(message.chat.id, 'Неверно, повтори ввод:\n'
                                                        '(Отмени ввод символом `-`)',
                                       reply_markup=self.getDaysKeyboard())
                 self.bot.register_next_step_handler(message, self.regDayTime)
-                return
-            if int(self.dataReg['day_reg']) < datetime.today().day:
-                if datetime.today().month != 12:
-                    self.dataReg['month_reg'] = str(datetime.today().month + 1)
-                else:
-                    self.dataReg['month_reg'] = '1'
-            else:
-                self.dataReg['month_reg'] = str(datetime.today().month)
-            self.bot.send_message(message.chat.id, 'Во сколько тебе нужна переговорка?\n'
-                                                   '(Отмени ввод символом `-`)')
-            self.bot.register_next_step_handler(message, self.regStartTime)
         else:
             self.first_time = ''
             self.bot.send_message(message.chat.id, 'Ввод отменен', reply_markup=self.getStartKeyboard())
@@ -67,7 +67,6 @@ class BotFuncs:
                 answer = 'Ваше время пересекается с:\n\n'
                 counter = 1
                 for row in intersection_times:
-                    print(row)
                     answer += str(counter) + '. ' + row[13] + ' - ' + row[14] + '  ---  ' \
                               + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                     counter += 1
@@ -88,7 +87,6 @@ class BotFuncs:
                 if not re.match(r'^[0-9]{1,2}$', self.dataReg['end_time'].lower()):
                     self.bot.send_message(message.chat.id, 'Не понял тебя, пожалуйста повтори')
                     self.bot.register_next_step_handler(message, self.endRegTime)
-                    return
             self.dataReg['end_time'] = self.db_funcs.checkTimeBefore(self.dataReg['end_time'])
             if self.dataReg['end_time'] > self.dataReg['start_time']:
                 intersection_times = self.checkTimesIntersection(self.dataReg['day_reg'], self.dataReg['month_reg'], self.dataReg['end_time'])
@@ -102,11 +100,11 @@ class BotFuncs:
                     answer += '\nПоменяй время или отмени ввод символом `-`'
                     self.bot.send_message(message.chat.id, answer)
                     self.bot.register_next_step_handler(message, self.endRegTime)
-                    return
 
                 self.bot.send_message(message.chat.id, 'Записал тебя на ' + self.dataReg['start_time'] + " - " + self.dataReg[
                                       'end_time'] + ", " + self.dataReg['day_reg'] + " число", reply_markup=self.getStartKeyboard())
                 self.first_time = ''
+                self.added_days = []
                 self.db_funcs.addToTimetable(message, self.dataReg)
             else:
                 self.bot.send_message(message.chat.id, 'Кажется, ты ошибся. Пожалуйста, повтори ввод')
@@ -212,7 +210,6 @@ class BotFuncs:
         if len(data) > 0:
             result_list += 'занятость на:\n'
             for row in data:
-                print(row)
                 now_month = row[3]
                 if now_month < 10:
                     now_month = '0' + str(now_month)
@@ -274,17 +271,7 @@ class BotFuncs:
                                                'Версия бота: 0.7.13\n'
                                                'Последнее обновление: 14.02.2020\n')
 
-    @staticmethod
-    def getStartKeyboard():
-        start_keyboard = telebot.types.ReplyKeyboardMarkup(True)
-        start_keyboard.row('Занять переговорку', 'Моя занятость', 'Удалить запись')
-        start_keyboard.row('Занятость переговорки на сегодня')
-        start_keyboard.row('Дата', 'Справка')
-
-        return start_keyboard
-
-    @staticmethod
-    def getDaysKeyboard():
+    def getDaysKeyboard(self):
         keyboard = telebot.types.ReplyKeyboardMarkup(True, True)
         row_width = 7
         buttons_added = []
@@ -295,10 +282,23 @@ class BotFuncs:
                 day_num = num - days_in_month
             else:
                 day_num = num
+            self.added_days = []
+            self.added_days.append(day_num)
             buttons_added.append(telebot.types.KeyboardButton(text=day_num))
             if len(buttons_added) == row_width:
                 keyboard.row(*buttons_added)
                 buttons_added = []
 
         return keyboard
+
+    @staticmethod
+    def getStartKeyboard():
+        start_keyboard = telebot.types.ReplyKeyboardMarkup(True)
+        start_keyboard.row('Занять переговорку', 'Моя занятость', 'Удалить запись')
+        start_keyboard.row('Занятость переговорки на сегодня')
+        start_keyboard.row('Дата', 'Справка')
+
+        return start_keyboard
+
+
 
