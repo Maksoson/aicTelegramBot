@@ -68,7 +68,7 @@ class BotFuncs:
                 counter = 1
                 for row in intersection_times:
                     print(row)
-                    answer += str(counter) + '. ' + row[12] + ' - ' + row[13] + '  ---  ' \
+                    answer += str(counter) + '. ' + row[13] + ' - ' + row[14] + '  ---  ' \
                               + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                     counter += 1
                 answer += '\nПоменяй время или отмени ввод символом `-`'
@@ -96,7 +96,7 @@ class BotFuncs:
                     answer = 'Ваше время пересекается с:\n\n'
                     counter = 1
                     for row in intersection_times:
-                        answer += str(counter) + '. ' + row[12] + ' - ' + row[13] + '  ---  ' \
+                        answer += str(counter) + '. ' + row[13] + ' - ' + row[14] + '  ---  ' \
                                   + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                         counter += 1
                     answer += '\nПоменяй время или отмени ввод символом `-`'
@@ -122,16 +122,16 @@ class BotFuncs:
         intersect_times = []
         if len(data) > 0:
             for row in data:
-                if int(day) == int(row[10]) and int(month) == int(row[11]):
-                    if time >= row[12]:
+                if int(day) == int(row[11]) and int(month) == int(row[12]):
+                    if time >= row[13]:
                         if self.first_time != '':
-                            if time <= row[13]:
+                            if time <= row[14]:
                                 intersect_times.append(row)
                         else:
-                            if time < row[13]:
+                            if time < row[14]:
                                 intersect_times.append(row)
                     if self.first_time != '':
-                        if self.first_time < row[12] and time > row[13]:
+                        if self.first_time < row[13] and time > row[14]:
                             intersect_times.append(row)
             if self.first_time == '':
                 self.first_time = time
@@ -212,6 +212,7 @@ class BotFuncs:
         if len(data) > 0:
             result_list += 'занятость на:\n'
             for row in data:
+                print(row)
                 now_month = row[3]
                 if now_month < 10:
                     now_month = '0' + str(now_month)
@@ -236,17 +237,16 @@ class BotFuncs:
         last_day = 0
         if len(data) > 0:
             for row in data:
-                print(row)
-                now_month = row[11]
+                now_month = row[12]
                 if now_month < 10:
                     now_month = '0' + str(now_month)
-                if last_day != row[10]:
-                    last_day = row[10]
+                if last_day != row[11]:
+                    last_day = row[11]
                     counter = 1
                     if last_day != 0:
                         result_list += '\n'
                     result_list += str(last_day) + '.' + str(now_month) + '.' + str(datetime.today().year) + ':\n\n'
-                result_list += str(counter) + '. ' + row[12] + ' - ' + row[13] + '  ---  ' \
+                result_list += str(counter) + '. ' + row[13] + ' - ' + row[14] + '  ---  ' \
                                + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                 counter += 1
         else:
