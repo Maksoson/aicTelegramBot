@@ -121,6 +121,7 @@ class BotFuncs:
     def sendTimetableNews(self, text):
         chat_ids = self.db_funcs.getAllChatIds()
         for chat_id in chat_ids:
+            print(chat_id)
             try:
                 time.sleep(1)
                 self.bot.send_message(chat_id, text)
