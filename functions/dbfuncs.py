@@ -80,7 +80,7 @@ class DatabaseFuncs:
     def getAllChatIds(self):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
-                query = 'SELECT user_char_id FROM public.users'
+                query = 'SELECT users.user_chat_id FROM public.users'
                 cursor.execute(query)
 
                 return cursor.fetchall()
