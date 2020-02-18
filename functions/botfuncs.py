@@ -32,6 +32,7 @@ class BotFuncs:
                                                        '(Отмени ввод символом `-`)',
                                       reply_markup=self.getDaysKeyboard())
                 self.bot.register_next_step_handler(message, self.regDayTime)
+            print(self.added_days)
             if int(self.dataReg['day_reg']) in self.added_days:
                 if int(self.dataReg['day_reg']) < datetime.today().day:
                     if datetime.today().month != 12:
