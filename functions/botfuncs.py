@@ -365,8 +365,8 @@ class BotFuncs:
 
     @staticmethod
     def getCancelButton():
-        keyboard = telebot.types.InlineKeyboardMarkup(True)
-        keyboard.add(telebot.types.InlineKeyboardButton('Отмена'))
+        keyboard = telebot.types.ReplyKeyboardMarkup(True)
+        keyboard.add('Отмена')
 
         return keyboard
 
