@@ -24,11 +24,22 @@ class BotFuncs:
         self.error = emojize("❌", use_aliases=True)
         self.success = emojize("✅", use_aliases=True)
         self.pushpin = emojize("📌", use_aliases=True)
-
+        self.memo = emojize("📝", use_aliases=True)
 
     # Записи за выбранный день
-    def getDayList(self, day_data):
+    def getDayList(self, user_id, day_data):
+        data = self.db_funcs.getTimesDay(user_id, day_data)
+        counter = 1
+        result_list = self.memo + ' '
+        if len(data) > 0:
+            for row in data:
+                if counter == 1:
+                    result_list += 'Занятость на ' + self.checkDateFormat(row[3]) + '.' + self.checkDateFormat(row[2]) \
+                                   + str(datetime.today().year) + ':\n\n'
+                result_list += str(counter) + '. ' + row[4] + ' - ' + row[5] + '\n'
+                counter += 1
 
+        return result_list
 
     # Занять переговорку (следующие 4 функции)
     def regTime(self, message):
@@ -52,6 +63,8 @@ class BotFuncs:
                         self.dataReg['month_reg'] = '1'
                 else:
                     self.dataReg['month_reg'] = str(datetime.today().month)
+
+                self.getDayList(message.from_user.id, int(self.dataReg['day_reg']))
                 self.bot.send_message(message.chat.id, 'Во сколько тебе нужна переговорка?',
                                       reply_markup=self.getCancelButton())
                 self.bot.register_next_step_handler(message, self.regStartTime)
