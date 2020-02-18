@@ -7,7 +7,7 @@ import calendar
 import telebot
 import bothome
 import time
-import urllib.parse
+from emoji import emojize
 from functions import dbfuncs
 
 
@@ -21,8 +21,8 @@ class BotFuncs:
         self.data = []
         self.first_time = ''
         self.added_days = []
-        self.error = u'U+1F601'
-        self.success = 'U+1F601'
+        self.error = emojize("❌", use_aliases=True)
+        self.success = emojize("✅", use_aliases=True)
 
     # Занять переговорку (следующие 4 функции)
     def regTime(self, message):
