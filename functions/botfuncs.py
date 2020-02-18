@@ -122,6 +122,7 @@ class BotFuncs:
         chat_ids = self.db_funcs.getAllChatIds()
         user_data = self.db_funcs.getUser(message)
         print(user_data)
+        print(user_data[2])
 
         for chat_id in chat_ids:
             # if chat_id[0] != message.chat.id:
