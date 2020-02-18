@@ -334,7 +334,7 @@ class BotFuncs:
     @staticmethod
     def checkDateFormat(date_data):
         if int(date_data) < 10:
-            return '0' + date_data
+            return '0' + str(date_data)
         else:
             return date_data
 
