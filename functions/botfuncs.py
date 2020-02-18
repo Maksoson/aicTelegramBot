@@ -64,8 +64,8 @@ class BotFuncs:
                 else:
                     self.dataReg['month_reg'] = str(datetime.today().month)
 
-                self.getDayList(message.from_user.id, int(self.dataReg['day_reg']))
-                self.bot.send_message(message.chat.id, 'Во сколько тебе нужна переговорка?',
+                day_list = self.getDayList(message.from_user.id, int(self.dataReg['day_reg']))
+                self.bot.send_message(message.chat.id, day_list + 'Во сколько тебе нужна переговорка?',
                                       reply_markup=self.getCancelButton())
                 self.bot.register_next_step_handler(message, self.regStartTime)
             else:
@@ -173,12 +173,15 @@ class BotFuncs:
                 if int(day) == int(row[11]) and int(month) == int(row[12]):
                     if self.first_time == '' and data_time >= row[13]:
                         if data_time < row[14]:
+                            print('1')
                             intersect_times.append(row)
                     elif self.first_time != '' and data_time > row[13]:
                         if data_time < row[14]:
+                            print('2')
                             intersect_times.append(row)
                     if self.first_time != '':
                         if self.first_time < row[13] and data_time >= row[14]:
+                            print('3')
                             intersect_times.append(row)
             if self.first_time == '':
                 self.first_time = data_time
@@ -194,9 +197,9 @@ class BotFuncs:
         last_day = 0
         if len(self.data) > 0:
             if func_type == 1:
-                result_list += 'Введи номер записи, которую хочешь отменить:\n\n'
+                result_list += 'Введи номер записи, которую хочешь отменить:\n'
             elif func_type == 2:
-                result_list += 'Введи номер записи, которую хочешь изменить:\n\n'
+                result_list += 'Введи номер записи, которую хочешь изменить:\n'
             for row in self.data:
                 now_month = self.checkDateFormat(row[3])
                 if last_day != row[2]:
@@ -362,7 +365,7 @@ class BotFuncs:
 
     @staticmethod
     def getCancelButton():
-        keyboard = telebot.types.ReplyKeyboardMarkup(True)
+        keyboard = telebot.types.InlineKeyboardMarkup(True)
         keyboard.add(telebot.types.InlineKeyboardButton('Отмена'))
 
         return keyboard

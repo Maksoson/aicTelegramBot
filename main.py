@@ -117,10 +117,8 @@ def send_text(message):
 def sticker_id(message):
     print(message)
 
-
-def deleteOldTimes():
-    db_funcs.deleteOldTimes()
-
+# @bot.callback_query_handler(func=lambda c: c.data)
+# def choose_film(c):
 
 # ------------------------------------------------ #
 server = Flask(__name__)
