@@ -129,7 +129,7 @@ class BotFuncs:
         user_data = self.db_funcs.getUser(message)[0]
         day_reg = self.checkDateFormat(self.dataReg['day_reg'])
         month_reg = self.checkDateFormat(self.dataReg['month_reg'])
-        # day_reg = self.dataReg['day_reg'] if int(self.dataReg['day_reg']) > 9 else '0' + self.dataReg['day_reg']
+        day_reg = self.dataReg['day_reg'] if int(self.dataReg['day_reg']) > 9 else '0' + self.dataReg['day_reg']
         # month_reg = self.dataReg['month_reg'] if int(self.dataReg['month_reg']) > 9 else '0' + self.dataReg['month_reg']
 
         for chat_id in chat_ids:
