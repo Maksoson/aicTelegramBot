@@ -27,12 +27,13 @@ class BotFuncs:
         self.memo = emojize("📝", use_aliases=True)
 
     # Записи за выбранный день
-    def getDayList(self, user_id, day_data):
-        data = self.db_funcs.getTimesDay(user_id, day_data)
+    def getDayList(self, day_data):
+        data = self.db_funcs.getTimesDay(day_data)
         counter = 1
         result_list = self.memo + ' '
         if len(data) > 0:
             for row in data:
+                print(row)
                 if counter == 1:
                     result_list += 'Занятость на ' + self.checkDateFormat(row[3]) + '.' + self.checkDateFormat(row[2]) \
                                    + str(datetime.today().year) + ':\n\n'
@@ -64,7 +65,7 @@ class BotFuncs:
                 else:
                     self.dataReg['month_reg'] = str(datetime.today().month)
 
-                day_list = self.getDayList(message.from_user.id, int(self.dataReg['day_reg']))
+                day_list = self.getDayList(int(self.dataReg['day_reg']))
                 self.bot.send_message(message.chat.id, day_list + 'Во сколько тебе нужна переговорка?',
                                       reply_markup=self.getCancelButton())
                 self.bot.register_next_step_handler(message, self.regStartTime)
@@ -173,15 +174,12 @@ class BotFuncs:
                 if int(day) == int(row[11]) and int(month) == int(row[12]):
                     if self.first_time == '' and data_time >= row[13]:
                         if data_time < row[14]:
-                            print('1')
                             intersect_times.append(row)
                     elif self.first_time != '' and data_time > row[13]:
                         if data_time < row[14]:
-                            print('2')
                             intersect_times.append(row)
                     if self.first_time != '':
                         if self.first_time < row[13] and data_time >= row[14]:
-                            print('3')
                             intersect_times.append(row)
             if self.first_time == '':
                 self.first_time = data_time
