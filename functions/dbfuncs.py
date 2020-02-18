@@ -76,6 +76,15 @@ class DatabaseFuncs:
 
                 return cursor.fetchone()
 
+    # Получить все чаты для рассылки
+    def getAllChatIds(self):
+        with closing(self.getConnection()) as connection:
+            with connection.cursor() as cursor:
+                query = 'SELECT user_char_id FROM public.users'
+                cursor.execute(query)
+
+                return cursor.fetchall()
+
     # Добавить запись на переговорку
     def addToTimetable(self, message, collection):
         with closing(self.getConnection()) as connection:

@@ -3,6 +3,7 @@ from datetime import datetime
 import calendar
 import telebot
 import bothome
+import time
 from functions import dbfuncs
 
 
@@ -103,17 +104,28 @@ class BotFuncs:
                     self.bot.send_message(message.chat.id, answer)
                     self.bot.register_next_step_handler(message, self.endRegTime)
                     return
-                self.bot.send_message(message.chat.id, 'Записал тебя на ' + self.dataReg['start_time'] + " - " + self.dataReg[
-                                      'end_time'] + ", " + self.dataReg['day_reg'] + " число", reply_markup=self.getStartKeyboard())
+                final_add_text = 'Записал тебя на ' + self.dataReg['start_time'] + " - " + self.dataReg[
+                                      'end_time'] + ", " + self.dataReg['day_reg'] + " число"
+                self.bot.send_message(message.chat.id, final_add_text, reply_markup=self.getStartKeyboard())
                 self.first_time = ''
                 self.added_days = []
                 self.db_funcs.addToTimetable(message, self.dataReg)
+                self.sendTimetableNews(final_add_text)
             else:
                 self.bot.send_message(message.chat.id, 'Кажется, ты ошибся. Пожалуйста, повтори ввод')
                 self.bot.register_next_step_handler(message, self.endRegTime)
         else:
             self.first_time = ''
             self.bot.send_message(message.chat.id, 'Ввод отменен', reply_markup=self.getStartKeyboard())
+
+    def sendTimetableNews(self, text):
+        chat_ids = self.db_funcs.getAllChatIds()
+        for chat_id in chat_ids:
+            try:
+                time.sleep(1)
+                self.bot.send_message(chat_id, text)
+            except:
+                continue
 
     # Проверка введенного времени на пересечение с уже существующими записями
     def checkTimesIntersection(self, day, month, time):
