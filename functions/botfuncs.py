@@ -26,7 +26,7 @@ class BotFuncs:
         self.bot.register_next_step_handler(message, self.regDayTime)
 
     def regDayTime(self, message):
-        self.dataReg['day_reg'] = str(message.text).strip()
+        self.dataReg['day_reg'] = str(message.text[0:2]).strip()
         if self.dataReg['day_reg'] != '-':
             if not re.match(r'^[0-9]{1,2}$', self.dataReg['day_reg'].lower()):
                 self.bot.send_message(message.chat.id, 'Выбери или введи число из предложенных:\n'
@@ -102,7 +102,7 @@ class BotFuncs:
                         counter += 1
                     answer += '\nПоменяй время или отмени ввод символом `-`'
                     self.bot.send_message(message.chat.id, answer)
-                    self.bot.register_next_step_handler(message, self.endRegTime)
+                    self.bot.register_next_step_handler(message, self.regStartTime)
                     return
                 final_add_text = 'Записал тебя на ' + self.dataReg['start_time'] + " - " + self.dataReg[
                                       'end_time'] + ", " + self.dataReg['day_reg'] + " число"
@@ -138,23 +138,23 @@ class BotFuncs:
         self.dataReg = {'start_time': '', 'end_time': '', 'day_reg': '', 'month_reg': ''}
 
     # Проверка введенного времени на пересечение с уже существующими записями
-    def checkTimesIntersection(self, day, month, time):
+    def checkTimesIntersection(self, day, month, data_time):
         data = self.db_funcs.sortTimes(self.db_funcs.getAllTimes(), 2)
         intersect_times = []
         if len(data) > 0:
             for row in data:
                 if int(day) == int(row[11]) and int(month) == int(row[12]):
-                    if self.first_time == '' and time >= row[13]:
-                        if time < row[14]:
+                    if self.first_time == '' and data_time >= row[13]:
+                        if data_time < row[14]:
                             intersect_times.append(row)
-                    elif self.first_time != '' and time > row[13]:
-                        if time <= row[14]:
+                    elif self.first_time != '' and data_time > row[13]:
+                        if data_time < row[14]:
                             intersect_times.append(row)
                     if self.first_time != '':
-                        if self.first_time < row[13] and time >= row[14]:
+                        if self.first_time < row[13] and data_time >= row[14]:
                             intersect_times.append(row)
             if self.first_time == '':
-                self.first_time = time
+                self.first_time = data_time
 
         return intersect_times
 
@@ -281,10 +281,12 @@ class BotFuncs:
 
     def getDaysKeyboard(self):
         self.added_days = []
+        day_names = ['(пн)', '(вт)', '(ср)', '(чт)', '(пт)', '(сб)', '(вск)', ]
         keyboard = telebot.types.ReplyKeyboardMarkup(True, True)
         row_width = 7
         buttons_added = []
         now = datetime.today()
+        now_day_num = datetime.weekday()
         days_in_month = calendar.monthrange(now.year, now.month)[1]
         for num in range(now.day, now.day + 14):
             if num > days_in_month:
@@ -292,7 +294,11 @@ class BotFuncs:
             else:
                 day_num = num
             self.added_days.append(day_num)
-            buttons_added.append(telebot.types.InlineKeyboardButton(text=str(day_num) + ' (пн)', callback_data=day_num))
+            buttons_added.append(telebot.types.InlineKeyboardButton(text=str(day_num) + day_names[now_day_num]))
+            if now_day_num != 6:
+                now_day_num += 1
+            else:
+                now_day_num = 0
             if len(buttons_added) == row_width:
                 keyboard.row(*buttons_added)
                 buttons_added = []
@@ -316,8 +322,8 @@ class BotFuncs:
                                                '/my - вывести только твои забронированное время.\n'
                                                '/time - вывести текущую дату и время.\n'
                                                '/cat - вывести случайную гифку с котом. (offed)\n\n'
-                                               'Версия бота: 0.7.13\n'
-                                               'Последнее обновление: 14.02.2020\n')
+                                               'Версия бота: 0.7.17\n'
+                                               'Последнее обновление: 18.02.2020\n')
 
 
     @staticmethod
