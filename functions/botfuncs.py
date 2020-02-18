@@ -23,6 +23,7 @@ class BotFuncs:
         self.added_days = []
         self.error = emojize("❌", use_aliases=True)
         self.success = emojize("✅", use_aliases=True)
+        self.pushpin = emojize("📌", use_aliases=True)
 
     # Занять переговорку (следующие 4 функции)
     def regTime(self, message):
@@ -34,7 +35,7 @@ class BotFuncs:
         self.dataReg['day_reg'] = str(message.text[0:2]).strip()
         if self.dataReg['day_reg'].lower() != 'отмена':
             if not re.match(r'^[0-9]{1,2}$', self.dataReg['day_reg'].lower()):
-                self.bot.send_message(message.chat.id, self.error + '\nНеверно, выбери снова:',
+                self.bot.send_message(message.chat.id, self.error + ' Неверно, выбери снова:',
                                       reply_markup=self.getDaysKeyboard())
                 self.bot.register_next_step_handler(message, self.regDayTime)
                 return
@@ -47,10 +48,10 @@ class BotFuncs:
                 else:
                     self.dataReg['month_reg'] = str(datetime.today().month)
                 self.bot.send_message(message.chat.id, 'Во сколько тебе нужна переговорка?',
-                                      reply_markup=self.getCancelButton())
+                                      reply_markup=self.getNumberKeyboard())
                 self.bot.register_next_step_handler(message, self.regStartTime)
             else:
-                self.bot.send_message(message.chat.id, self.error + '\nНеверно, выбери снова',
+                self.bot.send_message(message.chat.id, self.error + ' Неверно, выбери снова',
                                       reply_markup=self.getDaysKeyboard())
                 self.bot.register_next_step_handler(message, self.regDayTime)
         else:
@@ -63,25 +64,25 @@ class BotFuncs:
         if self.dataReg['start_time'].lower() != 'отмена':
             if not re.match(r'^[0-9]{0,2}(:|\s)[0-9]{2}$', self.dataReg['start_time'].lower()):
                 if not re.match(r'^[0-9]{1,2}$', self.dataReg['start_time'].lower()):
-                    self.bot.send_message(message.chat.id, self.error + '\nНеверные данные, повтори ввод',
-                                          reply_markup=self.getCancelButton())
+                    self.bot.send_message(message.chat.id, self.error + ' Неверные данные, повтори ввод',
+                                          reply_markup=self.getNumberKeyboard())
                     self.bot.register_next_step_handler(message, self.regStartTime)
                     return
             self.dataReg['start_time'] = self.db_funcs.checkTimeBefore(self.dataReg['start_time'])
             intersection_times = self.checkTimesIntersection(self.dataReg['day_reg'], self.dataReg['month_reg'], self.dataReg['start_time'])
             if len(intersection_times) > 0:
-                answer = self.error + '\nТвое время пересекается с:\n\n'
+                answer = self.error + ' Твое время пересекается с:\n\n'
                 counter = 1
                 for row in intersection_times:
                     answer += str(counter) + '. ' + row[13] + ' - ' + row[14] + '  ---  ' \
                               + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                     counter += 1
                 answer += '\nПовтори ввод'
-                self.bot.send_message(message.chat.id, answer, reply_markup=self.getCancelButton())
+                self.bot.send_message(message.chat.id, answer, reply_markup=self.getNumberKeyboard())
                 self.bot.register_next_step_handler(message, self.regStartTime)
                 return
             self.bot.send_message(message.chat.id, 'До скольки тебе нужна переговорка?',
-                                  reply_markup=self.getCancelButton())
+                                  reply_markup=self.getNumberKeyboard())
             self.bot.register_next_step_handler(message, self.endRegTime)
         else:
             self.first_time = ''
@@ -92,8 +93,8 @@ class BotFuncs:
         if self.dataReg['end_time'].lower() != 'отмена':
             if not re.match(r'^[0-9]{0,2}(:|\s)[0-9]{2}$', self.dataReg['end_time'].lower()):
                 if not re.match(r'^[0-9]{1,2}$', self.dataReg['end_time'].lower()):
-                    self.bot.send_message(message.chat.id, self.error + '\nНеверные данные, повтори ввод',
-                                          reply_markup=self.getCancelButton())
+                    self.bot.send_message(message.chat.id, self.error + ' Неверные данные, повтори ввод',
+                                          reply_markup=self.getNumberKeyboard())
                     self.bot.register_next_step_handler(message, self.endRegTime)
                     return
             self.dataReg['end_time'] = self.db_funcs.checkTimeBefore(self.dataReg['end_time'])
@@ -101,26 +102,26 @@ class BotFuncs:
                 intersection_times = self.checkTimesIntersection(self.dataReg['day_reg'], self.dataReg['month_reg'],
                                                                  self.dataReg['end_time'])
                 if len(intersection_times) > 0:
-                    answer = self.error + '\nТвое время пересекается с:\n\n'
+                    answer = self.error + ' Твое время пересекается с:\n\n'
                     counter = 1
                     for row in intersection_times:
                         answer += str(counter) + '. ' + row[13] + ' - ' + row[14] + '  ---  ' \
                                   + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                         counter += 1
                     answer += '\nПовтори ввод'
-                    self.bot.send_message(message.chat.id, answer, reply_markup=self.getCancelButton())
+                    self.bot.send_message(message.chat.id, answer, reply_markup=self.getNumberKeyboard())
                     self.bot.register_next_step_handler(message, self.regStartTime)
                     return
                 final_add_text = 'Записал тебя c ' + self.dataReg['start_time'] + " до " + self.dataReg[
                                   'end_time'] + ", на " + self.checkDateFormat(self.dataReg['day_reg']) + '.' \
-                                 + self.checkDateFormat(self.dataReg['month_reg']) + ' ' + self.success
+                                 + self.checkDateFormat(self.dataReg['month_reg']) + '  ' + self.success
                 self.bot.send_message(message.chat.id, final_add_text, reply_markup=self.getStartKeyboard())
                 self.first_time = ''
                 self.added_days = []
                 self.db_funcs.addToTimetable(message, self.dataReg)
                 # self.sendTimetableNews(message)
             else:
-                self.bot.send_message(message.chat.id, self.error + '\nПовтори ввод', reply_markup=self.getCancelButton())
+                self.bot.send_message(message.chat.id, self.error + ' Повтори ввод', reply_markup=self.getNumberKeyboard())
                 self.bot.register_next_step_handler(message, self.endRegTime)
         else:
             self.first_time = ''
@@ -177,28 +178,26 @@ class BotFuncs:
         last_day = 0
         if len(self.data) > 0:
             if func_type == 1:
-                result_list += 'Введи номер записи, которую хочешь отменить:\n' \
-                               '(Отмени ввод символом `-`)\n'
+                result_list += 'Введи номер записи, которую хочешь отменить:'
             elif func_type == 2:
-                result_list += 'Введи номер записи, которую хочешь изменить:\n' \
-                               '(Отмени ввод символом `-`)\n'
+                result_list += 'Введи номер записи, которую хочешь изменить:'
             for row in self.data:
                 now_month = self.checkDateFormat(row[3])
                 if last_day != row[2]:
                     last_day = self.checkDateFormat(row[2])
                     if last_day != 0:
                         result_list += '\n'
-                    result_list += str(last_day) + '.' + str(now_month) + '.' + str(datetime.today().year) + ':\n\n'
+                    result_list += self.pushpin + " " + str(last_day) + '.' + str(now_month) + '.' + str(datetime.today().year) + ':\n\n'
                 result_list += str(counter) + '. ' + row[4] + ' - ' + row[5] + '\n'
                 counter += 1
-            self.bot.send_message(chat_id, result_list)
+            self.bot.send_message(chat_id, result_list, reply_markup=self.getNumberKeyboard())
             if func_type == 1:
                 self.bot.register_next_step_handler(message, self.deleteTime)
             # elif func_type == 2:
             #     self.bot.register_next_step_handler(message, self.updateTime)
         else:
             result_list += 'Сегодня переговорку ты не занимал'
-            self.bot.send_message(chat_id, result_list)
+            self.bot.send_message(chat_id, result_list, reply_markup=self.getStartKeyboard())
 
     # Удаление записи
     def deleteTime(self, message):
@@ -206,12 +205,14 @@ class BotFuncs:
         if delete_time_id != '-':
             if not delete_time_id.isdigit():
                 self.bot.send_message(message.chat.id, 'Неверно, введи номер еще раз')
-                self.bot.register_next_step_handler(message, self.deleteTime)
+                self.bot.register_next_step_handler(message, self.deleteTime, reply_markup=self.getNumberKeyboard())
             counter = 1
             for row in self.data:
                 if counter == int(delete_time_id):
                     self.db_funcs.deleteFromTimetable(row[0])
-                    self.bot.send_message(message.chat.id, 'Запись на ' + row[4] + " - " + row[5] + " удалена!")
+                    self.bot.send_message(message.chat.id, 'Запись на ' + row[4] + " - " + row[5] + " за " +
+                                          self.checkDateFormat(row[2]) + "." + self.checkDateFormat(row[3]) +
+                                          " удалена!  " + self.success, reply_markup=self.getStartKeyboard())
                     self.data = []
                     break
                 counter += 1
@@ -246,13 +247,13 @@ class BotFuncs:
                     counter = 1
                     if last_day != 0:
                         result_list += '\n'
-                    result_list += str(last_day) + '.' + str(now_month) + '.' + str(datetime.today().year) + ':\n\n'
+                    result_list += self.pushpin + " " + str(last_day) + '.' + str(now_month) + '.' + str(datetime.today().year) + ':\n\n'
                 result_list += str(counter) + '. ' + row[4] + ' - ' + row[5] + '\n'
                 counter += 1
+            self.bot.send_message(message.chat.id, result_list, reply_markup=self.getNumberKeyboard())
         else:
             result_list += 'сегодня переговорку ты не занимал'
-
-        self.bot.send_message(message.chat.id, result_list)
+            self.bot.send_message(message.chat.id, result_list, reply_markup=self.getStartKeyboard())
 
     # Занятость переговорки на сегодня
     def printAllTimes(self, message):
@@ -268,15 +269,17 @@ class BotFuncs:
                     counter = 1
                     if last_day != 0:
                         result_list += '\n'
-                    result_list += str(last_day) + '.' + str(now_month) + '.' + str(datetime.today().year) + ':\n\n'
+                    result_list += self.pushpin + " " + str(last_day) + '.' + str(now_month) + '.' \
+                                   + str(datetime.today().year) + ':\n\n'
                 result_list += str(counter) + '. ' + row[13] + ' - ' + row[14] + '  ---  ' \
                                + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                 counter += 1
+            self.bot.send_message(message.chat.id, result_list, reply_markup=self.getStartKeyboard())
         else:
-            result_list = 'Сегодня переговорку еще никто не занимал! Успей забрать лучшее время ;)'
+            self.bot.send_message(message.chat.id, 'Сегодня переговорку еще никто не занимал! Успей '
+                                                   'забрать лучшее время ;)', reply_markup=self.getStartKeyboard())
 
-        self.bot.send_message(message.chat.id, result_list, reply_markup=self.getStartKeyboard())
-
+    # Клавиатура выбора дней
     def getDaysKeyboard(self):
         self.added_days = []
         day_names = ['(пн)', '(вт)', '(ср)', '(чт)', '(пт)', '(сб)', '(вск)', ]
@@ -342,9 +345,12 @@ class BotFuncs:
             return date_data
 
     @staticmethod
-    def getCancelButton():
+    def getNumberKeyboard():
         keyboard = telebot.types.ReplyKeyboardMarkup(True)
-        keyboard.row('Отмена')
+        keyboard.row('1', '2', '3')
+        keyboard.row('4', '5', '6')
+        keyboard.row('7', '8', '9')
+        keyboard.row('0', 'Отмена')
 
         return keyboard
 
