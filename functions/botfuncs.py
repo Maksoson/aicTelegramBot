@@ -122,10 +122,12 @@ class BotFuncs:
         chat_ids = self.db_funcs.getAllChatIds()
         user_data = self.db_funcs.getUser(message)
         for chat_id in chat_ids:
+            print(chat_id[0])
+            print(type(chat_id[0]))
             if chat_id[0] != message.chat.id:
                 try:
                     time.sleep(1)
-                    self.bot.send_message(chat_id[0], 'Пользователь ' + user_data[2] + ' ' + user_data[3] +
+                    self.bot.send_message(int(chat_id[0]), 'Пользователь ' + user_data[2] + ' ' + user_data[3] +
                                           ' (@' + user_data[1] + ') занял переговорку ' + self.dataReg['day_use'] + '.'
                                           + self.dataReg['month_use'] + ' с ' + self.dataReg['start_time'] + ' по ' +
                                           self.dataReg['end_time'])
