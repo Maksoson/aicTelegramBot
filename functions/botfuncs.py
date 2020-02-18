@@ -109,8 +109,8 @@ class BotFuncs:
                 self.bot.send_message(message.chat.id, final_add_text, reply_markup=self.getStartKeyboard())
                 self.first_time = ''
                 self.added_days = []
-                self.sendTimetableNews(message)
-                self.db_funcs.addToTimetable(message, self.dataReg)
+                if self.db_funcs.addToTimetable(message, self.dataReg):
+                    self.sendTimetableNews(message)
             else:
                 self.bot.send_message(message.chat.id, 'Кажется, ты ошибся. Пожалуйста, повтори ввод')
                 self.bot.register_next_step_handler(message, self.endRegTime)
@@ -118,22 +118,24 @@ class BotFuncs:
             self.first_time = ''
             self.bot.send_message(message.chat.id, 'Ввод отменен', reply_markup=self.getStartKeyboard())
 
+    # Рассылка о добавленной записи
     def sendTimetableNews(self, message):
         chat_ids = self.db_funcs.getAllChatIds()
-        user_data = self.db_funcs.getUser(message)
-        for row in user_data:
-            user_data = row
-            break
+        user_data = self.db_funcs.getUser(message)[0]
+        day_reg = self.dataReg['day_reg'] if int(self.dataReg['day_reg']) > 9 else '0' + self.dataReg['day_reg']
+        month_reg = self.dataReg['month_reg'] if int(self.dataReg['month_reg']) > 9 else '0' + self.dataReg['month_reg']
+
         for chat_id in chat_ids:
             if chat_id[0] != message.chat.id:
                 try:
                     time.sleep(1)
                     self.bot.send_message(chat_id[0], 'Пользователь ' + user_data[2] + ' ' + user_data[3] +
-                                          ' (@' + user_data[1] + ') занял переговорку ' + self.dataReg['day_reg'] + '.'
-                                          + self.dataReg['month_reg'] + ' с ' + self.dataReg['start_time'] + ' по ' +
-                                          self.dataReg['end_time'])
+                                          ' (@' + user_data[1] + ') занял переговорку ' + day_reg + '.' + month_reg +
+                                          ' с ' + self.dataReg['start_time'] + ' по ' + self.dataReg['end_time'])
                 except:
                     pass
+
+        self.dataReg = {'start_time': '', 'end_time': '', 'day_reg': '', 'month_reg': ''}
 
     # Проверка введенного времени на пересечение с уже существующими записями
     def checkTimesIntersection(self, day, month, time):
