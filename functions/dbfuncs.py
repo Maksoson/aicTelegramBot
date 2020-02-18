@@ -156,6 +156,7 @@ class DatabaseFuncs:
     @staticmethod
     def sortTimes(times_data, type_func):
         new_times_data = []
+        print(times_data)
 
         if type_func == 1:
             new_times_data = sorted(times_data, key=lambda row: (row[2], row[4], row[3]), reverse=False)

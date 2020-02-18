@@ -130,7 +130,7 @@ class BotFuncs:
                             if time < row[14]:
                                 intersect_times.append(row)
                     if self.first_time != '':
-                        if self.first_time < row[13] and time > row[14]:
+                        if self.first_time < row[13] and time >= row[14]:
                             intersect_times.append(row)
             if self.first_time == '':
                 self.first_time = time
