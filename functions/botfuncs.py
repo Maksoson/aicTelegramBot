@@ -121,19 +121,19 @@ class BotFuncs:
     def sendTimetableNews(self, message):
         chat_ids = self.db_funcs.getAllChatIds()
         user_data = self.db_funcs.getUser(message)
-        print(user_data)
-        print(user_data[2])
-
+        for row in user_data:
+            user_data = row
+            break
         for chat_id in chat_ids:
-            # if chat_id[0] != message.chat.id:
-            #     try:
-            #         time.sleep(1)
+            if chat_id[0] != message.chat.id:
+                try:
+                    time.sleep(1)
                     self.bot.send_message(chat_id[0], 'Пользователь ' + user_data[2] + ' ' + user_data[3] +
                                           ' (@' + user_data[1] + ') занял переговорку ' + self.dataReg['day_reg'] + '.'
                                           + self.dataReg['month_reg'] + ' с ' + self.dataReg['start_time'] + ' по ' +
                                           self.dataReg['end_time'])
-                # except:
-                #     pass
+                except:
+                    pass
 
     # Проверка введенного времени на пересечение с уже существующими записями
     def checkTimesIntersection(self, day, month, time):
