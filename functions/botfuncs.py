@@ -35,8 +35,8 @@ class BotFuncs:
             for row in data:
                 print(row)
                 if counter == 1:
-                    result_list += 'Занятость на ' + self.checkDateFormat(row[3]) + '.' + self.checkDateFormat(row[2]) \
-                                   + str(datetime.today().year) + ':\n\n'
+                    result_list += 'Занятость на ' + str(self.checkDateFormat(row[3])) + '.' + \
+                                   str(self.checkDateFormat(row[2])) + str(datetime.today().year) + ':\n\n'
                 result_list += str(counter) + '. ' + row[4] + ' - ' + row[5] + '\n'
                 counter += 1
 
@@ -176,11 +176,10 @@ class BotFuncs:
                         if data_time < row[14]:
                             intersect_times.append(row)
                     elif self.first_time != '' and data_time > row[13]:
-                        if data_time < row[14]:
+                        if data_time <= row[14]:
                             intersect_times.append(row)
-                    if self.first_time != '':
-                        if self.first_time < row[13] and data_time >= row[14]:
-                            intersect_times.append(row)
+                    elif self.first_time < row[13] and data_time >= row[14]:
+                        intersect_times.append(row)
             if self.first_time == '':
                 self.first_time = data_time
 
