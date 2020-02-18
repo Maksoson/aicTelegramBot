@@ -5,4 +5,6 @@ old_main.py
 test.py
 config_archive.py
 
+*.txt
+
 .idea/

@@ -11,22 +11,6 @@ class DatabaseFuncs:
     def __init__(self, bot):
         self.bot = bot
 
-    # Создание таблицы пользователей (не совсем актуально, позже изменю)
-    def createUsersTable(self):
-        with closing(self.getConnection()) as connection:
-            with connection.cursor() as cursor:
-                query = """CREATE TABLE public.users ( id SERIAL PRIMARY KEY,
-                          user_accname character(90) DEFAULT NULL,
-                          user_firstname character(90) DEFAULT NULL,
-                          user_lastname character(90) DEFAULT NULL,
-                          user_id integer NOT NULL,
-                          user_language character(20) DEFAULT NULL,
-                          user_rank character(45) NOT NULL DEFAULT 'Beginner',
-                          user_isbot boolean NOT NULL );
-                        """
-
-                cursor.execute(query)
-
     # Проверка данных о пользователе из БД на актуальность
     def checkUser(self, message):
         with closing(self.getConnection()) as connection:
@@ -64,11 +48,11 @@ class DatabaseFuncs:
     def addUser(self, message):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
-                query = 'INSERT INTO public.users (user_accname, user_firstname, user_lastname, user_id, user_language, user_isbot) ' \
-                        'VALUES (%s, %s, %s, %s, %s, %s)'
+                query = 'INSERT INTO public.users (user_accname, user_firstname, user_lastname, user_id, user_chat_id, user_language, user_isbot) ' \
+                        'VALUES (%s, %s, %s, %s, %s, %s, %s)'
                 cursor.execute(query,
-                               (self.checkNone(message.from_user.username), self.checkNone(message.from_user.first_name), self.checkNone(message.from_user.last_name),
-                                message.from_user.id, str(message.from_user.language_code).strip(), message.from_user.is_bot))
+                               [self.checkNone(message.from_user.username), self.checkNone(message.from_user.first_name), self.checkNone(message.from_user.last_name),
+                                message.from_user.id, message.chat.id, str(message.from_user.language_code).strip(), message.from_user.is_bot])
                 connection.commit()
 
     # Обновить данные о пользователе
@@ -76,11 +60,11 @@ class DatabaseFuncs:
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
                 query = 'UPDATE public.users ' \
-                        'SET user_accname = %s, user_firstname = %s, user_lastname = %s, user_id = %s, user_language = %s, user_isbot = %s ' \
+                        'SET user_accname = %s, user_firstname = %s, user_lastname = %s, user_id = %s, user_chat_id = %s, user_language = %s, user_isbot = %s' \
                         'WHERE user_id = %s'
                 cursor.execute(query,
-                               (self.checkNone(message.from_user.username), self.checkNone(message.from_user.first_name), self.checkNone(message.from_user.last_name),
-                                message.from_user.id, str(message.from_user.language_code).strip(), message.from_user.is_bot, message.from_user.id))
+                               [self.checkNone(message.from_user.username), self.checkNone(message.from_user.first_name), self.checkNone(message.from_user.last_name),
+                                message.from_user.id, message.chat.id, str(message.from_user.language_code).strip(), message.from_user.is_bot, message.from_user.id])
                 connection.commit()
 
     # Получить id пользователя по telegram_id (user_id)
@@ -99,12 +83,13 @@ class DatabaseFuncs:
                 start_time = self.checkTimeBefore(collection['start_time'])
                 end_time = self.checkTimeBefore(collection['end_time'])
                 day_reg = collection['day_reg']
+                month_reg = collection['month_reg']
                 date_create = datetime.datetime.today().date()
                 date_update = date_create
 
-                query = 'INSERT INTO public.timetable (user_id, day_use, start_time, end_time, date_create, date_update) ' \
+                query = 'INSERT INTO public.timetable (user_id, day_use, month_use, start_time, end_time, date_create, date_update) ' \
                         'VALUES (%s, %s, %s, %s, %s::date, %s::date)'
-                cursor.execute(query, [self.getUserId(message)[0], day_reg,
+                cursor.execute(query, [self.getUserId(message)[0], day_reg, month_reg,
                                        start_time, end_time, date_create, date_update])
                 connection.commit()
 
@@ -158,8 +143,8 @@ class DatabaseFuncs:
     def deleteOldTimes(self):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
-                query = 'DELETE FROM public.timetable WHERE day_use = %s'
-                cursor.execute(query, [datetime.datetime.today().day])
+                query = 'DELETE FROM public.timetable WHERE day_use = %s AND month_use = %s'
+                cursor.execute(query, [datetime.datetime.today().day, datetime.datetime.today().month])
                 connection.commit()
 
     # Замена None на пустую строку

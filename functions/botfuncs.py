@@ -55,11 +55,11 @@ class BotFuncs:
                     return
             self.dataReg['start_time'] = self.db_funcs.checkTimeBefore(self.dataReg['start_time'])
             intersection_times = self.checkTimesIntersection(self.dataReg['day_reg'], self.dataReg['start_time'])
-            print("LEN + " + str(len(intersection_times)))
             if len(intersection_times) > 0:
                 answer = 'Ваше время пересекается с:\n\n'
                 counter = 1
                 for row in intersection_times:
+                    print(row)
                     answer += str(counter) + '. ' + row[11] + ' - ' + row[12] + '  ---  ' \
                               + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                     counter += 1
@@ -286,3 +286,4 @@ class BotFuncs:
                 buttons_added = []
 
         return keyboard
+
