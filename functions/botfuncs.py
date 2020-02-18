@@ -42,6 +42,8 @@ class BotFuncs:
                                + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                 counter += 1
             result_list += '\n'
+        else:
+            result_list = 'В этот день переговорку еще никто не занимал (:'
 
         return result_list
 
@@ -141,7 +143,7 @@ class BotFuncs:
                 self.first_time = ''
                 self.added_days = []
                 self.db_funcs.addToTimetable(message, self.dataReg)
-                # self.sendTimetableNews(message)
+                self.sendTimetableNews(message)
             else:
                 self.bot.send_message(message.chat.id, self.error + ' Повтори ввод', reply_markup=self.getCancelButton())
                 self.bot.register_next_step_handler(message, self.endRegTime)
