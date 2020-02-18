@@ -126,7 +126,7 @@ class DatabaseFuncs:
                 return cursor.fetchall()
 
     # Получить мои сегодняшние записи на переговорку
-    def getMyTimesToday(self, user_id, day):
+    def getMyTimesDay(self, user_id, day):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
                 query = 'SELECT * FROM public.timetable WHERE user_id = %s AND day_use = %s'
