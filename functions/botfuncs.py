@@ -28,17 +28,17 @@ class BotFuncs:
 
     # Записи за выбранный день
     def getDayList(self, day_data):
-        data = self.db_funcs.getTimesDay(day_data)
+        data = self.db_funcs.sortTimes(self.db_funcs.getTimesDay(day_data))
         counter = 1
         result_list = self.memo + ' '
         if len(data) > 0:
             for row in data:
-                print(row)
                 if counter == 1:
                     result_list += 'Занятость на ' + str(self.checkDateFormat(row[3])) + '.' + \
-                                   str(self.checkDateFormat(row[2])) + str(datetime.today().year) + ':\n\n'
+                                   str(self.checkDateFormat(row[2])) + '.' + str(datetime.today().year) + ':\n\n'
                 result_list += str(counter) + '. ' + row[4] + ' - ' + row[5] + '\n'
                 counter += 1
+            result_list += '\n'
 
         return result_list
 
@@ -323,27 +323,6 @@ class BotFuncs:
 
         return keyboard
 
-    # Время
-    def printToday(self, chat_id, today):
-        self.bot.send_message(chat_id, str(today.strftime("%H:%M  %d.%m.%Y")))
-
-    # Справка
-    def printHelp(self, message):
-        self.bot.send_message(message.chat.id, 'Список команд:\n\n'
-                                               '/help - вывести список команд.\n'
-                                               '/add - занять переговорку:\n'
-                                               '-- Тебе нужно будет 2 раза ввести время.\n'
-                                               '-- Примеры ввода времени: 15, 15 00, 15 30, 15:30\n'
-                                               '/delete - перейти в режим удаления своей записи.\n'
-                                               '/update - перейти в режим правки своих записей. (offed)\n'
-                                               '/all - вывести весь список забронированного времени.\n'
-                                               '/my - вывести только твои забронированное время.\n'
-                                               '/time - вывести текущую дату и время.\n'
-                                               '/cat - вывести случайную гифку с котом. (offed)\n\n'
-                                               'Версия бота: 0.7.17\n'
-                                               'Последнее обновление: 18.02.2020\n')
-
-
     @staticmethod
     def getStartKeyboard():
         start_keyboard = telebot.types.ReplyKeyboardMarkup(True)
@@ -367,3 +346,22 @@ class BotFuncs:
 
         return keyboard
 
+    # Время
+    def printToday(self, chat_id, today):
+        self.bot.send_message(chat_id, str(today.strftime("%H:%M  %d.%m.%Y")))
+
+    # Справка
+    def printHelp(self, message):
+        self.bot.send_message(message.chat.id, 'Список команд:\n\n'
+                                               '/help - вывести список команд.\n'
+                                               '/add - занять переговорку:\n'
+                                               '-- Тебе нужно будет 2 раза ввести время.\n'
+                                               '-- Примеры ввода времени: 15, 15 00, 15 30, 15:30\n'
+                                               '/delete - перейти в режим удаления своей записи.\n'
+                                               '/update - перейти в режим правки своих записей. (offed)\n'
+                                               '/all - вывести весь список забронированного времени.\n'
+                                               '/my - вывести только твои забронированное время.\n'
+                                               '/time - вывести текущую дату и время.\n'
+                                               '/cat - вывести случайную гифку с котом. (offed)\n\n'
+                                               'Версия бота: 0.7.17\n'
+                                               'Последнее обновление: 18.02.2020\n')
