@@ -21,8 +21,8 @@ class BotFuncs:
         self.data = []
         self.first_time = ''
         self.added_days = []
-        self.error = '\xE2\x9D\x8C'
-        self.success = '\xE2\x9C\x85'
+        self.error = u'U+1F601'
+        self.success = 'U+1F601'
 
     # Занять переговорку (следующие 4 функции)
     def regTime(self, message):
