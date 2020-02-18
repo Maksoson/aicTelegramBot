@@ -1,4 +1,4 @@
-import config
+from datafiles import config
 from contextlib import closing
 import dj_database_url
 import psycopg2
@@ -82,13 +82,13 @@ class DatabaseFuncs:
             with connection.cursor() as cursor:
                 start_time = self.checkTimeBefore(collection['start_time'])
                 end_time = self.checkTimeBefore(collection['end_time'])
-                day_reg = collection['day_reg']
-                month_reg = datetime.datetime.today().month
+                day_reg = int(collection['day_reg'])
+                month_reg = int(collection['month_reg'])
                 date_create = datetime.datetime.today().date()
                 date_update = date_create
 
                 query = 'INSERT INTO public.timetable (user_id, day_use, month_use, start_time, end_time, date_create, date_update) ' \
-                        'VALUES (%s, %s, %s, %s, %s::date, %s::date)'
+                        'VALUES (%s, %s, %s, %s, %s, %s::date, %s::date)'
                 cursor.execute(query, [self.getUserId(message)[0], day_reg, month_reg,
                                        start_time, end_time, date_create, date_update])
                 connection.commit()
@@ -158,9 +158,9 @@ class DatabaseFuncs:
         new_times_data = []
 
         if type_func == 1:
-            new_times_data = sorted(times_data, key=lambda row: (row[2], row[3]), reverse=False)
+            new_times_data = sorted(times_data, key=lambda row: (row[2], row[3], row[4]), reverse=False)
         elif type_func == 2:
-            new_times_data = sorted(times_data, key=lambda row: (row[10], row[11]), reverse=False)
+            new_times_data = sorted(times_data, key=lambda row: (row[10], row[11], row[12]), reverse=False)
 
         return new_times_data
 

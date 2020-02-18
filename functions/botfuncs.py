@@ -1,5 +1,6 @@
 import re
-import datetime
+from datetime import datetime
+import calendar
 import telebot
 import bothome
 from functions import dbfuncs
@@ -9,7 +10,7 @@ class BotFuncs:
 
     def __init__(self, bot):
         self.bot = bot
-        self.dataReg = {'start_time': '', 'end_time': '', 'day_reg': ''}
+        self.dataReg = {'start_time': '', 'end_time': '', 'day_reg': '', 'month_reg': ''}
         self.db_funcs = dbfuncs.DatabaseFuncs(self.bot)
         self.bot_home = bothome.BotHome()
         self.data = []
@@ -31,12 +32,19 @@ class BotFuncs:
                                       reply_markup=self.getDaysKeyboard())
                 self.bot.register_next_step_handler(message, self.regDayTime)
                 return
-            if int(self.dataReg['day_reg']) < datetime.datetime.today().day:
+            if int(self.dataReg['day_reg']) < datetime.today().day:
                 self.bot.send_message(message.chat.id, 'Неверно, повтори ввод:\n'
                                                        '(Отмени ввод символом `-`)',
                                       reply_markup=self.getDaysKeyboard())
                 self.bot.register_next_step_handler(message, self.regDayTime)
                 return
+            if int(self.dataReg['day_reg']) < datetime.today().day:
+                if datetime.today().month != 12:
+                    self.dataReg['month_reg'] = str(datetime.today().month + 1)
+                else:
+                    self.dataReg['month_reg'] = '1'
+            else:
+                self.dataReg['month_reg'] = str(datetime.today().month)
             self.bot.send_message(message.chat.id, 'Во сколько тебе нужна переговорка?\n'
                                                    '(Отмени ввод символом `-`)')
             self.bot.register_next_step_handler(message, self.regStartTime)
@@ -54,13 +62,13 @@ class BotFuncs:
                     self.bot.register_next_step_handler(message, self.regStartTime)
                     return
             self.dataReg['start_time'] = self.db_funcs.checkTimeBefore(self.dataReg['start_time'])
-            intersection_times = self.checkTimesIntersection(self.dataReg['day_reg'], self.dataReg['start_time'])
+            intersection_times = self.checkTimesIntersection(self.dataReg['day_reg'], self.dataReg['month_reg'], self.dataReg['start_time'])
             if len(intersection_times) > 0:
                 answer = 'Ваше время пересекается с:\n\n'
                 counter = 1
                 for row in intersection_times:
                     print(row)
-                    answer += str(counter) + '. ' + row[11] + ' - ' + row[12] + '  ---  ' \
+                    answer += str(counter) + '. ' + row[12] + ' - ' + row[13] + '  ---  ' \
                               + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                     counter += 1
                 answer += '\nПоменяй время или отмени ввод символом `-`'
@@ -83,12 +91,12 @@ class BotFuncs:
                     return
             self.dataReg['end_time'] = self.db_funcs.checkTimeBefore(self.dataReg['end_time'])
             if self.dataReg['end_time'] > self.dataReg['start_time']:
-                intersection_times = self.checkTimesIntersection(self.dataReg['day_reg'], self.dataReg['end_time'])
+                intersection_times = self.checkTimesIntersection(self.dataReg['day_reg'], self.dataReg['month_reg'], self.dataReg['end_time'])
                 if len(intersection_times) > 0:
                     answer = 'Ваше время пересекается с:\n\n'
                     counter = 1
                     for row in intersection_times:
-                        answer += str(counter) + '. ' + row[11] + ' - ' + row[12] + '  ---  ' \
+                        answer += str(counter) + '. ' + row[12] + ' - ' + row[13] + '  ---  ' \
                                   + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                         counter += 1
                     answer += '\nПоменяй время или отмени ввод символом `-`'
@@ -109,21 +117,21 @@ class BotFuncs:
             self.bot.send_message(message.chat.id, 'Ввод отменен', reply_markup=self.getStartKeyboard())
 
     # Проверка введенного времени на пересечение с уже существующими записями
-    def checkTimesIntersection(self, day, time):
+    def checkTimesIntersection(self, day, month, time):
         data = self.db_funcs.sortTimes(self.db_funcs.getAllTimes(), 2)
         intersect_times = []
         if len(data) > 0:
             for row in data:
-                if int(day) == int(row[10]):
-                    if time >= row[11]:
+                if int(day) == int(row[10]) and int(month) == int(row[11]):
+                    if time >= row[12]:
                         if self.first_time != '':
-                            if time <= row[12]:
+                            if time <= row[13]:
                                 intersect_times.append(row)
                         else:
-                            if time < row[12]:
+                            if time < row[13]:
                                 intersect_times.append(row)
                     if self.first_time != '':
-                        if self.first_time < row[11] and time > row[12]:
+                        if self.first_time < row[12] and time > row[13]:
                             intersect_times.append(row)
             if self.first_time == '':
                 self.first_time = time
@@ -137,7 +145,6 @@ class BotFuncs:
         self.data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message)), 1)
         counter = 1
         last_day = 0
-        now_month = datetime.datetime.today().month
         if len(self.data) > 0:
             if func_type == 1:
                 result_list += 'Введи номер записи, которую хочешь отменить:\n' \
@@ -145,15 +152,16 @@ class BotFuncs:
             elif func_type == 2:
                 result_list += 'Введи номер записи, которую хочешь изменить:\n' \
                                '(Отмени ввод символом `-`)\n'
-            if now_month < 10:
-                now_month = '0' + str(now_month)
             for row in self.data:
+                now_month = row[3]
+                if now_month < 10:
+                    now_month = '0' + str(now_month)
                 if last_day != row[2]:
                     last_day = row[2]
                     if last_day != 0:
                         result_list += '\n'
-                    result_list += str(last_day) + '.' + now_month + '.' + str(datetime.datetime.today().year) + ':\n\n'
-                result_list += str(counter) + '. ' + row[3] + ' - ' + row[4] + '\n'
+                    result_list += str(last_day) + '.' + now_month + '.' + str(datetime.today().year) + ':\n\n'
+                result_list += str(counter) + '. ' + row[4] + ' - ' + row[5] + '\n'
                 counter += 1
             self.bot.send_message(chat_id, result_list)
             if func_type == 1:
@@ -175,7 +183,7 @@ class BotFuncs:
             for row in self.data:
                 if counter == int(delete_time_id):
                     self.db_funcs.deleteFromTimetable(row[0])
-                    self.bot.send_message(message.chat.id, 'Запись на ' + row[3] + " - " + row[4] + " удалена!")
+                    self.bot.send_message(message.chat.id, 'Запись на ' + row[4] + " - " + row[5] + " удалена!")
                     self.data = []
                     break
                 counter += 1
@@ -201,19 +209,19 @@ class BotFuncs:
         data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message)), 1)
         counter = 1
         last_day = 0
-        now_month = datetime.datetime.today().month
-        if now_month < 10:
-            now_month = '0' + str(now_month)
         if len(data) > 0:
             result_list += 'занятость на:\n'
             for row in data:
+                now_month = row[3]
+                if now_month < 10:
+                    now_month = '0' + str(now_month)
                 if last_day != row[2]:
                     last_day = row[2]
                     counter = 1
                     if last_day != 0:
                         result_list += '\n'
-                    result_list += str(last_day) + '.' + now_month + '.' + str(datetime.datetime.today().year) + ':\n\n'
-                result_list += str(counter) + '. ' + row[3] + ' - ' + row[4] + '\n'
+                    result_list += str(last_day) + '.' + now_month + '.' + str(datetime.today().year) + ':\n\n'
+                result_list += str(counter) + '. ' + row[4] + ' - ' + row[5] + '\n'
                 counter += 1
         else:
             result_list += 'сегодня переговорку ты не занимал'
@@ -226,18 +234,18 @@ class BotFuncs:
         data = self.db_funcs.sortTimes(self.db_funcs.getAllTimes(), 2)
         counter = 1
         last_day = 0
-        now_month = datetime.datetime.today().month
-        if now_month < 10:
-            now_month = '0' + str(now_month)
         if len(data) > 0:
             for row in data:
+                now_month = row[11]
+                if now_month < 10:
+                    now_month = '0' + str(now_month)
                 if last_day != row[10]:
                     last_day = row[10]
                     counter = 1
                     if last_day != 0:
                         result_list += '\n'
-                    result_list += str(last_day) + '.' + now_month + '.' + str(datetime.datetime.today().year) + ':\n\n'
-                result_list += str(counter) + '. ' + row[11] + ' - ' + row[12] + '  ---  ' \
+                    result_list += str(last_day) + '.' + now_month + '.' + str(datetime.today().year) + ':\n\n'
+                result_list += str(counter) + '. ' + row[12] + ' - ' + row[13] + '  ---  ' \
                                + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                 counter += 1
         else:
@@ -279,9 +287,14 @@ class BotFuncs:
         keyboard = telebot.types.ReplyKeyboardMarkup(True, True)
         row_width = 7
         buttons_added = []
-        today = datetime.datetime.today().day
-        for num in range(today, today + 14):
-            buttons_added.append(telebot.types.KeyboardButton(text=num))
+        now = datetime.today()
+        days_in_month = calendar.monthrange(now.year, now.month)[1]
+        for num in range(now.day, now.day + 14):
+            if num > days_in_month:
+                day_num = num - days_in_month
+            else:
+                day_num = num
+            buttons_added.append(telebot.types.KeyboardButton(text=day_num))
             if len(buttons_added) == row_width:
                 keyboard.row(*buttons_added)
                 buttons_added = []

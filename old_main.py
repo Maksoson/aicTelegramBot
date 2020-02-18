@@ -1,6 +1,6 @@
 import requests
 import datetime
-import config
+from datafiles import config
 # import pb
 import pytz
 

@@ -1,10 +1,8 @@
 /venv
 /virtualenv
+.idea/
 
 old_main.py
 test.py
-config_archive.py
-
-*.txt
-
-.idea/
+datafiles/config_archive.py
+datafiles/dbtables.txt

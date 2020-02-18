@@ -1,6 +1,6 @@
 import telebot
 import datetime
-import config
+from datafiles import config
 import os
 import bothome
 from flask import Flask, request
