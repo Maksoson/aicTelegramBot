@@ -157,6 +157,8 @@ class BotFuncs:
                     now_month = '0' + str(now_month)
                 if last_day != row[2]:
                     last_day = row[2]
+                    if int(last_day) < 10:
+                        last_day = '0' + last_day
                     if last_day != 0:
                         result_list += '\n'
                     result_list += str(last_day) + '.' + str(now_month) + '.' + str(datetime.today().year) + ':\n\n'
@@ -216,6 +218,8 @@ class BotFuncs:
                     now_month = '0' + str(now_month)
                 if last_day != row[2]:
                     last_day = row[2]
+                    if int(last_day) < 10:
+                        last_day = '0' + last_day
                     counter = 1
                     if last_day != 0:
                         result_list += '\n'
@@ -240,6 +244,8 @@ class BotFuncs:
                     now_month = '0' + str(now_month)
                 if last_day != row[11]:
                     last_day = row[11]
+                    if int(last_day) < 10:
+                        last_day = '0' + last_day
                     counter = 1
                     if last_day != 0:
                         result_list += '\n'
@@ -273,6 +279,7 @@ class BotFuncs:
                                                'Последнее обновление: 14.02.2020\n')
 
     def getDaysKeyboard(self):
+        self.added_days = []
         keyboard = telebot.types.ReplyKeyboardMarkup(True, True)
         row_width = 7
         buttons_added = []
@@ -283,7 +290,6 @@ class BotFuncs:
                 day_num = num - days_in_month
             else:
                 day_num = num
-            self.added_days = []
             self.added_days.append(day_num)
             buttons_added.append(telebot.types.KeyboardButton(text=day_num))
             if len(buttons_added) == row_width:
