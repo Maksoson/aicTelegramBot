@@ -60,7 +60,7 @@ class DatabaseFuncs:
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
                 query = 'UPDATE public.users ' \
-                        'SET user_accname = %s, user_firstname = %s, user_lastname = %s, user_id = %s, user_chat_id = %s, user_language = %s, user_isbot = %s' \
+                        'SET user_accname = %s, user_firstname = %s, user_lastname = %s, user_id = %s, user_chat_id = %s, user_language = %s, user_isbot = %s ' \
                         'WHERE user_id = %s'
                 cursor.execute(query,
                                [self.checkNone(message.from_user.username), self.checkNone(message.from_user.first_name), self.checkNone(message.from_user.last_name),
@@ -83,7 +83,7 @@ class DatabaseFuncs:
                 start_time = self.checkTimeBefore(collection['start_time'])
                 end_time = self.checkTimeBefore(collection['end_time'])
                 day_reg = collection['day_reg']
-                month_reg = collection['month_reg']
+                month_reg = datetime.datetime.today().month
                 date_create = datetime.datetime.today().date()
                 date_update = date_create
 

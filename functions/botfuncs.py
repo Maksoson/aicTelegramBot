@@ -197,7 +197,7 @@ class BotFuncs:
 
     # Моя занятость
     def printMyTimes(self, message):
-        result_list = '@' + message.from_user.username + ', занятость на:\n'
+        result_list = '@' + message.from_user.username + ', '
         data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message)), 1)
         counter = 1
         last_day = 0
@@ -205,6 +205,7 @@ class BotFuncs:
         if now_month < 10:
             now_month = '0' + str(now_month)
         if len(data) > 0:
+            result_list += 'занятость на:\n'
             for row in data:
                 if last_day != row[2]:
                     last_day = row[2]
@@ -215,7 +216,7 @@ class BotFuncs:
                 result_list += str(counter) + '. ' + row[3] + ' - ' + row[4] + '\n'
                 counter += 1
         else:
-            result_list += 'Сегодня переговорку ты не занимал'
+            result_list += 'сегодня переговорку ты не занимал'
 
         self.bot.send_message(message.chat.id, result_list)
 
@@ -240,9 +241,9 @@ class BotFuncs:
                                + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                 counter += 1
         else:
-            result_list += 'Сегодня переговорку еще никто не занимал! Успей забрать лучшее время ;)'
+            result_list = 'Сегодня переговорку еще никто не занимал! Успей забрать лучшее время ;)'
 
-        self.bot.send_message(message.chat.id, result_list)
+        self.bot.send_message(message.chat.id, result_list, reply_markup=self.getStartKeyboard())
 
     # Время
     def printToday(self, chat_id, today):
