@@ -106,11 +106,11 @@ class BotFuncs:
                     return
                 final_add_text = 'Записал тебя на ' + self.dataReg['start_time'] + " - " + self.dataReg[
                                       'end_time'] + ", " + self.dataReg['day_reg'] + " число"
-                self.bot.send_message(235988277, final_add_text, reply_markup=self.getStartKeyboard())
+                self.bot.send_message(message.chat.id, final_add_text, reply_markup=self.getStartKeyboard())
                 self.first_time = ''
                 self.added_days = []
                 self.db_funcs.addToTimetable(message, self.dataReg)
-                self.sendTimetableNews(final_add_text)
+                self.sendTimetableNews()
             else:
                 self.bot.send_message(message.chat.id, 'Кажется, ты ошибся. Пожалуйста, повтори ввод')
                 self.bot.register_next_step_handler(message, self.endRegTime)
@@ -118,15 +118,16 @@ class BotFuncs:
             self.first_time = ''
             self.bot.send_message(message.chat.id, 'Ввод отменен', reply_markup=self.getStartKeyboard())
 
-    def sendTimetableNews(self, text):
+    def sendTimetableNews(self, message):
         chat_ids = self.db_funcs.getAllChatIds()
+        user_data = self.db_funcs.getUser(message)
         for chat_id in chat_ids:
-            print(chat_id)
-            try:
-                time.sleep(1)
-                self.bot.send_message(chat_id, text)
-            except:
-                continue
+            if chat_id[0] != message.chat.id:
+                try:
+                    time.sleep(1)
+                    self.bot.send_message(chat_id[0], 'Пользователь ' + user_data[2] + ' ' + user_data[3] + ' (@' + user_data[1] + ')')
+                except:
+                    continue
 
     # Проверка введенного времени на пересечение с уже существующими записями
     def checkTimesIntersection(self, day, month, time):

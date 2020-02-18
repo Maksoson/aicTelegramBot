@@ -76,6 +76,14 @@ class DatabaseFuncs:
 
                 return cursor.fetchone()
 
+    def getUser(self, message):
+        with closing(self.getConnection()) as connection:
+            with connection.cursor() as cursor:
+                query = 'SELECT * FROM public.users WHERE user_id = %s'
+                cursor.execute(query, [message.from_user.id])
+
+                return cursor.fetchall()
+
     # Получить все чаты для рассылки
     def getAllChatIds(self):
         with closing(self.getConnection()) as connection:
