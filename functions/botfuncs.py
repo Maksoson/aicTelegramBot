@@ -33,10 +33,13 @@ class BotFuncs:
         result_list = self.memo + ' '
         if len(data) > 0:
             for row in data:
+                last_day = str(self.checkDateFormat(row[11]))
+                now_month = str(self.checkDateFormat(row[12]))
                 if counter == 1:
-                    result_list += 'Занятость на ' + str(self.checkDateFormat(row[3])) + '.' + \
-                                   str(self.checkDateFormat(row[2])) + '.' + str(datetime.today().year) + ':\n\n'
-                result_list += str(counter) + '. ' + row[4] + ' - ' + row[5] + '\n'
+                    result_list += 'Занятость на ' + last_day + '.' + now_month + '.' + \
+                                   str(datetime.today().year) + ':\n\n'
+                result_list += str(counter) + '. ' + row[13] + ' - ' + row[14] + '  ---  ' \
+                               + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                 counter += 1
             result_list += '\n'
 
