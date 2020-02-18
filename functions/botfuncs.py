@@ -181,7 +181,7 @@ class BotFuncs:
                     elif self.first_time != '' and data_time > row[13]:
                         if data_time <= row[14]:
                             intersect_times.append(row)
-                    elif self.first_time < row[13] and data_time >= row[14]:
+                    elif self.first_time <= row[13] and data_time >= row[14]:
                         intersect_times.append(row)
             if self.first_time == '':
                 self.first_time = data_time
