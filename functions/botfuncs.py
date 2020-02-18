@@ -109,8 +109,8 @@ class BotFuncs:
                 self.bot.send_message(message.chat.id, final_add_text, reply_markup=self.getStartKeyboard())
                 self.first_time = ''
                 self.added_days = []
-                self.db_funcs.addToTimetable(message, self.dataReg)
                 self.sendTimetableNews(message)
+                self.db_funcs.addToTimetable(message, self.dataReg)
             else:
                 self.bot.send_message(message.chat.id, 'Кажется, ты ошибся. Пожалуйста, повтори ввод')
                 self.bot.register_next_step_handler(message, self.endRegTime)
@@ -125,7 +125,7 @@ class BotFuncs:
             if chat_id[0] != message.chat.id:
                 try:
                     time.sleep(1)
-                    self.bot.send_message(235988277, 'Пользователь ' + user_data[2] + ' ' + user_data[3] +
+                    self.bot.send_message(chat_id[0], 'Пользователь ' + user_data[2] + ' ' + user_data[3] +
                                           ' (@' + user_data[1] + ') занял переговорку ' + self.dataReg['day_use'] + '.'
                                           + self.dataReg['month_use'] + ' с ' + self.dataReg['start_time'] + ' по ' +
                                           self.dataReg['end_time'])
