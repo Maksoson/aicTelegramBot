@@ -106,7 +106,7 @@ class BotFuncs:
                     return
                 final_add_text = 'Записал тебя на ' + self.dataReg['start_time'] + " - " + self.dataReg[
                                       'end_time'] + ", " + self.dataReg['day_reg'] + " число"
-                self.bot.send_message(message.chat.id, final_add_text, reply_markup=self.getStartKeyboard())
+                self.bot.send_message(235988277, final_add_text, reply_markup=self.getStartKeyboard())
                 self.first_time = ''
                 self.added_days = []
                 self.db_funcs.addToTimetable(message, self.dataReg)
