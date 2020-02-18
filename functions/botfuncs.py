@@ -149,8 +149,8 @@ class BotFuncs:
     def sendTimetableNews(self, message):
         chat_ids = self.db_funcs.getAllChatIds()
         user_data = self.db_funcs.getUser(message)[0]
-        day_reg = self.checkDateFormat(self.dataReg['day_reg'])
-        month_reg = self.checkDateFormat(self.dataReg['month_reg'])
+        day_reg = str(self.checkDateFormat(self.dataReg['day_reg']))
+        month_reg = str(self.checkDateFormat(self.dataReg['month_reg']))
 
         for chat_id in chat_ids:
             if chat_id[0] != message.chat.id:
@@ -227,7 +227,7 @@ class BotFuncs:
                 if counter == int(delete_time_id):
                     self.db_funcs.deleteFromTimetable(row[0])
                     self.bot.send_message(message.chat.id, 'Запись на ' + row[4] + " - " + row[5] + " за " +
-                                          self.checkDateFormat(row[2]) + "." + self.checkDateFormat(row[3]) +
+                                          str(self.checkDateFormat(row[2])) + "." + str(self.checkDateFormat(row[3])) +
                                           " удалена!  " + self.success, reply_markup=self.getStartKeyboard())
                     self.data = []
                     break
@@ -358,7 +358,7 @@ class BotFuncs:
         if int(date_data) < 10:
             return '0' + str(date_data)
         else:
-            return str(date_data)
+            return date_data
 
     @staticmethod
     def getCancelButton():
