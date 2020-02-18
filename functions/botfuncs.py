@@ -18,8 +18,8 @@ class BotFuncs:
         self.data = []
         self.first_time = ''
         self.added_days = []
-        self.error = urllib.parse.quote('\xE2\x9D\x8C')
-        self.success = urllib.parse.quote('\xE2\x9C\x85')
+        self.error = '%E2%9D%8C'
+        self.success = '%E2%9C%85'
 
     # Занять переговорку (следующие 4 функции)
     def regTime(self, message):
