@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from datafiles import config
 from contextlib import closing
 import dj_database_url
