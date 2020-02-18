@@ -122,13 +122,12 @@ class BotFuncs:
         if len(data) > 0:
             for row in data:
                 if int(day) == int(row[11]) and int(month) == int(row[12]):
-                    if time >= row[13]:
-                        if self.first_time != '':
-                            if time <= row[14]:
-                                intersect_times.append(row)
-                        else:
-                            if time < row[14]:
-                                intersect_times.append(row)
+                    if self.first_time == '' and time >= row[13]:
+                        if time < row[14]:
+                            intersect_times.append(row)
+                    elif self.first_time != '' and time > row[13]:
+                        if time <= row[14]:
+                            intersect_times.append(row)
                     if self.first_time != '':
                         if self.first_time < row[13] and time >= row[14]:
                             intersect_times.append(row)
