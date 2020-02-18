@@ -29,8 +29,6 @@ class DatabaseFuncs:
 
     # Сравнение старых и текущих данных о пользователе
     def compareUserData(self, old_user_data, new_user_data):
-        for row in old_user_data:
-            print(row)
         if str(old_user_data[1]).strip() != new_user_data.from_user.username:
             return False
         if str(old_user_data[2]).strip() != new_user_data.from_user.first_name:
@@ -173,7 +171,6 @@ class DatabaseFuncs:
     @staticmethod
     def sortTimes(times_data, type_func):
         new_times_data = []
-        print(times_data)
 
         if type_func == 1:
             new_times_data = sorted(times_data, key=lambda row: (row[3], row[2], row[4]), reverse=False)
