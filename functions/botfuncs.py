@@ -110,7 +110,7 @@ class BotFuncs:
                 self.first_time = ''
                 self.added_days = []
                 self.db_funcs.addToTimetable(message, self.dataReg)
-                self.sendTimetableNews(message)
+                # self.sendTimetableNews(message)
             else:
                 self.bot.send_message(message.chat.id, 'Кажется, ты ошибся. Пожалуйста, повтори ввод')
                 self.bot.register_next_step_handler(message, self.endRegTime)
@@ -131,7 +131,7 @@ class BotFuncs:
                     time.sleep(1)
                     self.bot.send_message(chat_id[0], 'Пользователь ' + user_data[2] + ' ' + user_data[3] +
                                           ' (@' + user_data[1] + ') занял переговорку ' + day_reg + '.' + month_reg +
-                                          ' с ' + self.dataReg['start_time'] + ' по ' + self.dataReg['end_time'])
+                                          ' с ' + self.dataReg['start_time'] + ' до ' + self.dataReg['end_time'])
                 except:
                     pass
 
@@ -292,7 +292,7 @@ class BotFuncs:
             else:
                 day_num = num
             self.added_days.append(day_num)
-            buttons_added.append(telebot.types.KeyboardButton(text=day_num))
+            buttons_added.append(telebot.types.InlineKeyboardButton(text=str(day_num) + ' (пн)', callback_data=day_num))
             if len(buttons_added) == row_width:
                 keyboard.row(*buttons_added)
                 buttons_added = []
