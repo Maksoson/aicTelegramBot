@@ -158,9 +158,9 @@ class DatabaseFuncs:
         new_times_data = []
 
         if type_func == 1:
-            new_times_data = sorted(times_data, key=lambda row: (row[2], row[3], row[4]), reverse=False)
+            new_times_data = sorted(times_data, key=lambda row: (row[2], row[4], row[3]), reverse=False)
         elif type_func == 2:
-            new_times_data = sorted(times_data, key=lambda row: (row[10], row[11], row[12]), reverse=False)
+            new_times_data = sorted(times_data, key=lambda row: (row[10], row[12], row[11]), reverse=False)
 
         return new_times_data
 
