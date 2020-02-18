@@ -160,7 +160,7 @@ class BotFuncs:
                     last_day = row[2]
                     if last_day != 0:
                         result_list += '\n'
-                    result_list += str(last_day) + '.' + now_month + '.' + str(datetime.today().year) + ':\n\n'
+                    result_list += str(last_day) + '.' + str(now_month) + '.' + str(datetime.today().year) + ':\n\n'
                 result_list += str(counter) + '. ' + row[4] + ' - ' + row[5] + '\n'
                 counter += 1
             self.bot.send_message(chat_id, result_list)
@@ -220,7 +220,7 @@ class BotFuncs:
                     counter = 1
                     if last_day != 0:
                         result_list += '\n'
-                    result_list += str(last_day) + '.' + now_month + '.' + str(datetime.today().year) + ':\n\n'
+                    result_list += str(last_day) + '.' + str(now_month) + '.' + str(datetime.today().year) + ':\n\n'
                 result_list += str(counter) + '. ' + row[4] + ' - ' + row[5] + '\n'
                 counter += 1
         else:
@@ -244,7 +244,7 @@ class BotFuncs:
                     counter = 1
                     if last_day != 0:
                         result_list += '\n'
-                    result_list += str(last_day) + '.' + now_month + '.' + str(datetime.today().year) + ':\n\n'
+                    result_list += str(last_day) + '.' + str(now_month) + '.' + str(datetime.today().year) + ':\n\n'
                 result_list += str(counter) + '. ' + row[12] + ' - ' + row[13] + '  ---  ' \
                                + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                 counter += 1
