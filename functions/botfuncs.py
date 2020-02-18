@@ -286,7 +286,7 @@ class BotFuncs:
         row_width = 7
         buttons_added = []
         now = datetime.today()
-        now_day_num = datetime.weekday()
+        now_day_num = datetime.date().weekday()
         days_in_month = calendar.monthrange(now.year, now.month)[1]
         for num in range(now.day, now.day + 14):
             if num > days_in_month:
