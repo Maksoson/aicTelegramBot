@@ -226,7 +226,7 @@ class BotFuncs:
 
     # Вывод списка на удаление/изменение
     def seeTimesListFor(self, message, func_type):
-        self.getDaysData()
+        # self.getDaysData()
         result_list = ''
         chat_id = message.chat.id
         self.data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message)), 1)
@@ -241,7 +241,7 @@ class BotFuncs:
             for row in self.data:
                 now_month = str(self.checkDateFormat(row[3]))
                 if last_day != row[2]:
-                    last_day = str(self.checkDateFormat(row[2]))
+                    last_day = self.checkDateFormat(row[2])
                     if last_day != 0:
                         result_list += '\n'
                     result_list += self.pushpin + " " + str(last_day) + '.' + str(now_month) + '.' + \
@@ -295,7 +295,7 @@ class BotFuncs:
 
     # Моя занятость
     def printMyTimes(self, message):
-        self.getDaysData()
+        # self.getDaysData()
         is_empty = False
         if self.db_funcs.checkNone(message.from_user.username) == '':
             is_empty = True
@@ -310,11 +310,11 @@ class BotFuncs:
             for row in data:
                 now_month = str(self.checkDateFormat(row[3]))
                 if last_day != row[2]:
-                    last_day = str(self.checkDateFormat(row[2]))
+                    last_day = self.checkDateFormat(row[2])
                     counter = 1
                     if last_day != 0:
                         result_list += '\n'
-                    result_list += self.pushpin + " " + last_day + '.' + now_month + '.' + \
+                    result_list += self.pushpin + " " + str(last_day) + '.' + now_month + '.' + \
                                    str(datetime.today().year) + ' ' + self.days_dict[last_day] + ':\n\n'
                 result_list += str(counter) + '. ' + row[4] + ' - ' + row[5] + '\n'
                 counter += 1
@@ -325,7 +325,7 @@ class BotFuncs:
 
     # Занятость переговорки на сегодня
     def printAllTimes(self, message):
-        self.getDaysData()
+        # self.getDaysData()
         result_list = 'Занятость на:\n'
         data = self.db_funcs.sortTimes(self.db_funcs.getAllTimes(), 2)
         counter = 1
@@ -334,11 +334,11 @@ class BotFuncs:
             for row in data:
                 now_month = str(self.checkDateFormat(row[12]))
                 if last_day != row[11]:
-                    last_day = str(self.checkDateFormat(row[11]))
+                    last_day = self.checkDateFormat(row[11])
                     counter = 1
                     if last_day != 0:
                         result_list += '\n'
-                    result_list += self.pushpin + " " + last_day + '.' + now_month + '.' \
+                    result_list += self.pushpin + " " + str(last_day) + '.' + now_month + '.' \
                                    + str(datetime.today().year) + ' ' + self.days_dict[last_day] + ':\n\n'
                 result_list += str(counter) + '. ' + row[13] + ' - ' + row[14] + '  ---  ' \
                                + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
