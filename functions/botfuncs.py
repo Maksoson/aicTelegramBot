@@ -20,7 +20,7 @@ class BotFuncs:
         self.bot_home = bothome.BotHome()
 
         self.dataReg = {'start_time': '', 'end_time': '', 'day_reg': '', 'month_reg': ''}
-        self.days_list = {}
+        self.days_dict = {}
 
         self.data = []
         self.added_days = []
@@ -351,6 +351,7 @@ class BotFuncs:
         self.added_days = []
         keyboard = telebot.types.ReplyKeyboardMarkup(True, True)
         row_width = 7
+        days_list = {}
         buttons_added = []
         now = datetime.today()
         now_day_num = now.weekday()
@@ -362,7 +363,7 @@ class BotFuncs:
                 day_num = num
             self.added_days.append(day_num)
             buttons_added.append(telebot.types.InlineKeyboardButton(text=str(day_num) + ' ' + self.day_names[now_day_num]))
-            self.days_list[str(self.checkDateFormat(day_num)).strip()] = self.day_names[now_day_num]
+            days_list[str(self.checkDateFormat(day_num)).strip()] = self.day_names[now_day_num]
             if now_day_num != 6:
                 now_day_num += 1
             else:
@@ -370,6 +371,7 @@ class BotFuncs:
             if len(buttons_added) == row_width:
                 keyboard.row(*buttons_added)
                 buttons_added = []
+        self.days_dict = days_list
         keyboard.row('Отмена')
         print(self.days_list)
 
