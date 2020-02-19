@@ -63,7 +63,7 @@ class BotFuncs:
                 last_day = str(self.checkDateFormat(row[11]))
                 now_month = str(self.checkDateFormat(row[12]))
                 if counter == 1:
-                    result_list += 'Занятость на ' + last_day + '.' + now_month + '.' + \
+                    result_list += self.memo + ' Занятость на ' + last_day + '.' + now_month + '.' + \
                                    str(datetime.today().year) + ' ' + self.day_names[now_day_num] + ':\n\n'
                 result_list += str(counter) + '. ' + row[13] + ' - ' + row[14] + '  ---  ' \
                                + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
@@ -202,13 +202,13 @@ class BotFuncs:
         if len(data) > 0:
             for row in data:
                 if int(day) == int(row[11]) and int(month) == int(row[12]):
-                    if self.first_time == '' and data_time >= row[13]:
+                    if self.dataReg['start_time'] == '' and data_time >= row[13]:
                         if data_time < row[14]:
                             intersect_times.append(row)
-                    elif self.first_time != '' and data_time > row[13]:
+                    elif self.dataReg['start_time'] != '' and data_time > row[13]:
                         if data_time <= row[14]:
                             intersect_times.append(row)
-                    elif self.first_time <= row[13] and data_time >= row[14]:
+                    elif self.dataReg['start_time'] <= row[13] and data_time >= row[14]:
                         intersect_times.append(row)
             if self.first_time == '':
                 self.first_time = data_time
@@ -286,13 +286,18 @@ class BotFuncs:
 
     # Моя занятость
     def printMyTimes(self, message):
-        result_list = '@' + message.from_user.username + ', '
+        is_empty = False
+        if self.db_funcs.checkNone(message.from_user.username) == '':
+            is_empty = True
+            result_list = self.memo + ' Твоя занятость на:'
+        else:
+            result_list = self.memo + ' @' + message.from_user.username + ', '
         data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message)), 1)
         counter = 1
         last_day = 0
         now_day_num = datetime.today().weekday()
         if len(data) > 0:
-            result_list += 'занятость на:\n'
+            result_list += 'занятость на:\n' if not is_empty else ''
             for row in data:
                 print(row)
                 now_month = self.checkDateFormat(row[3])
