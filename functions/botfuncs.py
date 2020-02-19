@@ -16,15 +16,19 @@ class BotFuncs:
 
     def __init__(self, bot):
         self.bot = bot
-        self.dataReg = {'start_time': '', 'end_time': '', 'day_reg': '', 'month_reg': ''}
         self.db_funcs = dbfuncs.DatabaseFuncs(self.bot)
         self.bot_home = bothome.BotHome()
+
+        self.dataReg = {'start_time': '', 'end_time': '', 'day_reg': '', 'month_reg': ''}
+        self.days_list = {}
+
         self.data = []
-        self.first_time = ''
-        self.focused_day = ''
         self.added_days = []
         self.day_names = ['(пн)', '(вт)', '(ср)', '(чт)', '(пт)', '(сб)', '(вск)']
-        self.days_list = {}
+
+        self.first_time = ''
+        self.focused_day = ''
+
         self.error = emojize("❌", use_aliases=True)
         self.success = emojize("✅", use_aliases=True)
         self.pushpin = emojize("📌", use_aliases=True)
@@ -299,6 +303,7 @@ class BotFuncs:
         data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message)), 1)
         counter = 1
         last_day = 0
+        print(self.days_list)
         if len(data) > 0:
             result_list += 'занятость на:\n' if not is_empty else ''
             for row in data:
@@ -357,7 +362,7 @@ class BotFuncs:
                 day_num = num
             self.added_days.append(day_num)
             buttons_added.append(telebot.types.InlineKeyboardButton(text=str(day_num) + ' ' + self.day_names[now_day_num]))
-            self.days_list[str(self.checkDateFormat(day_num))] = self.day_names[now_day_num]
+            self.days_list[str(self.checkDateFormat(day_num)).strip()] = self.day_names[now_day_num]
             if now_day_num != 6:
                 now_day_num += 1
             else:
@@ -366,6 +371,7 @@ class BotFuncs:
                 keyboard.row(*buttons_added)
                 buttons_added = []
         keyboard.row('Отмена')
+        print(self.days_list)
 
         return keyboard
 
