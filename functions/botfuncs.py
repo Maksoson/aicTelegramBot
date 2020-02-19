@@ -342,8 +342,8 @@ class BotFuncs:
                         self.last_function_used = 'delete'
                         self.data_before_used.append(self.checkDateFormat(row[2]))
                         self.data_before_used.append(self.checkDateFormat(row[3]))
-                        self.data_before_used.append(row[3])
                         self.data_before_used.append(row[4])
+                        self.data_before_used.append(row[5])
                         self.bot.send_message(message.chat.id, 'Запись на ' + row[4] + " - " + row[5] + " за " +
                                               str(self.checkDateFormat(row[2])) + "." + str(self.checkDateFormat(row[3])) +
                                               " удалена!  " + self.success, reply_markup=self.getStartKeyboard())
@@ -376,8 +376,8 @@ class BotFuncs:
                     self.last_function_used = 'update'
                     self.data_before_used.append(self.checkDateFormat(row[2]))
                     self.data_before_used.append(self.checkDateFormat(row[3]))
-                    self.data_before_used.append(row[3])
                     self.data_before_used.append(row[4])
+                    self.data_before_used.append(row[5])
                     self.regTime(message)
                     break
                     # if self.db_funcs.updateTimetable(row[0]):
@@ -549,7 +549,7 @@ class BotFuncs:
                                                '-- Тебе нужно будет 2 раза ввести время.\n'
                                                '-- Примеры ввода времени: 15, 15 00, 15 30, 15:30\n'
                                                '/delete - перейти в режим удаления своей записи.\n'
-                                               # '/update - перейти в режим правки своих записей. (offed)\n'
+                                               '/update - перейти в режим правки своих записей.\n'
                                                '/all - вывести весь список забронированного времени.\n'
                                                '/my - вывести только твои забронированное время.\n'
                                                '/time - вывести текущую дату и время.\n'

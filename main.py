@@ -19,9 +19,9 @@ db_funcs = dbfuncs.DatabaseFuncs(bot)
 bot_funcs = botfuncs.BotFuncs(bot)
 
 start_keyboard = telebot.types.ReplyKeyboardMarkup(True)
-start_keyboard.row('Занять переговорку', 'Моя занятость', 'Удалить запись')
-start_keyboard.row('Занятость переговорки на сегодня')
-start_keyboard.row('Дата', 'Справка')
+start_keyboard.row('Занять переговорку', 'Изменить запись', 'Удалить запись')
+start_keyboard.row('Моя занятость', 'Занятость переговорки на сегодня')
+start_keyboard.row('Дата', 'Справка', 'Кот')
 
 
 # ------------------------------------------------ #
@@ -46,47 +46,8 @@ def startFunc(message):
             bot_funcs.seeTimesListFor(message, 2)
         elif command == '/my':
             bot_funcs.printMyTimes(message)
-
-
-# @bot.message_handler(commands=['help'])
-# def pleaseHelp(message):
-#     db_funcs.checkUser(message)
-#     bot_funcs.printHelp(message)
-#
-#
-# @bot.message_handler(commands=['add'])
-# def addUserTime(message):
-#     bot_funcs.regTime(message)
-#
-#
-# @bot.message_handler(commands=['time'])
-# def printTime(message):
-#     bot_funcs.printToday(message.chat.id, datetime.datetime.today())
-#
-#
-# @bot.message_handler(commands=['all'])
-# def printAll(message):
-#     bot_funcs.printAllTimes(message)
-#
-#
-# @bot.message_handler(commands=['delete'])
-# def deleteTime(message):
-#     bot_funcs.seeTimesListFor(message, 1)
-#
-#
-# @bot.message_handler(commands=['my'])
-# def printAllMy(message):
-#     bot_funcs.printMyTimes(message)
-#
-#
-# @bot.message_handler(commands=['update, cat'])
-# def deleteUserTime(message):
-#     bot.send_message(message.chat.id, 'Эта функция пока что не доступна :(')
-
-#
-# @bot.message_handler(regexp='((https?):((//)|(\\\\))+([\w\d:#@%/;$()~_?\+-=\\\.&](#!)?)*)')
-# def command_url(message):
-#     bot.reply_to(message, "По ссылкам, пока что, переходить я не умею :(")
+        elif command == '/cat':
+            bot.send_message(message.chat.id, 'Мяу', reply_markup=start_keyboard)
 
 
 @bot.message_handler(content_types=['text'])
@@ -114,6 +75,8 @@ def send_text(message):
             bot_funcs.printAllTimes(message)
         elif user_message == 'справка':
             bot_funcs.printHelp(message)
+        elif user_message == '/cat':
+            bot.send_message(message.chat.id, 'Мяу', reply_markup=start_keyboard)
 
 
 # @bot.message_handler(content_types=['sticker'])
