@@ -70,14 +70,14 @@ class BotFuncs:
             for row in data:
                 if counter == 1:
                     result_list += 'Занятость на ' + now_day + '.' + now_month + '.' + \
-                                   str(datetime.today().year) + ' ' + self.days_list[now_day] + ':\n\n'
+                                   str(datetime.today().year) + ' ' + self.days_dict[now_day] + ':\n\n'
                 result_list += str(counter) + '. ' + row[13] + ' - ' + row[14] + '  ---  ' \
                                + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                 counter += 1
             result_list += '\n'
         else:
             result_list += 'Занятость на ' + now_day + '.' + now_month + '.' + \
-                                   str(datetime.today().year) + ' ' + self.days_list[now_day] + ':\n\n'
+                                   str(datetime.today().year) + ' ' + self.days_dict[now_day] + ':\n\n'
             result_list += 'Список пуст\n\n'
 
         return result_list
@@ -244,7 +244,7 @@ class BotFuncs:
                     if last_day != 0:
                         result_list += '\n'
                     result_list += self.pushpin + " " + str(last_day) + '.' + str(now_month) + '.' + \
-                                   str(datetime.today().year) + ' ' + self.days_list[last_day] + ':\n\n'
+                                   str(datetime.today().year) + ' ' + self.days_dict[last_day] + ':\n\n'
                     if now_day_num != 6:
                         now_day_num += 1
                     else:
@@ -303,7 +303,7 @@ class BotFuncs:
         data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message)), 1)
         counter = 1
         last_day = 0
-        print(self.days_list)
+        print(self.days_dict)
         if len(data) > 0:
             result_list += 'занятость на:\n' if not is_empty else ''
             for row in data:
@@ -314,7 +314,7 @@ class BotFuncs:
                     if last_day != 0:
                         result_list += '\n'
                     result_list += self.pushpin + " " + str(last_day) + '.' + str(now_month) + '.' + \
-                                   str(datetime.today().year) + ' ' + self.days_list[last_day] + ':\n\n'
+                                   str(datetime.today().year) + ' ' + self.days_dict[last_day] + ':\n\n'
                 result_list += str(counter) + '. ' + row[4] + ' - ' + row[5] + '\n'
                 counter += 1
             self.bot.send_message(message.chat.id, result_list, reply_markup=self.getStartKeyboard())
@@ -337,7 +337,7 @@ class BotFuncs:
                     if last_day != 0:
                         result_list += '\n'
                     result_list += self.pushpin + " " + str(last_day) + '.' + str(now_month) + '.' \
-                                   + str(datetime.today().year) + ' ' + self.days_list[last_day] + ':\n\n'
+                                   + str(datetime.today().year) + ' ' + self.days_dict[last_day] + ':\n\n'
                 result_list += str(counter) + '. ' + row[13] + ' - ' + row[14] + '  ---  ' \
                                + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                 counter += 1
@@ -373,7 +373,7 @@ class BotFuncs:
                 buttons_added = []
         self.days_dict = days_list
         keyboard.row('Отмена')
-        print(self.days_list)
+        print(self.days_dict)
 
         return keyboard
 
