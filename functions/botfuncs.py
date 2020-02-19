@@ -188,9 +188,16 @@ class BotFuncs:
 
                 self.added_days = []
                 if self.last_function_used == 'update':
-                    if self.db_funcs.updateTimetable(int(self.data_before_used[0]), self.dataReg):
+                    row_id = int(self.data_before_used[0])
+                    last_day = str(self.checkDateFormat(self.data_before_used[1]))
+                    last_month = str(self.checkDateFormat(self.data_before_used[2]))
+                    start_time = str(self.db_funcs.checkTimeBefore(self.data_before_used[3]))
+                    end_time = str(self.db_funcs.checkTimeBefore(self.data_before_used[4]))
+                    if self.db_funcs.updateTimetable(row_id, self.dataReg):
                         self.bot.send_message(message.chat.id,
-                                              'Запись перенесена на ' + self.db_funcs.checkTimeBefore(self.dataReg['start_time'])
+                                              'Запись перенесена c ' + start_time + ' - ' + end_time + ', ' + last_day
+                                              + '.' + last_month + ' ' + self.days_dict[last_day] + ' на '
+                                              + self.db_funcs.checkTimeBefore(self.dataReg['start_time'])
                                               + ' - ' + self.db_funcs.checkTimeBefore(self.dataReg['end_time']) +
                                               ' ' + self.checkDateFormat(self.dataReg['day_reg']) + '.'
                                               + self.checkDateFormat(self.dataReg['month_reg']) + ' '
