@@ -245,15 +245,20 @@ class BotFuncs:
             for row in data:
                 is_error = False
                 if int(day) == int(row[11]) and int(month) == int(row[12]):
+                    print(start_time)
                     if start_time == '':
                         if row[13] <= data_time < row[14]:
+                            print('err1')
                             is_error = True
                     else:
                         if row[13] <= start_time < row[14]:
+                            print('err2')
                             is_error = True
                         if row[13] < data_time <= row[14]:
+                            print('err3')
                             is_error = True
                         if start_time <= row[13] and data_time >= row[14]:
+                            print('err4')
                             is_error = True
 
                 if is_error:
@@ -277,7 +282,7 @@ class BotFuncs:
                 result_list += 'Введи номер записи, которую хочешь изменить:\n'
             for row in self.data:
                 now_month = str(self.checkDateFormat(row[3]))
-                if last_day != row[2]:
+                if self.checkDateFormat(last_day) != self.checkDateFormat(row[2]):
                     last_day = self.checkDateFormat(row[2])
                     if last_day != 0:
                         result_list += '\n'
@@ -347,7 +352,7 @@ class BotFuncs:
             result_list += 'занятость на:\n' if not is_empty else ''
             for row in data:
                 now_month = str(self.checkDateFormat(row[3]))
-                if last_day != row[2]:
+                if self.checkDateFormat(last_day) != self.checkDateFormat(row[2]):
                     last_day = self.checkDateFormat(row[2])
                     counter = 1
                     if last_day != 0:
@@ -371,7 +376,7 @@ class BotFuncs:
         if len(data) > 0:
             for row in data:
                 now_month = str(self.checkDateFormat(row[12]))
-                if last_day != row[11]:
+                if self.checkDateFormat(last_day) != self.checkDateFormat(row[11]):
                     last_day = self.checkDateFormat(row[11])
                     counter = 1
                     if last_day != 0:
