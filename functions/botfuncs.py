@@ -234,6 +234,7 @@ class BotFuncs:
             month_reg = str(self.checkDateFormat(self.dataReg['month_reg']))
 
         for chat_id in chat_ids:
+            print(chat_id)
             if chat_id[0] != message.chat.id:
                 try:
                     time.sleep(1)
