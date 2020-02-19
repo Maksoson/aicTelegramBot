@@ -48,9 +48,9 @@ class BotFuncs:
                                         'Надеюсь тебе понравится со мной работать!\n\n',
                                         reply_markup=self.getStartKeyboard())
                 self.printHelp(message)
-            else:
-                self.bot.send_message(message.chat.id,  self.error + ' Ты ввел неверное секретное слово. Попробуй снова')
-                self.bot.register_next_step_handler(message, self.validateSecretWord)
+        else:
+            self.bot.send_message(message.chat.id,  self.error + ' Ты ввел неверное секретное слово. Попробуй снова')
+            self.bot.register_next_step_handler(message, self.validateSecretWord)
 
     # Записи за выбранный день
     def getDayList(self, day_data):
