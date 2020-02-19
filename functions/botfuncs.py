@@ -19,12 +19,13 @@ class BotFuncs:
         self.db_funcs = dbfuncs.DatabaseFuncs(self.bot)
         self.bot_home = bothome.BotHome()
 
-        self.dataReg = {'start_time': '', 'end_time': '', 'day_reg': '', 'month_reg': ''}
-        self.days_dict = {}
-
         self.data = []
-        self.added_days = []
+        auto_data = self.getDaysData()
+        self.added_days = auto_data[0]
         self.day_names = ['(пн)', '(вт)', '(ср)', '(чт)', '(пт)', '(сб)', '(вск)']
+
+        self.dataReg = {'start_time': '', 'end_time': '', 'day_reg': '', 'month_reg': ''}
+        self.days_dict = auto_data[1]
 
         self.first_time = ''
         self.focused_day = ''
@@ -238,9 +239,9 @@ class BotFuncs:
             elif func_type == 2:
                 result_list += 'Введи номер записи, которую хочешь изменить:\n'
             for row in self.data:
-                now_month = self.checkDateFormat(row[3])
+                now_month = str(self.checkDateFormat(row[3]))
                 if last_day != row[2]:
-                    last_day = self.checkDateFormat(row[2])
+                    last_day = str(self.checkDateFormat(row[2]))
                     if last_day != 0:
                         result_list += '\n'
                     result_list += self.pushpin + " " + str(last_day) + '.' + str(now_month) + '.' + \
@@ -303,17 +304,16 @@ class BotFuncs:
         data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message)), 1)
         counter = 1
         last_day = 0
-        print(self.days_dict)
         if len(data) > 0:
             result_list += 'занятость на:\n' if not is_empty else ''
             for row in data:
-                now_month = self.checkDateFormat(row[3])
+                now_month = str(self.checkDateFormat(row[3]))
                 if last_day != row[2]:
-                    last_day = self.checkDateFormat(row[2])
+                    last_day = str(self.checkDateFormat(row[2]))
                     counter = 1
                     if last_day != 0:
                         result_list += '\n'
-                    result_list += self.pushpin + " " + str(last_day) + '.' + str(now_month) + '.' + \
+                    result_list += self.pushpin + " " + last_day + '.' + now_month + '.' + \
                                    str(datetime.today().year) + ' ' + self.days_dict[last_day] + ':\n\n'
                 result_list += str(counter) + '. ' + row[4] + ' - ' + row[5] + '\n'
                 counter += 1
@@ -330,13 +330,13 @@ class BotFuncs:
         last_day = 0
         if len(data) > 0:
             for row in data:
-                now_month = self.checkDateFormat(row[12])
+                now_month = str(self.checkDateFormat(row[12]))
                 if last_day != row[11]:
-                    last_day = self.checkDateFormat(row[11])
+                    last_day = str(self.checkDateFormat(row[11]))
                     counter = 1
                     if last_day != 0:
                         result_list += '\n'
-                    result_list += self.pushpin + " " + str(last_day) + '.' + str(now_month) + '.' \
+                    result_list += self.pushpin + " " + last_day + '.' + now_month + '.' \
                                    + str(datetime.today().year) + ' ' + self.days_dict[last_day] + ':\n\n'
                 result_list += str(counter) + '. ' + row[13] + ' - ' + row[14] + '  ---  ' \
                                + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
@@ -348,10 +348,10 @@ class BotFuncs:
 
     # Клавиатура выбора дней
     def getDaysKeyboard(self):
-        self.added_days = []
+        # self.added_days = []
         keyboard = telebot.types.ReplyKeyboardMarkup(True, True)
         row_width = 7
-        days_list = {}
+        # days_list = {}
         buttons_added = []
         now = datetime.today()
         now_day_num = now.weekday()
@@ -361,9 +361,9 @@ class BotFuncs:
                 day_num = num - days_in_month
             else:
                 day_num = num
-            self.added_days.append(day_num)
+            # self.added_days.append(day_num)
             buttons_added.append(telebot.types.InlineKeyboardButton(text=str(day_num) + ' ' + self.day_names[now_day_num]))
-            days_list[str(self.checkDateFormat(day_num)).strip()] = self.day_names[now_day_num]
+            # days_list[str(self.checkDateFormat(day_num)).strip()] = self.day_names[now_day_num]
             if now_day_num != 6:
                 now_day_num += 1
             else:
@@ -371,11 +371,32 @@ class BotFuncs:
             if len(buttons_added) == row_width:
                 keyboard.row(*buttons_added)
                 buttons_added = []
-        self.days_dict = days_list
+        # self.days_dict = days_list
         keyboard.row('Отмена')
-        print(self.days_dict)
+        # print(self.days_dict)
 
         return keyboard
+
+    # Информация на следующие 14 дней
+    def getDaysData(self):
+        added_days = []
+        days_dict = {}
+        now = datetime.today()
+        now_day_num = now.weekday()
+        days_in_month = calendar.monthrange(now.year, now.month)[1]
+        for num in range(now.day, now.day + 14):
+            if num > days_in_month:
+                day_num = num - days_in_month
+            else:
+                day_num = num
+            added_days.append(day_num)
+            days_dict[str(self.checkDateFormat(day_num)).strip()] = self.day_names[now_day_num]
+            if now_day_num != 6:
+                now_day_num += 1
+            else:
+                now_day_num = 0
+
+        return added_days, days_dict
 
     @staticmethod
     def getStartKeyboard():
