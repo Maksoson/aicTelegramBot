@@ -120,21 +120,22 @@ class BotFuncs:
 
     def regStartTime(self, message):
         self.first_time = ''
-        self.dataReg['start_time'] = str(message.text).strip()
-        if self.dataReg['start_time'].lower() != 'отмена':
-            if not re.match(r'^[0-9]{0,2}(:|\s)[0-9]{2}$', self.dataReg['start_time'].lower()):
-                if not re.match(r'^[0-9]{1,2}$', self.dataReg['start_time'].lower()):
+        start_time = str(message.text).strip()
+        if start_time.lower() != 'отмена':
+            if not re.match(r'^[0-9]{0,2}(:|\s)[0-9]{2}$', start_time.lower()):
+                if not re.match(r'^[0-9]{1,2}$', start_time.lower()):
                     self.bot.send_message(message.chat.id, self.error + ' Неверные данные, повтори ввод',
                                           reply_markup=self.getCancelButton())
                     self.bot.register_next_step_handler(message, self.regStartTime)
                     return
-            self.dataReg['start_time'] = self.db_funcs.checkTimeBefore(self.dataReg['start_time'])
-            if not self.checkInsertedTime(self.dataReg['start_time']):
+            start_time = self.db_funcs.checkTimeBefore(start_time)
+            if not self.checkInsertedTime(start_time):
                 self.bot.send_message(message.chat.id, self.error + ' Неверные данные, повтори ввод',
                                       reply_markup=self.getCancelButton())
                 self.bot.register_next_step_handler(message, self.regStartTime)
                 return
-            intersection_times = self.checkTimesIntersection(self.dataReg['day_reg'], self.dataReg['month_reg'], self.dataReg['start_time'])
+            intersection_times = self.checkTimesIntersection(self.dataReg['day_reg'], self.dataReg['month_reg'],
+                                                             start_time)
             if len(intersection_times) > 0:
                 answer = self.error + ' Твое время пересекается с:\n\n'
                 counter = 1
@@ -146,6 +147,7 @@ class BotFuncs:
                 self.bot.send_message(message.chat.id, answer)
                 self.bot.register_next_step_handler(message, self.regStartTime)
                 return
+            self.dataReg['start_time'] = start_time
             self.bot.send_message(message.chat.id, 'До скольки тебе нужна переговорка?')
             self.bot.register_next_step_handler(message, self.endRegTime)
         else:
@@ -185,10 +187,9 @@ class BotFuncs:
                                  + self.checkDateFormat(self.dataReg['month_reg']) + ' ' + \
                                  self.days_dict[self.checkDateFormat(self.dataReg['day_reg'])] + '  ' + self.success
                 self.bot.send_message(message.chat.id, final_add_text, reply_markup=self.getStartKeyboard())
-                # self.first_time = ''
                 self.added_days = []
                 self.db_funcs.addToTimetable(message, self.dataReg)
-                # self.sendTimetableNews(message)
+                self.sendTimetableNews(message)
             else:
                 self.bot.send_message(message.chat.id, self.error + ' Повтори ввод')
                 self.bot.register_next_step_handler(message, self.endRegTime)
@@ -216,7 +217,6 @@ class BotFuncs:
 
         self.dataReg = {'start_time': '', 'end_time': '', 'day_reg': '', 'month_reg': ''}
 
-    # Проверка введенного времени на пересечение с уже существующими записями
     def test(self, day, month, data_time):
         data = self.db_funcs.sortTimes(self.db_funcs.getAllTimes(), 2)
         intersect_times = []
@@ -237,6 +237,7 @@ class BotFuncs:
 
         return intersect_times
 
+    # Проверка введенного времени на пересечение с уже существующими записями
     def checkTimesIntersection(self, day, month, data_time):
         data = self.db_funcs.sortTimes(self.db_funcs.getAllTimes(), 2)
         start_time = self.db_funcs.checkTimeBefore(self.dataReg['start_time'])
@@ -248,17 +249,13 @@ class BotFuncs:
                     print(start_time)
                     if start_time == '':
                         if row[13] <= data_time < row[14]:
-                            print('err1')
                             is_error = True
                     else:
                         if row[13] <= start_time < row[14]:
-                            print('err2')
                             is_error = True
                         if row[13] < data_time <= row[14]:
-                            print('err3')
                             is_error = True
                         if start_time <= row[13] and data_time >= row[14]:
-                            print('err4')
                             is_error = True
 
                 if is_error:
