@@ -202,13 +202,14 @@ class BotFuncs:
         if len(data) > 0:
             for row in data:
                 if int(day) == int(row[11]) and int(month) == int(row[12]):
-                    if self.dataReg['start_time'] == '' and data_time >= row[13]:
+                    print(self.first_time + '    LEERLTLETLE')
+                    if self.first_time == '' and data_time >= row[13]:
                         if data_time < row[14]:
                             intersect_times.append(row)
-                    elif self.dataReg['start_time'] != '' and data_time > row[13]:
+                    elif self.first_time != '' and data_time > row[13]:
                         if data_time <= row[14]:
                             intersect_times.append(row)
-                    elif self.dataReg['start_time'] <= row[13] and data_time >= row[14]:
+                    elif self.first_time <= row[13] and data_time >= row[14]:
                         intersect_times.append(row)
             if self.first_time == '':
                 self.first_time = data_time
