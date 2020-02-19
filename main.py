@@ -27,11 +27,13 @@ start_keyboard.row('Дата', 'Справка')
 # ------------------------------------------------ #
 @bot.message_handler(commands=['start', 'help', 'add', 'time', 'all', 'my', 'delete', 'update', 'cat'])
 def startFunc(message):
-    print(message)
     if bot_funcs.isUserExist(message):
         command = str(message.text).strip()
         if command == '/start':
-            bot.send_message(message.chat.id, reply_markup=start_keyboard)
+            bot.send_message(message.chat.id, 'Я тебя уже знаю, ' + message.from_user.username,
+                             reply_markup=start_keyboard)
+        elif command == '/help':
+            bot_funcs.printHelp(message)
         elif command == '/add':
             bot_funcs.regTime(message)
         elif command == '/time':

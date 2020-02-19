@@ -57,13 +57,14 @@ class BotFuncs:
         data = self.db_funcs.sortTimes(self.db_funcs.getTimesDay(day_data), 2)
         counter = 1
         result_list = self.memo + ' '
+        now_day_num = datetime.today().weekday()
         if len(data) > 0:
             for row in data:
                 last_day = str(self.checkDateFormat(row[11]))
                 now_month = str(self.checkDateFormat(row[12]))
                 if counter == 1:
                     result_list += 'Занятость на ' + last_day + '.' + now_month + '.' + \
-                                   str(datetime.today().year) + ':\n\n'
+                                   str(datetime.today().year) + ' ' + self.day_names[now_day_num] + ':\n\n'
                 result_list += str(counter) + '. ' + row[13] + ' - ' + row[14] + '  ---  ' \
                                + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                 counter += 1
@@ -221,6 +222,7 @@ class BotFuncs:
         self.data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message)), 1)
         counter = 1
         last_day = 0
+        now_day_num = datetime.today().weekday()
         if len(self.data) > 0:
             if func_type == 1:
                 result_list += 'Введи номер записи, которую хочешь отменить:\n'
@@ -232,9 +234,14 @@ class BotFuncs:
                     last_day = self.checkDateFormat(row[2])
                     if last_day != 0:
                         result_list += '\n'
-                    result_list += self.pushpin + " " + str(last_day) + '.' + str(now_month) + '.' + str(datetime.today().year) + ':\n\n'
+                    result_list += self.pushpin + " " + str(last_day) + '.' + str(now_month) + '.' + \
+                                   str(datetime.today().year) + ' ' + self.day_names[now_day_num] + ':\n\n'
                 result_list += str(counter) + '. ' + row[4] + ' - ' + row[5] + '\n'
                 counter += 1
+                if now_day_num != 6:
+                    now_day_num += 1
+                else:
+                    now_day_num = 0
             self.bot.send_message(chat_id, result_list, reply_markup=self.getCancelButton())
             if func_type == 1:
                 self.bot.register_next_step_handler(message, self.deleteTime)
@@ -283,6 +290,7 @@ class BotFuncs:
         data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message)), 1)
         counter = 1
         last_day = 0
+        now_day_num = datetime.today().weekday()
         if len(data) > 0:
             result_list += 'занятость на:\n'
             for row in data:
@@ -293,9 +301,14 @@ class BotFuncs:
                     counter = 1
                     if last_day != 0:
                         result_list += '\n'
-                    result_list += self.pushpin + " " + str(last_day) + '.' + str(now_month) + '.' + str(datetime.today().year) + ':\n\n'
+                    result_list += self.pushpin + " " + str(last_day) + '.' + str(now_month) + '.' + \
+                                   str(datetime.today().year) + ' ' + self.day_names[now_day_num] + ':\n\n'
                 result_list += str(counter) + '. ' + row[4] + ' - ' + row[5] + '\n'
                 counter += 1
+                if now_day_num != 6:
+                    now_day_num += 1
+                else:
+                    now_day_num = 0
             self.bot.send_message(message.chat.id, result_list, reply_markup=self.getStartKeyboard())
         else:
             result_list += 'сегодня переговорку ты не занимал'
@@ -307,9 +320,9 @@ class BotFuncs:
         data = self.db_funcs.sortTimes(self.db_funcs.getAllTimes(), 2)
         counter = 1
         last_day = 0
+        now_day_num = datetime.today().weekday()
         if len(data) > 0:
             for row in data:
-                print(row)
                 now_month = self.checkDateFormat(row[12])
                 if last_day != row[11]:
                     last_day = self.checkDateFormat(row[11])
@@ -317,10 +330,14 @@ class BotFuncs:
                     if last_day != 0:
                         result_list += '\n'
                     result_list += self.pushpin + " " + str(last_day) + '.' + str(now_month) + '.' \
-                                   + str(datetime.today().year) + ':\n\n'
+                                   + str(datetime.today().year) + ' ' + self.day_names[now_day_num] + ':\n\n'
                 result_list += str(counter) + '. ' + row[13] + ' - ' + row[14] + '  ---  ' \
                                + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                 counter += 1
+                if now_day_num != 6:
+                    now_day_num += 1
+                else:
+                    now_day_num = 0
             self.bot.send_message(message.chat.id, result_list, reply_markup=self.getStartKeyboard())
         else:
             self.bot.send_message(message.chat.id, 'Сегодня переговорку еще никто не занимал! Успей '
