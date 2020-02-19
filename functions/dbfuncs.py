@@ -116,17 +116,15 @@ class DatabaseFuncs:
                     return False
 
     # Изменение записи
-    def updateTimetable(self, message, old_data, new_data):
+    def updateTimetable(self, row_id, new_data):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
                 print(new_data)
-                print(old_data)
                 query = 'UPDATE public.timetable SET day_use = %s, month_use = %s, start_time = %s, end_time = %s ' \
-                        'WHERE user_id = %s, day_use = %s, month_use = %s, start_time = %s, end_time = %s '
+                        'WHERE id = %s'
                 try:
                     cursor.execute(query, [int(new_data['day_reg']), int(new_data['month_reg']), new_data['start_time'],
-                                           new_data['end_time'], self.getUserId(message),
-                                           old_data[0], old_data[1], old_data[2], old_data[3]])
+                                           new_data['end_time'], row_id])
                     connection.commit()
 
                     return True

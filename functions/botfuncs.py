@@ -188,7 +188,7 @@ class BotFuncs:
 
                 self.added_days = []
                 if self.last_function_used == 'update':
-                    if self.db_funcs.updateTimetable(message, self.data_before_used, self.dataReg):
+                    if self.db_funcs.updateTimetable(int(self.data_before_used[0]), self.dataReg):
                         self.bot.send_message(message.chat.id,
                                               'Запись перенесена на ' + self.db_funcs.checkTimeBefore(self.dataReg['start_time'])
                                               + ' - ' + self.db_funcs.checkTimeBefore(self.dataReg['end_time']) +
@@ -340,6 +340,7 @@ class BotFuncs:
                 if counter == int(delete_time_id):
                     if self.db_funcs.deleteFromTimetable(row[0]):
                         self.last_function_used = 'delete'
+                        self.data_before_used.append(row[0])
                         self.data_before_used.append(row[2])
                         self.data_before_used.append(row[3])
                         self.data_before_used.append(row[4])
@@ -374,6 +375,7 @@ class BotFuncs:
             for row in self.data:
                 if counter == int(update_time_id):
                     self.last_function_used = 'update'
+                    self.data_before_used.append(row[0])
                     self.data_before_used.append(row[2])
                     self.data_before_used.append(row[3])
                     self.data_before_used.append(row[4])
