@@ -8,6 +8,7 @@ import telebot
 import bothome
 import time
 from emoji import emojize
+from datafiles import config
 from functions import dbfuncs
 
 
@@ -21,10 +22,35 @@ class BotFuncs:
         self.data = []
         self.first_time = ''
         self.added_days = []
+        self.day_names = ['(пн)', '(вт)', '(ср)', '(чт)', '(пт)', '(сб)', '(вск)', ]
         self.error = emojize("❌", use_aliases=True)
         self.success = emojize("✅", use_aliases=True)
         self.pushpin = emojize("📌", use_aliases=True)
         self.memo = emojize("📝", use_aliases=True)
+
+    # Стартовый диалог
+    def isUserExist(self, message):
+        if self.db_funcs.checkUser(message.from_user.id):
+            return True
+        else:
+            self.bot.send_message(message.chat.id, 'Привет, ' + message.from_user.username + '!\n'
+                                                                                        'Пожалуйста, введи секретное слово, чтобы начать пользоваться моими возможностями :)')
+            self.bot.register_next_step_handler(message, self.validateSecretWord)
+
+    # Проверка секретного слова
+    def validateSecretWord(self, message):
+        secret_word = str(message.text).strip()
+        if secret_word == config.SECRET_WORD:
+            if self.db_funcs.addUser(message):
+                self.bot.send_message(message.chat.id, 'Привет, ' + message.from_user.username + '!\n'
+                                        'Я - бот компании Russian Robotics, предназначенный для ведения расписания переговорки!\n\n'
+                                        'Нажми на "Справка" или введи /help, чтобы увидеть мои возможности (:\n'
+                                        'Надеюсь тебе понравится со мной работать!\n\n',
+                                        reply_markup=self.getStartKeyboard())
+                self.printHelp(message)
+            else:
+                self.bot.send_message(message.chat.id,  self.error + ' Ты ввел неверное секретное слово. Попробуй снова')
+                self.bot.register_next_step_handler(message, self.validateSecretWord)
 
     # Записи за выбранный день
     def getDayList(self, day_data):
@@ -54,7 +80,7 @@ class BotFuncs:
         self.bot.register_next_step_handler(message, self.regDayTime)
 
     def regDayTime(self, message):
-        if message.text.lower() != 'отмена':
+        if message.text.lower().strip() != 'отмена':
             self.dataReg['day_reg'] = str(message.text[0:2]).strip()
             if not re.match(r'^[0-9]{1,2}$', self.dataReg['day_reg'].lower()):
                 self.bot.send_message(message.chat.id, self.error + ' Неверно, выбери снова:',
@@ -102,11 +128,10 @@ class BotFuncs:
                               + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                     counter += 1
                 answer += '\nПовтори ввод'
-                self.bot.send_message(message.chat.id, answer, reply_markup=self.getCancelButton())
+                self.bot.send_message(message.chat.id, answer)
                 self.bot.register_next_step_handler(message, self.regStartTime)
                 return
-            self.bot.send_message(message.chat.id, 'До скольки тебе нужна переговорка?',
-                                  reply_markup=self.getCancelButton())
+            self.bot.send_message(message.chat.id, 'До скольки тебе нужна переговорка?')
             self.bot.register_next_step_handler(message, self.endRegTime)
         else:
             self.first_time = ''
@@ -117,8 +142,7 @@ class BotFuncs:
         if self.dataReg['end_time'].lower() != 'отмена':
             if not re.match(r'^[0-9]{0,2}(:|\s)[0-9]{2}$', self.dataReg['end_time'].lower()):
                 if not re.match(r'^[0-9]{1,2}$', self.dataReg['end_time'].lower()):
-                    self.bot.send_message(message.chat.id, self.error + ' Неверные данные, повтори ввод',
-                                          reply_markup=self.getCancelButton())
+                    self.bot.send_message(message.chat.id, self.error + ' Неверные данные, повтори ввод')
                     self.bot.register_next_step_handler(message, self.endRegTime)
                     return
             self.dataReg['end_time'] = self.db_funcs.checkTimeBefore(self.dataReg['end_time'])
@@ -133,7 +157,7 @@ class BotFuncs:
                                   + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                         counter += 1
                     answer += '\nПовтори ввод'
-                    self.bot.send_message(message.chat.id, answer, reply_markup=self.getCancelButton())
+                    self.bot.send_message(message.chat.id, answer)
                     self.bot.register_next_step_handler(message, self.regStartTime)
                     return
                 final_add_text = 'Записал тебя c ' + self.dataReg['start_time'] + " до " + self.dataReg[
@@ -143,9 +167,9 @@ class BotFuncs:
                 self.first_time = ''
                 self.added_days = []
                 self.db_funcs.addToTimetable(message, self.dataReg)
-                self.sendTimetableNews(message)
+                # self.sendTimetableNews(message)
             else:
-                self.bot.send_message(message.chat.id, self.error + ' Повтори ввод', reply_markup=self.getCancelButton())
+                self.bot.send_message(message.chat.id, self.error + ' Повтори ввод')
                 self.bot.register_next_step_handler(message, self.endRegTime)
         else:
             self.first_time = ''
@@ -154,7 +178,7 @@ class BotFuncs:
     # Рассылка о добавленной записи
     def sendTimetableNews(self, message):
         chat_ids = self.db_funcs.getAllChatIds()
-        user_data = self.db_funcs.getUser(message)[0]
+        user_data = self.db_funcs.getUser(message)
         day_reg = str(self.checkDateFormat(self.dataReg['day_reg']))
         month_reg = str(self.checkDateFormat(self.dataReg['month_reg']))
 
@@ -262,6 +286,7 @@ class BotFuncs:
         if len(data) > 0:
             result_list += 'занятость на:\n'
             for row in data:
+                print(row)
                 now_month = self.checkDateFormat(row[3])
                 if last_day != row[2]:
                     last_day = self.checkDateFormat(row[2])
@@ -284,6 +309,7 @@ class BotFuncs:
         last_day = 0
         if len(data) > 0:
             for row in data:
+                print(row)
                 now_month = self.checkDateFormat(row[12])
                 if last_day != row[11]:
                     last_day = self.checkDateFormat(row[11])
@@ -303,7 +329,6 @@ class BotFuncs:
     # Клавиатура выбора дней
     def getDaysKeyboard(self):
         self.added_days = []
-        day_names = ['(пн)', '(вт)', '(ср)', '(чт)', '(пт)', '(сб)', '(вск)', ]
         keyboard = telebot.types.ReplyKeyboardMarkup(True, True)
         row_width = 7
         buttons_added = []
@@ -316,7 +341,7 @@ class BotFuncs:
             else:
                 day_num = num
             self.added_days.append(day_num)
-            buttons_added.append(telebot.types.InlineKeyboardButton(text=str(day_num) + ' ' + day_names[now_day_num]))
+            buttons_added.append(telebot.types.InlineKeyboardButton(text=str(day_num) + ' ' + self.day_names[now_day_num]))
             if now_day_num != 6:
                 now_day_num += 1
             else:
@@ -363,10 +388,10 @@ class BotFuncs:
                                                '-- Тебе нужно будет 2 раза ввести время.\n'
                                                '-- Примеры ввода времени: 15, 15 00, 15 30, 15:30\n'
                                                '/delete - перейти в режим удаления своей записи.\n'
-                                               '/update - перейти в режим правки своих записей. (offed)\n'
+                                               # '/update - перейти в режим правки своих записей. (offed)\n'
                                                '/all - вывести весь список забронированного времени.\n'
                                                '/my - вывести только твои забронированное время.\n'
                                                '/time - вывести текущую дату и время.\n'
-                                               '/cat - вывести случайную гифку с котом. (offed)\n\n'
-                                               'Версия бота: 0.7.17\n'
-                                               'Последнее обновление: 18.02.2020\n')
+                                               # '/cat - вывести случайную гифку с котом. (offed)\n\n'
+                                               'Версия бота: 0.8.21\n'
+                                               'Последнее обновление: 19.02.2020\n')

@@ -16,19 +16,24 @@ class DatabaseFuncs:
 
     # Проверка данных о пользователе из БД на актуальность
     def checkUser(self, message):
-        with closing(self.getConnection()) as connection:
-            with connection.cursor() as cursor:
-                query = 'SELECT * FROM public.users WHERE user_id = %s'
-                cursor.execute(query, [message.from_user.id])
-
-                if cursor.rowcount > 0:
-                    for row in cursor:
-                        if not self.compareUserData(row, message):
-                            self.updateUser(message)
-                            return True
-                else:
-                    self.addUser(message)
-                    return False
+        # with closing(self.getConnection()) as connection:
+        #     with connection.cursor() as cursor:
+        # query = 'SELECT * FROM public.users WHERE user_id = %s'
+        # cursor.execute(query, [message.from_user.id])
+        if self.getUserId(message) is not None:
+            if not self.compareUserData(self.getUser(message), message):
+                self.updateUser(message)
+                return True
+        else:
+            return False
+            # if cursor.rowcount > 0:
+            #     for row in cursor:
+            #         if not self.compareUserData(row, message):
+            #             self.updateUser(message)
+            #             return True
+            # else:
+            #     self.addUser(message)
+            #     return False
 
     # Сравнение старых и текущих данных о пользователе
     def compareUserData(self, old_user_data, new_user_data):
@@ -51,10 +56,15 @@ class DatabaseFuncs:
             with connection.cursor() as cursor:
                 query = 'INSERT INTO public.users (user_accname, user_firstname, user_lastname, user_id, user_chat_id, user_language, user_isbot) ' \
                         'VALUES (%s, %s, %s, %s, %s, %s, %s)'
-                cursor.execute(query,
-                               [self.checkNone(message.from_user.username), self.checkNone(message.from_user.first_name), self.checkNone(message.from_user.last_name),
-                                message.from_user.id, message.chat.id, str(message.from_user.language_code).strip(), message.from_user.is_bot])
-                connection.commit()
+                try:
+                    cursor.execute(query,
+                                   [self.checkNone(message.from_user.username), self.checkNone(message.from_user.first_name), self.checkNone(message.from_user.last_name),
+                                    message.from_user.id, message.chat.id, str(message.from_user.language_code).strip(), message.from_user.is_bot])
+                    connection.commit()
+
+                    return True
+                except:
+                    return False
 
     # Обновить данные о пользователе
     def updateUser(self, message):
@@ -83,7 +93,7 @@ class DatabaseFuncs:
                 query = 'SELECT * FROM public.users WHERE user_id = %s'
                 cursor.execute(query, [message.from_user.id])
 
-                return cursor.fetchall()
+                return cursor.fetchone()
 
     # Получить все чаты для рассылки
     def getAllChatIds(self):
