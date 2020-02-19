@@ -19,7 +19,6 @@ class BotFuncs:
         self.db_funcs = dbfuncs.DatabaseFuncs(self.bot)
         self.bot_home = bothome.BotHome()
 
-        self.getDaysData()
         self.data = []
         self.added_days = []
         self.day_names = ['(пн)', '(вт)', '(ср)', '(чт)', '(пт)', '(сб)', '(вск)']
@@ -227,6 +226,7 @@ class BotFuncs:
 
     # Вывод списка на удаление/изменение
     def seeTimesListFor(self, message, func_type):
+        self.getDaysData()
         result_list = ''
         chat_id = message.chat.id
         self.data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message)), 1)
@@ -295,6 +295,7 @@ class BotFuncs:
 
     # Моя занятость
     def printMyTimes(self, message):
+        self.getDaysData()
         is_empty = False
         if self.db_funcs.checkNone(message.from_user.username) == '':
             is_empty = True
@@ -324,6 +325,7 @@ class BotFuncs:
 
     # Занятость переговорки на сегодня
     def printAllTimes(self, message):
+        self.getDaysData()
         result_list = 'Занятость на:\n'
         data = self.db_funcs.sortTimes(self.db_funcs.getAllTimes(), 2)
         counter = 1
