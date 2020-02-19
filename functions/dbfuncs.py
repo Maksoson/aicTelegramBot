@@ -16,24 +16,12 @@ class DatabaseFuncs:
 
     # Проверка данных о пользователе из БД на актуальность
     def checkUser(self, message):
-        # with closing(self.getConnection()) as connection:
-        #     with connection.cursor() as cursor:
-        # query = 'SELECT * FROM public.users WHERE user_id = %s'
-        # cursor.execute(query, [message.from_user.id])
         if self.getUserId(message) is not None:
             if not self.compareUserData(self.getUser(message), message):
                 self.updateUser(message)
                 return True
         else:
             return False
-            # if cursor.rowcount > 0:
-            #     for row in cursor:
-            #         if not self.compareUserData(row, message):
-            #             self.updateUser(message)
-            #             return True
-            # else:
-            #     self.addUser(message)
-            #     return False
 
     # Сравнение старых и текущих данных о пользователе
     def compareUserData(self, old_user_data, new_user_data):
@@ -87,6 +75,7 @@ class DatabaseFuncs:
 
                 return cursor.fetchone()
 
+    # Получить данные о пользователе по telegram_id
     def getUser(self, message):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
@@ -117,17 +106,42 @@ class DatabaseFuncs:
 
                 query = 'INSERT INTO public.timetable (user_id, day_use, month_use, start_time, end_time, date_create, date_update) ' \
                         'VALUES (%s, %s, %s, %s, %s, %s::date, %s::date)'
-                cursor.execute(query, [self.getUserId(message)[0], day_reg, month_reg,
-                                       start_time, end_time, date_create, date_update])
-                connection.commit()
+                try:
+                    cursor.execute(query, [self.getUserId(message), day_reg, month_reg,
+                                           start_time, end_time, date_create, date_update])
+                    connection.commit()
+
+                    return True
+                except:
+                    return False
+
+    # Изменение записи
+    def updateTimetable(self, old_data, new_data):
+        with closing(self.getConnection()) as connection:
+            with connection.cursor() as cursor:
+                query = 'UPDATE public.timetable AS t SET day_use = %s, month_use = %s, start_time = %s, end_time = %s ' \
+                        'FROM public.users AS u WHERE t.user_id = u.id, day_use = %s, month_use = %s, start_time = %s, end_time = %s '
+                try:
+                    cursor.execute(query, [new_data['day_reg'], new_data['month_reg'], new_data['start_time'],
+                                           new_data['end_time'], old_data[0], old_data[1], old_data[2], old_data[3]])
+                    connection.commit()
+
+                    return True
+                except:
+                    return False
 
     # Удаление записи (разрешено удалять только свои записи)
     def deleteFromTimetable(self, time_id):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
                 query = 'DELETE FROM public.timetable WHERE id = %s'
-                cursor.execute(query, [time_id])
-                connection.commit()
+                try:
+                    cursor.execute(query, [time_id])
+                    connection.commit()
+
+                    return True
+                except:
+                    return False
 
     # Получить мои записи на переговорку
     def getMyTimes(self, user_id):

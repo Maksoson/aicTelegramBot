@@ -26,13 +26,15 @@ class BotFuncs:
         self.dataReg = {'start_time': '', 'end_time': '', 'day_reg': '', 'month_reg': ''}
         self.days_dict = {}
 
-        self.first_time = ''
         self.focused_day = ''
+        self.last_function_used = ''
+        self.data_before_used = []
 
         self.error = emojize("❌", use_aliases=True)
         self.success = emojize("✅", use_aliases=True)
         self.pushpin = emojize("📌", use_aliases=True)
         self.memo = emojize("📝", use_aliases=True)
+        self.interrobang = emojize("⁉", use_aliases=True)
 
     # Стартовый диалог
     def isUserExist(self, message):
@@ -115,7 +117,6 @@ class BotFuncs:
                                       reply_markup=self.getDaysKeyboard())
                 self.bot.register_next_step_handler(message, self.regDayTime)
         else:
-            self.first_time = ''
             self.bot.send_message(message.chat.id, 'Ввод отменен', reply_markup=self.getStartKeyboard())
 
     def regStartTime(self, message):
@@ -154,7 +155,6 @@ class BotFuncs:
             self.bot.send_message(message.chat.id, 'До скольки тебе нужна переговорка?')
             self.bot.register_next_step_handler(message, self.endRegTime)
         else:
-            self.first_time = ''
             self.bot.send_message(message.chat.id, 'Ввод отменен', reply_markup=self.getStartKeyboard())
 
     def endRegTime(self, message):
@@ -185,19 +185,44 @@ class BotFuncs:
                     self.bot.send_message(message.chat.id, answer)
                     self.bot.register_next_step_handler(message, self.regStartTime)
                     return
-                final_add_text = 'Записал тебя c ' + self.dataReg['start_time'] + " до " + self.dataReg[
-                                  'end_time'] + ", на " + self.checkDateFormat(self.dataReg['day_reg']) + '.' \
-                                 + self.checkDateFormat(self.dataReg['month_reg']) + ' ' + \
-                                 self.days_dict[self.checkDateFormat(self.dataReg['day_reg'])] + '  ' + self.success
-                self.bot.send_message(message.chat.id, final_add_text, reply_markup=self.getStartKeyboard())
+
                 self.added_days = []
-                self.db_funcs.addToTimetable(message, self.dataReg)
+                if self.last_function_used == 'update':
+                    if self.db_funcs.updateTimetable(self.data_before_used, self.dataReg):
+                        self.bot.send_message(message.chat.id,
+                                              'Запись перенесена на ' + self.db_funcs.checkTimeBefore(self.dataReg['start_time'])
+                                              + ' - ' + self.db_funcs.checkTimeBefore(self.dataReg['end_time']) +
+                                              ' ' + self.checkDateFormat(self.dataReg['day_reg']) + '.'
+                                              + self.checkDateFormat(self.dataReg['month_reg']) + ' '
+                                              + self.days_dict[str(self.checkDateFormat(self.dataReg['day_reg']))]
+                                              + ' ' + self.success,
+                                              reply_markup=self.getStartKeyboard())
+                    else:
+                        self.bot.send_message(message.chat.id, self.interrobang +
+                                              ' Запись не изменена! Произошла ошибка. Попробуй позже',
+                                              reply_markup=self.getStartKeyboard())
+                        self.data_before_used = []
+                        self.last_function_used = ''
+                        return
+                else:
+                    if self.db_funcs.addToTimetable(message, self.dataReg):
+                        self.bot.send_message(message.chat.id, 'Записал тебя c ' + self.dataReg['start_time'] + " до " +
+                                              self.dataReg['end_time'] + ", на " + self.checkDateFormat(self.dataReg['day_reg'])
+                                              + '.' + self.checkDateFormat(self.dataReg['month_reg']) + ' ' +
+                                              self.days_dict[self.checkDateFormat(self.dataReg['day_reg'])] + '  ' +
+                                              self.success, reply_markup=self.getStartKeyboard())
+                    else:
+                        self.bot.send_message(message.chat.id, self.interrobang +
+                                              ' Запись не добавлена! Произошла ошибка. Попробуй позже',
+                                              reply_markup=self.getStartKeyboard())
+                        self.data_before_used = []
+                        self.last_function_used = ''
+                        return
                 self.sendTimetableNews(message)
             else:
                 self.bot.send_message(message.chat.id, self.error + ' Повтори ввод')
                 self.bot.register_next_step_handler(message, self.endRegTime)
         else:
-            self.first_time = ''
             self.bot.send_message(message.chat.id, 'Ввод отменен', reply_markup=self.getStartKeyboard())
 
     # Рассылка о добавленной записи
@@ -211,34 +236,29 @@ class BotFuncs:
             if chat_id[0] != message.chat.id:
                 try:
                     time.sleep(1)
-                    self.bot.send_message(chat_id[0], 'Пользователь ' + user_data[2] + ' ' + user_data[3] +
-                                          ' (@' + user_data[1] + ') занял переговорку ' + day_reg + '.' + month_reg +
-                                          ' ' + self.days_dict[day_reg] + ' с ' + self.dataReg['start_time'] +
-                                          ' до ' + self.dataReg['end_time'])
+                    if self.last_function_used == 'update':
+                        self.bot.send_message(chat_id[0], 'Пользователь ' + user_data[2] + ' ' + user_data[3] +
+                                              ' (@' + user_data[1] + ') изменил запись с ' + self.data_before_used[3] +
+                                              ' - ' + self.data_before_used[4] + ', ' + self.data_before_used[2] + '.'
+                                              + self.data_before_used[3] + ' ' + self.days_dict[self.data_before_used[2]]
+                                              + ' на ' + day_reg + '.' + month_reg + ' ' + self.days_dict[day_reg] +
+                                              ' с ' + self.dataReg['start_time'] + ' до ' + self.dataReg['end_time'])
+                    elif self.last_function_used == 'delete':
+                        self.bot.send_message(chat_id[0], 'Пользователь ' + user_data[2] + ' ' + user_data[3] +
+                                              ' (@' + user_data[1] + ') удалил запись на ' + self.data_before_used[3] +
+                                              ' - ' + self.data_before_used[4] + ', ' + self.data_before_used[2] + '.'
+                                              + self.data_before_used[3] + ' ' + self.days_dict[self.data_before_used[2]])
+                    else:
+                        self.bot.send_message(chat_id[0], 'Пользователь ' + user_data[2] + ' ' + user_data[3] +
+                                              ' (@' + user_data[1] + ') занял переговорку ' + day_reg + '.' + month_reg +
+                                              ' ' + self.days_dict[day_reg] + ' с ' + self.dataReg['start_time'] +
+                                              ' до ' + self.dataReg['end_time'])
                 except:
                     pass
 
+        self.data_before_used = []
+        self.last_function_used = ''
         self.dataReg = {'start_time': '', 'end_time': '', 'day_reg': '', 'month_reg': ''}
-
-    def test(self, day, month, data_time):
-        data = self.db_funcs.sortTimes(self.db_funcs.getAllTimes(), 2)
-        intersect_times = []
-        if len(data) > 0:
-            for row in data:
-                if int(day) == int(row[11]) and int(month) == int(row[12]):
-                    print(self.first_time + '    LEERLTLETLE')
-                    if self.first_time == '' and data_time >= row[13]:
-                        if data_time < row[14]:
-                            intersect_times.append(row)
-                    elif self.first_time != '' and data_time > row[13]:
-                        if data_time <= row[14]:
-                            intersect_times.append(row)
-                    elif self.first_time <= row[13] and data_time >= row[14]:
-                        intersect_times.append(row)
-            if self.first_time == '':
-                self.first_time = data_time
-
-        return intersect_times
 
     # Проверка введенного времени на пересечение с уже существующими записями
     def checkTimesIntersection(self, day, month, data_time):
@@ -249,8 +269,6 @@ class BotFuncs:
             for row in data:
                 is_error = False
                 if int(day) == int(row[11]) and int(month) == int(row[12]):
-                    print(start_time)
-                    print(self.dataReg['start_time'])
                     if start_time == '':
                         if row[13] <= data_time < row[14]:
                             is_error = True
@@ -270,9 +288,11 @@ class BotFuncs:
     # Вывод списка на удаление/изменение
     def seeTimesListFor(self, message, func_type):
         self.getDaysData()
+        self.data_before_used = []
+        self.last_function_used = ''
+        self.data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message)), 1)
         result_list = ''
         chat_id = message.chat.id
-        self.data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message)), 1)
         counter = 1
         last_day = 0
         if len(self.data) > 0:
@@ -294,44 +314,83 @@ class BotFuncs:
             self.bot.send_message(chat_id, result_list, reply_markup=self.getCancelButton())
             if func_type == 1:
                 self.bot.register_next_step_handler(message, self.deleteTime)
-            # elif func_type == 2:
-            #     self.bot.register_next_step_handler(message, self.updateTime)
+            elif func_type == 2:
+                self.bot.register_next_step_handler(message, self.updateTime)
         else:
             result_list += 'Сегодня переговорку ты не занимал'
             self.bot.send_message(chat_id, result_list, reply_markup=self.getStartKeyboard())
 
     # Удаление записи
     def deleteTime(self, message):
-        self.getDaysData()
+        # self.getDaysData()
         delete_time_id = str(message.text).strip()
         if delete_time_id.lower() != 'отмена':
             if not delete_time_id.isdigit():
                 self.bot.send_message(message.chat.id, 'Неверно, введи номер еще раз')
-                self.bot.register_next_step_handler(message, self.deleteTime, reply_markup=self.getCancelButton())
+                self.bot.register_next_step_handler(message, self.deleteTime)
             counter = 1
             for row in self.data:
                 if counter == int(delete_time_id):
-                    self.db_funcs.deleteFromTimetable(row[0])
-                    self.bot.send_message(message.chat.id, 'Запись на ' + row[4] + " - " + row[5] + " за " +
-                                          str(self.checkDateFormat(row[2])) + "." + str(self.checkDateFormat(row[3])) +
-                                          " удалена!  " + self.success, reply_markup=self.getStartKeyboard())
-                    self.data = []
-                    break
+                    if self.db_funcs.deleteFromTimetable(row[0]):
+                        self.last_function_used = 'delete'
+                        self.data_before_used = row
+                        self.bot.send_message(message.chat.id, 'Запись на ' + row[4] + " - " + row[5] + " за " +
+                                              str(self.checkDateFormat(row[2])) + "." + str(self.checkDateFormat(row[3])) +
+                                              " удалена!  " + self.success, reply_markup=self.getStartKeyboard())
+                        self.sendTimetableNews(message)
+                        self.data = []
+                        break
+                    else:
+                        self.bot.send_message(message.chat.id, self.interrobang +
+                                              ' Запись не удалена! Произошла ошибка. Попробуй позже',
+                                              reply_markup=self.getStartKeyboard())
+                        self.data = []
+                        break
                 counter += 1
         else:
+            self.data_before_used = []
+            self.last_function_used = ''
             self.bot.send_message(message.chat.id, 'Ввод отменен', reply_markup=self.getStartKeyboard())
 
-    # # Изменение записи
-    # Не забудь раскомментить вызов функции выше!
-    # def updateTime(self, message):
-    #     update_time_id = str(message.text).strip()
-    #     if not update_time_id.isdigit():
-    #         self.bot.send_message(message.chat.id, 'Неверно, введи номер еще раз')
-    #         self.bot.register_next_step_handler(message, self.updateTime)
-    #     counter = 1
-    #     for row in self.data:
-    #         if counter == int(update_time_id):
-    #             self.db_funcs.updateTimetable()
+    # Изменение записи
+    def updateTime(self, message):
+        # self.getDaysData()
+        update_time_id = str(message.text).strip()
+        if update_time_id.lower() != 'отмена':
+            if not update_time_id.isdigit():
+                self.bot.send_message(message.chat.id, 'Неверно, введи номер еще раз')
+                self.bot.register_next_step_handler(message, self.updateTime)
+            counter = 1
+            for row in self.data:
+                if counter == int(update_time_id):
+                    self.data_before_used.append(self.checkDateFormat(row[2]))
+                    self.data_before_used.append(self.checkDateFormat(row[3]))
+                    self.data_before_used.append(row[3])
+                    self.data_before_used.append(row[4])
+                    self.last_function_used = 'update'
+                    self.regTime(message)
+                    break
+                    # if self.db_funcs.updateTimetable(row[0]):
+                    #     now_day = str(self.checkDateFormat(row[2]))
+                    #     now_month = str(self.checkDateFormat(row[3]))
+                    #     self.bot.send_message(message.chat.id,
+                    #                           'Запись на ' + row[4] + ' - ' + row[5] + ' за ' + now_day + '.'
+                    #                           + now_month + ' ' + self.days_dict[now_day] + ' успешно изменена!  '
+                    #                           + self.success,
+                    #                           reply_markup=self.getStartKeyboard())
+                    #     self.data = []
+                    #     break
+                    # else:
+                    #     self.bot.send_message(message.chat.id, self.interrobang +
+                    #                           ' Запись не изменена! Произошла какая-то ошибка. Попробуйте позже',
+                    #                           reply_markup=self.getStartKeyboard())
+                    #     self.data = []
+                    #     break
+                counter += 1
+        else:
+            self.data_before_used = []
+            self.last_function_used = ''
+            self.bot.send_message(message.chat.id, 'Ввод отменен', reply_markup=self.getStartKeyboard())
 
     # Моя занятость
     def printMyTimes(self, message):

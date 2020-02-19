@@ -111,7 +111,6 @@ def send_text(message):
         elif user_message == 'занятость переговорки на сегодня':
             bot_funcs.printAllTimes(message)
         elif user_message == 'справка':
-            # db_funcs.checkUser(message)
             bot_funcs.printHelp(message)
 
 
