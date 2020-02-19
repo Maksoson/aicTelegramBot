@@ -30,7 +30,7 @@ class BotFuncs:
 
     # Стартовый диалог
     def isUserExist(self, message):
-        if self.db_funcs.checkUser(message.from_user.id):
+        if self.db_funcs.checkUser(message):
             return True
         else:
             self.bot.send_message(message.chat.id, 'Привет, ' + message.from_user.username + '!\n'
