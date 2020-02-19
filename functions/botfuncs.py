@@ -229,8 +229,9 @@ class BotFuncs:
     def sendTimetableNews(self, message):
         chat_ids = self.db_funcs.getAllChatIds()
         user_data = self.db_funcs.getUser(message)
-        day_reg = str(self.checkDateFormat(self.dataReg['day_reg']))
-        month_reg = str(self.checkDateFormat(self.dataReg['month_reg']))
+        if self.last_function_used != 'delete':
+            day_reg = str(self.checkDateFormat(self.dataReg['day_reg']))
+            month_reg = str(self.checkDateFormat(self.dataReg['month_reg']))
 
         for chat_id in chat_ids:
             if chat_id[0] != message.chat.id:

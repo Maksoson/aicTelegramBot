@@ -42,6 +42,8 @@ def startFunc(message):
             bot_funcs.printAllTimes(message)
         elif command == '/delete':
             bot_funcs.seeTimesListFor(message, 1)
+        elif command == '/update':
+            bot_funcs.seeTimesListFor(message, 2)
         elif command == '/my':
             bot_funcs.printMyTimes(message)
 
