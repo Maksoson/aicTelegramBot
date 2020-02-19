@@ -195,8 +195,8 @@ class BotFuncs:
                     end_time = str(self.db_funcs.checkTimeBefore(self.data_before_used[4]))
                     if self.db_funcs.updateTimetable(row_id, self.dataReg):
                         self.bot.send_message(message.chat.id,
-                                              'Запись перенесена c ' + start_time + ' - ' + end_time + ', ' + last_day
-                                              + '.' + last_month + ' ' + self.days_dict[last_day] + ' на '
+                                              'Запись перенесена \nc' + start_time + ' - ' + end_time + ', ' + last_day
+                                              + '.' + last_month + ' ' + self.days_dict[last_day] + '\nна '
                                               + self.db_funcs.checkTimeBefore(self.dataReg['start_time'])
                                               + ' - ' + self.db_funcs.checkTimeBefore(self.dataReg['end_time']) +
                                               ' ' + self.checkDateFormat(self.dataReg['day_reg']) + '.'
@@ -252,10 +252,10 @@ class BotFuncs:
                     time.sleep(1)
                     if self.last_function_used == 'update':
                         self.bot.send_message(chat_id[0], 'Пользователь ' + user_data[2] + ' ' + user_data[3] +
-                                              ' (@' + user_data[1] + ') изменил запись с ' + start_time + ' - ' +
+                                              ' (@' + user_data[1] + ') изменил запись:\n' + start_time + ' - ' +
                                               end_time + ', ' + last_day + '.' + last_month + ' ' +
-                                              self.days_dict[last_day] + ' на ' + self.dataReg['start_time'] +
-                                              ' - ' + self.dataReg['end_time'] + day_reg + '.' + month_reg + ' ' +
+                                              self.days_dict[last_day] + '\nна ' + self.dataReg['start_time'] +
+                                              ' - ' + self.dataReg['end_time'] + ', ' + day_reg + '.' + month_reg + ' ' +
                                               self.days_dict[day_reg])
                     elif self.last_function_used == 'delete':
                         self.bot.send_message(chat_id[0], 'Пользователь ' + user_data[2] + ' ' + user_data[3] +
