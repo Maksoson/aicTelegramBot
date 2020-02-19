@@ -539,7 +539,7 @@ class BotFuncs:
 
     # Время
     def printToday(self, chat_id, today):
-        self.bot.send_message(chat_id, str(today.strftime("%H:%M  %d.%m.%Y")))
+        self.bot.send_message(chat_id, str(today.strftime("%H:%M  %d.%m.%Y")), reply_markup=self.getStartKeyboard())
 
     # Справка
     def printHelp(self, message):
@@ -555,4 +555,5 @@ class BotFuncs:
                                                '/time - вывести текущую дату и время.\n'
                                                # '/cat - вывести случайную гифку с котом. (offed)\n\n'
                                                'Версия бота: 0.8.21\n'
-                                               'Последнее обновление: 19.02.2020\n')
+                                               'Последнее обновление: 19.02.2020\n',
+                              reply_markup=self.getStartKeyboard())

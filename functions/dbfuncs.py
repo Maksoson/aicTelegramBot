@@ -119,6 +119,10 @@ class DatabaseFuncs:
     def updateTimetable(self, message, old_data, new_data):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
+                print(new_data)
+                print(old_data)
+                print(self.getUserId(message))
+                print(type(self.getUserId(message)))
                 query = 'UPDATE public.timetable t SET day_use = %s, month_use = %s, start_time = %s, end_time = %s ' \
                         'WHERE user_id = %s, day_use = %s, month_use = %s, start_time = %s, end_time = %s '
                 try:
