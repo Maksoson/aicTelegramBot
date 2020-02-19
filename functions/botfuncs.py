@@ -57,20 +57,24 @@ class BotFuncs:
         data = self.db_funcs.sortTimes(self.db_funcs.getTimesDay(day_data), 2)
         counter = 1
         result_list = self.memo + ' '
+        now_day = ''
+        now_month = ''
         now_day_num = datetime.today().weekday()
         if len(data) > 0:
             for row in data:
-                last_day = str(self.checkDateFormat(row[11]))
+                now_day = str(self.checkDateFormat(row[11]))
                 now_month = str(self.checkDateFormat(row[12]))
                 if counter == 1:
-                    result_list += self.memo + ' Занятость на ' + last_day + '.' + now_month + '.' + \
+                    result_list += 'Занятость на ' + now_day + '.' + now_month + '.' + \
                                    str(datetime.today().year) + ' ' + self.day_names[now_day_num] + ':\n\n'
                 result_list += str(counter) + '. ' + row[13] + ' - ' + row[14] + '  ---  ' \
                                + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                 counter += 1
             result_list += '\n'
         else:
-            result_list = 'В этот день переговорку еще никто не занимал (:'
+            result_list += 'Занятость на ' + now_day + '.' + now_month + '.' + \
+                                   str(datetime.today().year) + ' ' + self.day_names[now_day_num] + ':\n\n'
+            result_list += 'Список пуст\n\n'
 
         return result_list
 
@@ -165,7 +169,7 @@ class BotFuncs:
                                   'end_time'] + ", на " + self.checkDateFormat(self.dataReg['day_reg']) + '.' \
                                  + self.checkDateFormat(self.dataReg['month_reg']) + '  ' + self.success
                 self.bot.send_message(message.chat.id, final_add_text, reply_markup=self.getStartKeyboard())
-                self.first_time = ''
+                # self.first_time = ''
                 self.added_days = []
                 self.db_funcs.addToTimetable(message, self.dataReg)
                 # self.sendTimetableNews(message)
