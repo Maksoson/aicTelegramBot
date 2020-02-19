@@ -254,9 +254,9 @@ class BotFuncs:
                         self.bot.send_message(chat_id[0], 'Пользователь ' + user_data[2] + ' ' + user_data[3] +
                                               ' (@' + user_data[1] + ') изменил запись с ' + start_time + ' - ' +
                                               end_time + ', ' + last_day + '.' + last_month + ' ' +
-                                              self.days_dict[last_day] + ' на ' + day_reg + '.' + month_reg + ' ' +
-                                              self.days_dict[day_reg] + ' с ' + self.dataReg['start_time'] +
-                                              ' до ' + self.dataReg['end_time'])
+                                              self.days_dict[last_day] + ' на ' + self.dataReg['start_time'] +
+                                              ' - ' + self.dataReg['end_time'] + day_reg + '.' + month_reg + ' ' +
+                                              self.days_dict[day_reg])
                     elif self.last_function_used == 'delete':
                         self.bot.send_message(chat_id[0], 'Пользователь ' + user_data[2] + ' ' + user_data[3] +
                                               ' (@' + user_data[1] + ') удалил запись на ' + start_time +
