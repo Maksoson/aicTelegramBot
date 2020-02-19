@@ -241,12 +241,12 @@ class BotFuncs:
                         result_list += '\n'
                     result_list += self.pushpin + " " + str(last_day) + '.' + str(now_month) + '.' + \
                                    str(datetime.today().year) + ' ' + self.day_names[now_day_num] + ':\n\n'
+                    if now_day_num != 6:
+                        now_day_num += 1
+                    else:
+                        now_day_num = 0
                 result_list += str(counter) + '. ' + row[4] + ' - ' + row[5] + '\n'
                 counter += 1
-                if now_day_num != 6:
-                    now_day_num += 1
-                else:
-                    now_day_num = 0
             self.bot.send_message(chat_id, result_list, reply_markup=self.getCancelButton())
             if func_type == 1:
                 self.bot.register_next_step_handler(message, self.deleteTime)
@@ -274,7 +274,6 @@ class BotFuncs:
                     break
                 counter += 1
         else:
-            self.first_time = ''
             self.bot.send_message(message.chat.id, 'Ввод отменен', reply_markup=self.getStartKeyboard())
 
     # # Изменение записи
@@ -313,12 +312,12 @@ class BotFuncs:
                         result_list += '\n'
                     result_list += self.pushpin + " " + str(last_day) + '.' + str(now_month) + '.' + \
                                    str(datetime.today().year) + ' ' + self.day_names[now_day_num] + ':\n\n'
+                    if now_day_num != 6:
+                        now_day_num += 1
+                    else:
+                        now_day_num = 0
                 result_list += str(counter) + '. ' + row[4] + ' - ' + row[5] + '\n'
                 counter += 1
-                if now_day_num != 6:
-                    now_day_num += 1
-                else:
-                    now_day_num = 0
             self.bot.send_message(message.chat.id, result_list, reply_markup=self.getStartKeyboard())
         else:
             result_list += 'сегодня переговорку ты не занимал'
@@ -341,13 +340,13 @@ class BotFuncs:
                         result_list += '\n'
                     result_list += self.pushpin + " " + str(last_day) + '.' + str(now_month) + '.' \
                                    + str(datetime.today().year) + ' ' + self.day_names[now_day_num] + ':\n\n'
+                    if now_day_num != 6:
+                        now_day_num += 1
+                    else:
+                        now_day_num = 0
                 result_list += str(counter) + '. ' + row[13] + ' - ' + row[14] + '  ---  ' \
                                + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                 counter += 1
-                if now_day_num != 6:
-                    now_day_num += 1
-                else:
-                    now_day_num = 0
             self.bot.send_message(message.chat.id, result_list, reply_markup=self.getStartKeyboard())
         else:
             self.bot.send_message(message.chat.id, 'Сегодня переговорку еще никто не занимал! Успей '
