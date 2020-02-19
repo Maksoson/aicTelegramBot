@@ -54,8 +54,8 @@ class BotFuncs:
         self.bot.register_next_step_handler(message, self.regDayTime)
 
     def regDayTime(self, message):
-        self.dataReg['day_reg'] = str(message.text[0:2]).strip()
-        if self.dataReg['day_reg'].lower() != 'отмена':
+        if message.text.lower() != 'отмена':
+            self.dataReg['day_reg'] = str(message.text[0:2]).strip()
             if not re.match(r'^[0-9]{1,2}$', self.dataReg['day_reg'].lower()):
                 self.bot.send_message(message.chat.id, self.error + ' Неверно, выбери снова:',
                                       reply_markup=self.getDaysKeyboard())
