@@ -128,6 +128,11 @@ class BotFuncs:
                     self.bot.register_next_step_handler(message, self.regStartTime)
                     return
             self.dataReg['start_time'] = self.db_funcs.checkTimeBefore(self.dataReg['start_time'])
+            if not self.checkInsertedTime(self.dataReg['start_time']):
+                self.bot.send_message(message.chat.id, self.error + ' Неверные данные, повтори ввод',
+                                      reply_markup=self.getCancelButton())
+                self.bot.register_next_step_handler(message, self.regStartTime)
+                return
             intersection_times = self.checkTimesIntersection(self.dataReg['day_reg'], self.dataReg['month_reg'], self.dataReg['start_time'])
             if len(intersection_times) > 0:
                 answer = self.error + ' Твое время пересекается с:\n\n'
@@ -155,6 +160,11 @@ class BotFuncs:
                     self.bot.register_next_step_handler(message, self.endRegTime)
                     return
             self.dataReg['end_time'] = self.db_funcs.checkTimeBefore(self.dataReg['end_time'])
+            if not self.checkInsertedTime(self.dataReg['end_time']):
+                self.bot.send_message(message.chat.id, self.error + ' Неверные данные, повтори ввод',
+                                      reply_markup=self.getCancelButton())
+                self.bot.register_next_step_handler(message, self.regStartTime)
+                return
             if self.dataReg['end_time'] > self.dataReg['start_time']:
                 intersection_times = self.checkTimesIntersection(self.dataReg['day_reg'], self.dataReg['month_reg'],
                                                                  self.dataReg['end_time'])
@@ -226,7 +236,7 @@ class BotFuncs:
 
     # Вывод списка на удаление/изменение
     def seeTimesListFor(self, message, func_type):
-        # self.getDaysData()
+        self.getDaysData()
         result_list = ''
         chat_id = message.chat.id
         self.data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message)), 1)
@@ -263,6 +273,7 @@ class BotFuncs:
 
     # Удаление записи
     def deleteTime(self, message):
+        self.getDaysData()
         delete_time_id = str(message.text).strip()
         if delete_time_id.lower() != 'отмена':
             if not delete_time_id.isdigit():
@@ -295,7 +306,7 @@ class BotFuncs:
 
     # Моя занятость
     def printMyTimes(self, message):
-        # self.getDaysData()
+        self.getDaysData()
         is_empty = False
         if self.db_funcs.checkNone(message.from_user.username) == '':
             is_empty = True
@@ -325,7 +336,7 @@ class BotFuncs:
 
     # Занятость переговорки на сегодня
     def printAllTimes(self, message):
-        # self.getDaysData()
+        self.getDaysData()
         result_list = 'Занятость на:\n'
         data = self.db_funcs.sortTimes(self.db_funcs.getAllTimes(), 2)
         counter = 1
@@ -400,6 +411,10 @@ class BotFuncs:
 
         self.added_days = added_days
         self.days_dict = days_dict
+
+
+    def checkInsertedTime(self, time_data):
+        return True if time_data >= '00:00' or time_data < '23:58' else False
 
     @staticmethod
     def getStartKeyboard():

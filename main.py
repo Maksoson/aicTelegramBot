@@ -29,7 +29,6 @@ start_keyboard.row('Дата', 'Справка')
 def startFunc(message):
     if bot_funcs.isUserExist(message):
         command = str(message.text).strip()
-        bot_funcs.getDaysData()
         if command == '/start':
             bot.send_message(message.chat.id, 'Я тебя уже знаю, ' + message.from_user.username,
                              reply_markup=start_keyboard)
@@ -91,7 +90,6 @@ def startFunc(message):
 @bot.message_handler(content_types=['text'])
 def send_text(message):
     if bot_funcs.isUserExist(message):
-        bot_funcs.getDaysData()
         user_message = message.text.lower()
         chat_id = message.chat.id
         user_first_name = message.from_user.first_name
