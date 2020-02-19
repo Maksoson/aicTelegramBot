@@ -182,7 +182,8 @@ class BotFuncs:
                     return
                 final_add_text = 'Записал тебя c ' + self.dataReg['start_time'] + " до " + self.dataReg[
                                   'end_time'] + ", на " + self.checkDateFormat(self.dataReg['day_reg']) + '.' \
-                                 + self.checkDateFormat(self.dataReg['month_reg']) + '  ' + self.success
+                                 + self.checkDateFormat(self.dataReg['month_reg']) + ' ' + \
+                                 self.days_dict[self.checkDateFormat(self.dataReg['day_reg'])] + '  ' + self.success
                 self.bot.send_message(message.chat.id, final_add_text, reply_markup=self.getStartKeyboard())
                 # self.first_time = ''
                 self.added_days = []
@@ -216,7 +217,7 @@ class BotFuncs:
         self.dataReg = {'start_time': '', 'end_time': '', 'day_reg': '', 'month_reg': ''}
 
     # Проверка введенного времени на пересечение с уже существующими записями
-    def checkTimesIntersection(self, day, month, data_time):
+    def test(self, day, month, data_time):
         data = self.db_funcs.sortTimes(self.db_funcs.getAllTimes(), 2)
         intersect_times = []
         if len(data) > 0:
@@ -233,6 +234,30 @@ class BotFuncs:
                         intersect_times.append(row)
             if self.first_time == '':
                 self.first_time = data_time
+
+        return intersect_times
+
+    def checkTimesIntersection(self, day, month, data_time):
+        data = self.db_funcs.sortTimes(self.db_funcs.getAllTimes(), 2)
+        start_time = self.db_funcs.checkTimeBefore(self.dataReg['start_time'])
+        intersect_times = []
+        if len(data) > 0:
+            for row in data:
+                is_error = False
+                if int(day) == int(row[11]) and int(month) == int(row[12]):
+                    if start_time == '':
+                        if row[13] <= data_time < row[14]:
+                            is_error = True
+                    else:
+                        if row[13] <= start_time < row[14]:
+                            is_error = True
+                        if row[13] < data_time <= row[14]:
+                            is_error = True
+                        if start_time <= row[13] and data_time >= row[14]:
+                            is_error = True
+
+                if is_error:
+                    intersect_times.append(row)
 
         return intersect_times
 
