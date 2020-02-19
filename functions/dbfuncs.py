@@ -119,8 +119,8 @@ class DatabaseFuncs:
     def updateTimetable(self, old_data, new_data):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
-                query = 'UPDATE public.timetable AS t SET day_use = %s, month_use = %s, start_time = %s, end_time = %s ' \
-                        'FROM public.users AS u WHERE t.user_id = u.id, day_use = %s, month_use = %s, start_time = %s, end_time = %s '
+                query = 'UPDATE public.timetable AS t, public.users as u SET day_use = %s, month_use = %s, start_time = %s, end_time = %s ' \
+                        'WHERE t.user_id = u.id, day_use = %s, month_use = %s, start_time = %s, end_time = %s '
                 try:
                     cursor.execute(query, [new_data['day_reg'], new_data['month_reg'], new_data['start_time'],
                                            new_data['end_time'], old_data[0], old_data[1], old_data[2], old_data[3]])
