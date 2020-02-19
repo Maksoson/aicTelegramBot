@@ -35,6 +35,8 @@ class BotFuncs:
         self.pushpin = emojize("📌", use_aliases=True)
         self.memo = emojize("📝", use_aliases=True)
         self.interrobang = emojize("⁉", use_aliases=True)
+        self.minus = emojize("➖", use_aliases=True)
+        self.plus = emojize("➕", use_aliases=True)
 
     # Стартовый диалог
     def isUserExist(self, message):
@@ -195,14 +197,13 @@ class BotFuncs:
                     end_time = str(self.db_funcs.checkTimeBefore(self.data_before_used[4]))
                     if self.db_funcs.updateTimetable(row_id, self.dataReg):
                         self.bot.send_message(message.chat.id,
-                                              'Запись перенесена \nc' + start_time + ' - ' + end_time + ', ' + last_day
-                                              + '.' + last_month + ' ' + self.days_dict[last_day] + '\nна '
+                                              'Запись успешно перенесена:\n\n' + self.minus + ' ' + start_time + ' - ' + end_time + ', '
+                                              + last_day + '.' + last_month + ' ' + self.days_dict[last_day] + '\n\n' + self.plus + ' '
                                               + self.db_funcs.checkTimeBefore(self.dataReg['start_time'])
                                               + ' - ' + self.db_funcs.checkTimeBefore(self.dataReg['end_time']) +
                                               ' ' + self.checkDateFormat(self.dataReg['day_reg']) + '.'
                                               + self.checkDateFormat(self.dataReg['month_reg']) + ' '
-                                              + self.days_dict[str(self.checkDateFormat(self.dataReg['day_reg']))]
-                                              + ' ' + self.success,
+                                              + self.days_dict[str(self.checkDateFormat(self.dataReg['day_reg']))],
                                               reply_markup=self.getStartKeyboard())
                     else:
                         self.bot.send_message(message.chat.id, self.interrobang +
@@ -252,18 +253,18 @@ class BotFuncs:
                     time.sleep(1)
                     if self.last_function_used == 'update':
                         self.bot.send_message(chat_id[0], 'Пользователь ' + user_data[2] + ' ' + user_data[3] +
-                                              ' (@' + user_data[1] + ') изменил запись:\n' + start_time + ' - ' +
+                                              ' (@' + user_data[1] + ') изменил запись:\n\n' + self.minus + ' ' + start_time + ' - ' +
                                               end_time + ', ' + last_day + '.' + last_month + ' ' +
-                                              self.days_dict[last_day] + '\nна ' + self.dataReg['start_time'] +
+                                              self.days_dict[last_day] + '\n\n' + self.plus + ' ' + self.dataReg['start_time'] +
                                               ' - ' + self.dataReg['end_time'] + ', ' + day_reg + '.' + month_reg + ' ' +
                                               self.days_dict[day_reg])
                     elif self.last_function_used == 'delete':
-                        self.bot.send_message(chat_id[0], 'Пользователь ' + user_data[2] + ' ' + user_data[3] +
+                        self.bot.send_message(chat_id[0], self.minus + ' Пользователь ' + user_data[2] + ' ' + user_data[3] +
                                               ' (@' + user_data[1] + ') удалил запись на ' + start_time +
                                               ' - ' + end_time + ', ' + last_day + '.' + last_month +
                                               ' ' + self.days_dict[last_day])
                     else:
-                        self.bot.send_message(chat_id[0], 'Пользователь ' + user_data[2] + ' ' + user_data[3] +
+                        self.bot.send_message(chat_id[0], self.plus + ' Пользователь ' + user_data[2] + ' ' + user_data[3] +
                                               ' (@' + user_data[1] + ') занял переговорку ' + day_reg + '.' + month_reg +
                                               ' ' + self.days_dict[day_reg] + ' с ' + self.dataReg['start_time'] +
                                               ' до ' + self.dataReg['end_time'])
