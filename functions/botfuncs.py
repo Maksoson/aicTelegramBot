@@ -19,6 +19,7 @@ class BotFuncs:
         self.db_funcs = dbfuncs.DatabaseFuncs(self.bot)
         self.bot_home = bothome.BotHome()
 
+        self.getDaysData()
         self.data = []
         self.added_days = []
         self.day_names = ['(пн)', '(вт)', '(ср)', '(чт)', '(пт)', '(сб)', '(вск)']
