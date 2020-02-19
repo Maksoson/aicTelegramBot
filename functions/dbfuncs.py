@@ -123,7 +123,7 @@ class DatabaseFuncs:
                 print(old_data)
                 print(self.getUserId(message))
                 print(type(self.getUserId(message)))
-                query = 'UPDATE public.timetable t SET day_use = %s, month_use = %s, start_time = %s, end_time = %s ' \
+                query = 'UPDATE public.timetable SET day_use = %s, month_use = %s, start_time = %s, end_time = %s ' \
                         'WHERE user_id = %s, day_use = %s, month_use = %s, start_time = %s, end_time = %s '
                 try:
                     cursor.execute(query, [new_data['day_reg'], new_data['month_reg'], new_data['start_time'],
