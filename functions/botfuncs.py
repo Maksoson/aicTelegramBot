@@ -84,6 +84,7 @@ class BotFuncs:
 
     # Занять переговорку (следующие 4 функции)
     def regTime(self, message):
+        self.getDaysData()
         self.bot.send_message(message.chat.id, 'Выбери или введи день из предложенных:',
                               reply_markup=self.getDaysKeyboard())
         self.bot.register_next_step_handler(message, self.regDayTime)
