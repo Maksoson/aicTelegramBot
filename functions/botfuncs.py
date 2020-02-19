@@ -134,6 +134,7 @@ class BotFuncs:
                                       reply_markup=self.getCancelButton())
                 self.bot.register_next_step_handler(message, self.regStartTime)
                 return
+            self.dataReg['start_time'] = start_time
             intersection_times = self.checkTimesIntersection(self.dataReg['day_reg'], self.dataReg['month_reg'],
                                                              start_time)
             if len(intersection_times) > 0:
@@ -147,7 +148,6 @@ class BotFuncs:
                 self.bot.send_message(message.chat.id, answer)
                 self.bot.register_next_step_handler(message, self.regStartTime)
                 return
-            self.dataReg['start_time'] = start_time
             self.bot.send_message(message.chat.id, 'До скольки тебе нужна переговорка?')
             self.bot.register_next_step_handler(message, self.endRegTime)
         else:
@@ -247,7 +247,7 @@ class BotFuncs:
                 is_error = False
                 if int(day) == int(row[11]) and int(month) == int(row[12]):
                     print(start_time)
-                    if start_time == '':
+                    if self.first_time == '':
                         if row[13] <= data_time < row[14]:
                             is_error = True
                     else:
@@ -260,6 +260,8 @@ class BotFuncs:
 
                 if is_error:
                     intersect_times.append(row)
+                else:
+                    self.first_time = start_time
 
         return intersect_times
 
