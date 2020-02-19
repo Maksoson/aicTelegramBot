@@ -271,7 +271,6 @@ class BotFuncs:
         self.data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message)), 1)
         counter = 1
         last_day = 0
-        now_day_num = datetime.today().weekday()
         if len(self.data) > 0:
             if func_type == 1:
                 result_list += 'Введи номер записи, которую хочешь отменить:\n'
@@ -279,16 +278,13 @@ class BotFuncs:
                 result_list += 'Введи номер записи, которую хочешь изменить:\n'
             for row in self.data:
                 now_month = str(self.checkDateFormat(row[3]))
-                if self.checkDateFormat(last_day) != self.checkDateFormat(row[2]):
+                if last_day != self.checkDateFormat(row[2]):
                     last_day = self.checkDateFormat(row[2])
                     if last_day != 0:
                         result_list += '\n'
                     result_list += self.pushpin + " " + str(last_day) + '.' + now_month + '.' + \
                                    str(datetime.today().year) + ' ' + self.days_dict[str(last_day)] + ':\n\n'
-                    if now_day_num != 6:
-                        now_day_num += 1
-                    else:
-                        now_day_num = 0
+
                 result_list += str(counter) + '. ' + row[4] + ' - ' + row[5] + '\n'
                 counter += 1
             self.bot.send_message(chat_id, result_list, reply_markup=self.getCancelButton())
@@ -349,7 +345,7 @@ class BotFuncs:
             result_list += 'занятость на:\n' if not is_empty else ''
             for row in data:
                 now_month = str(self.checkDateFormat(row[3]))
-                if self.checkDateFormat(last_day) != self.checkDateFormat(row[2]):
+                if last_day != self.checkDateFormat(row[2]):
                     last_day = self.checkDateFormat(row[2])
                     counter = 1
                     if last_day != 0:
@@ -373,7 +369,7 @@ class BotFuncs:
         if len(data) > 0:
             for row in data:
                 now_month = str(self.checkDateFormat(row[12]))
-                if self.checkDateFormat(last_day) != self.checkDateFormat(row[11]):
+                if last_day != self.checkDateFormat(row[11]):
                     last_day = self.checkDateFormat(row[11])
                     counter = 1
                     if last_day != 0:
