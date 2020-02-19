@@ -207,7 +207,8 @@ class BotFuncs:
                     time.sleep(1)
                     self.bot.send_message(chat_id[0], 'Пользователь ' + user_data[2] + ' ' + user_data[3] +
                                           ' (@' + user_data[1] + ') занял переговорку ' + day_reg + '.' + month_reg +
-                                          ' с ' + self.dataReg['start_time'] + ' до ' + self.dataReg['end_time'])
+                                          ' ' + self.days_dict[day_reg] + ' с ' + self.dataReg['start_time'] +
+                                          ' до ' + self.dataReg['end_time'])
                 except:
                     pass
 
@@ -254,7 +255,7 @@ class BotFuncs:
                     last_day = self.checkDateFormat(row[2])
                     if last_day != 0:
                         result_list += '\n'
-                    result_list += self.pushpin + " " + str(last_day) + '.' + str(now_month) + '.' + \
+                    result_list += self.pushpin + " " + str(last_day) + '.' + now_month + '.' + \
                                    str(datetime.today().year) + ' ' + self.days_dict[str(last_day)] + ':\n\n'
                     if now_day_num != 6:
                         now_day_num += 1
@@ -414,7 +415,7 @@ class BotFuncs:
 
 
     def checkInsertedTime(self, time_data):
-        return True if time_data >= '00:00' or time_data < '23:58' else False
+        return True if time_data >= '00:00' and time_data < '23:58' else False
 
     @staticmethod
     def getStartKeyboard():
