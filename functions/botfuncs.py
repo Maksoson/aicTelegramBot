@@ -195,7 +195,6 @@ class BotFuncs:
                     last_month = str(self.checkDateFormat(self.data_before_used[2]))
                     start_time = str(self.db_funcs.checkTimeBefore(self.data_before_used[3]))
                     end_time = str(self.db_funcs.checkTimeBefore(self.data_before_used[4]))
-                    
                     if self.db_funcs.updateTimetable(row_id, self.dataReg):
                         self.bot.send_message(message.chat.id,
                                               'Запись успешно перенесена:\n\n' + self.minus + ' ' + start_time + ' - ' + end_time + ', '
@@ -218,7 +217,7 @@ class BotFuncs:
                         self.bot.send_message(message.chat.id, self.plus + ' Записал тебя c ' + self.dataReg['start_time'] + " до " +
                                               self.dataReg['end_time'] + ", на " + self.checkDateFormat(self.dataReg['day_reg'])
                                               + '.' + self.checkDateFormat(self.dataReg['month_reg']) + ' ' +
-                                              self.days_dict[self.checkDateFormat(self.dataReg['day_reg'])],
+                                              self.days_dict[self.checkDateFormat(self.dataReg['day_reg'])], 
                                               reply_markup=self.getStartKeyboard())
                     else:
                         self.bot.send_message(message.chat.id, self.interrobang +
@@ -354,7 +353,7 @@ class BotFuncs:
                         self.data_before_used.append(row[3])
                         self.data_before_used.append(row[4])
                         self.data_before_used.append(row[5])
-
+                        
                         self.bot.send_message(message.chat.id, self.minus + ' Запись на ' + row[4] + " - " + row[5] + " за " +
                                               str(self.checkDateFormat(row[2])) + "." + str(self.checkDateFormat(row[3])) +
                                               " удалена!  " + self.success, reply_markup=self.getStartKeyboard())
