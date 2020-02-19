@@ -52,6 +52,7 @@ def startFunc(message):
 
 @bot.message_handler(content_types=['text'])
 def send_text(message):
+    print(message)
     if bot_funcs.isUserExist(message):
         user_message = message.text.lower()
         chat_id = message.chat.id
@@ -69,13 +70,15 @@ def send_text(message):
             bot_funcs.printMyTimes(message)
         elif user_message == 'удалить запись':
             bot_funcs.seeTimesListFor(message, 1)
+        elif user_message == 'изменить запись':
+            bot_funcs.seeTimesListFor(message, 1)
         elif user_message == 'занять переговорку':
             bot_funcs.regTime(message)
         elif user_message == 'занятость переговорки на сегодня':
             bot_funcs.printAllTimes(message)
         elif user_message == 'справка':
             bot_funcs.printHelp(message)
-        elif user_message == '/cat':
+        elif user_message == 'кот':
             bot.send_message(message.chat.id, 'Мяу', reply_markup=start_keyboard)
 
 
