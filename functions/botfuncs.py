@@ -234,10 +234,10 @@ class BotFuncs:
             month_reg = str(self.checkDateFormat(self.dataReg['month_reg']))
 
         if len(self.data_before_used) > 0:
-            last_day = str(self.checkDateFormat(self.data_before_used[0]))
-            last_month = str(self.checkDateFormat(self.data_before_used[1]))
-            start_time = str(self.db_funcs.checkTimeBefore(self.data_before_used[2]))
-            end_time = str(self.db_funcs.checkTimeBefore(self.data_before_used[3]))
+            last_day = str(self.checkDateFormat(self.data_before_used[1]))
+            last_month = str(self.checkDateFormat(self.data_before_used[2]))
+            start_time = str(self.db_funcs.checkTimeBefore(self.data_before_used[3]))
+            end_time = str(self.db_funcs.checkTimeBefore(self.data_before_used[4]))
 
         for chat_id in chat_ids:
             if chat_id[0] != message.chat.id:
