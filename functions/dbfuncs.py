@@ -73,7 +73,7 @@ class DatabaseFuncs:
                 query = 'SELECT id FROM public.users WHERE user_id = %s'
                 cursor.execute(query, [message.from_user.id])
 
-                return cursor.fetchone()
+                return cursor.fetchone()[0]
 
     # Получить данные о пользователе по telegram_id
     def getUser(self, message):

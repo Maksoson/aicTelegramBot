@@ -234,8 +234,8 @@ class BotFuncs:
             month_reg = str(self.checkDateFormat(self.dataReg['month_reg']))
 
         if len(self.data_before_used) > 0:
-            last_day = str(self.data_before_used[0])
-            last_month = str(self.data_before_used[1])
+            last_day = str(self.checkDateFormat(self.data_before_used[0]))
+            last_month = str(self.checkDateFormat(self.data_before_used[1]))
             start_time = str(self.db_funcs.checkTimeBefore(self.data_before_used[2]))
             end_time = str(self.db_funcs.checkTimeBefore(self.data_before_used[3]))
 
@@ -340,8 +340,8 @@ class BotFuncs:
                 if counter == int(delete_time_id):
                     if self.db_funcs.deleteFromTimetable(row[0]):
                         self.last_function_used = 'delete'
-                        self.data_before_used.append(self.checkDateFormat(row[2]))
-                        self.data_before_used.append(self.checkDateFormat(row[3]))
+                        self.data_before_used.append(row[2])
+                        self.data_before_used.append(row[3])
                         self.data_before_used.append(row[4])
                         self.data_before_used.append(row[5])
                         self.bot.send_message(message.chat.id, 'Запись на ' + row[4] + " - " + row[5] + " за " +
@@ -374,8 +374,8 @@ class BotFuncs:
             for row in self.data:
                 if counter == int(update_time_id):
                     self.last_function_used = 'update'
-                    self.data_before_used.append(self.checkDateFormat(row[2]))
-                    self.data_before_used.append(self.checkDateFormat(row[3]))
+                    self.data_before_used.append(row[2])
+                    self.data_before_used.append(row[3])
                     self.data_before_used.append(row[4])
                     self.data_before_used.append(row[5])
                     self.regTime(message)
