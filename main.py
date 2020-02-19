@@ -25,8 +25,9 @@ start_keyboard.row('Дата', 'Справка')
 
 
 # ------------------------------------------------ #
-@bot.message_handler(commands=['start, help, add, time, all, my, delete, update, cat'])
+@bot.message_handler(commands=['start', 'help', 'add', 'time', 'all', 'my', 'delete', 'update', 'cat'])
 def startFunc(message):
+    print(message)
     if bot_funcs.isUserExist(message):
         command = str(message.text).strip()
         if command == '/start':
