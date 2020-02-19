@@ -119,7 +119,7 @@ class BotFuncs:
             self.bot.send_message(message.chat.id, 'Ввод отменен', reply_markup=self.getStartKeyboard())
 
     def regStartTime(self, message):
-        self.first_time = ''
+        self.dataReg['start_time'] = ''
         start_time = str(message.text).strip()
         if start_time.lower() != 'отмена':
             if not re.match(r'^[0-9]{0,2}(:|\s)[0-9]{2}$', start_time.lower()):
@@ -128,13 +128,14 @@ class BotFuncs:
                                           reply_markup=self.getCancelButton())
                     self.bot.register_next_step_handler(message, self.regStartTime)
                     return
+
             start_time = self.db_funcs.checkTimeBefore(start_time)
             if not self.checkInsertedTime(start_time):
                 self.bot.send_message(message.chat.id, self.error + ' Неверные данные, повтори ввод',
                                       reply_markup=self.getCancelButton())
                 self.bot.register_next_step_handler(message, self.regStartTime)
                 return
-            self.dataReg['start_time'] = start_time
+
             intersection_times = self.checkTimesIntersection(self.dataReg['day_reg'], self.dataReg['month_reg'],
                                                              start_time)
             if len(intersection_times) > 0:
@@ -148,6 +149,8 @@ class BotFuncs:
                 self.bot.send_message(message.chat.id, answer)
                 self.bot.register_next_step_handler(message, self.regStartTime)
                 return
+
+            self.dataReg['start_time'] = start_time
             self.bot.send_message(message.chat.id, 'До скольки тебе нужна переговорка?')
             self.bot.register_next_step_handler(message, self.endRegTime)
         else:
@@ -247,7 +250,8 @@ class BotFuncs:
                 is_error = False
                 if int(day) == int(row[11]) and int(month) == int(row[12]):
                     print(start_time)
-                    if self.first_time == '':
+                    print(self.dataReg['start_time'])
+                    if start_time == '':
                         if row[13] <= data_time < row[14]:
                             is_error = True
                     else:
@@ -260,8 +264,6 @@ class BotFuncs:
 
                 if is_error:
                     intersect_times.append(row)
-                else:
-                    self.first_time = start_time
 
         return intersect_times
 

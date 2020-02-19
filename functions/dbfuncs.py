@@ -198,6 +198,8 @@ class DatabaseFuncs:
             return data_time + ':00'
         elif len(data_time) == 1:
             return '0' + data_time + ':00'
+        elif len(data_time) == 0:
+            return ''
 
     # Связь с БД
     @staticmethod
