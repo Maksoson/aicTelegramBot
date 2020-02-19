@@ -233,23 +233,28 @@ class BotFuncs:
             day_reg = str(self.checkDateFormat(self.dataReg['day_reg']))
             month_reg = str(self.checkDateFormat(self.dataReg['month_reg']))
 
-        print(self.last_function_used)
+        if len(self.data_before_used) > 0:
+            last_day = str(self.data_before_used[0])
+            last_month = str(self.data_before_used[1])
+            start_time = str(self.db_funcs.checkTimeBefore(self.data_before_used[2]))
+            end_time = str(self.db_funcs.checkTimeBefore(self.data_before_used[3]))
+
         for chat_id in chat_ids:
             if chat_id[0] != message.chat.id:
                 try:
                     time.sleep(1)
                     if self.last_function_used == 'update':
                         self.bot.send_message(chat_id[0], 'Пользователь ' + user_data[2] + ' ' + user_data[3] +
-                                              ' (@' + user_data[1] + ') изменил запись с ' + self.data_before_used[3] +
-                                              ' - ' + self.data_before_used[4] + ', ' + self.data_before_used[2] + '.'
-                                              + self.data_before_used[3] + ' ' + self.days_dict[self.data_before_used[2]]
-                                              + ' на ' + day_reg + '.' + month_reg + ' ' + self.days_dict[day_reg] +
-                                              ' с ' + self.dataReg['start_time'] + ' до ' + self.dataReg['end_time'])
+                                              ' (@' + user_data[1] + ') изменил запись с ' + start_time + ' - ' +
+                                              end_time + ', ' + last_day + '.' + last_month + ' ' +
+                                              self.days_dict[last_day] + ' на ' + day_reg + '.' + month_reg + ' ' +
+                                              self.days_dict[day_reg] + ' с ' + self.dataReg['start_time'] +
+                                              ' до ' + self.dataReg['end_time'])
                     elif self.last_function_used == 'delete':
                         self.bot.send_message(chat_id[0], 'Пользователь ' + user_data[2] + ' ' + user_data[3] +
-                                              ' (@' + user_data[1] + ') удалил запись на ' + self.data_before_used[3] +
-                                              ' - ' + self.data_before_used[4] + ', ' + self.data_before_used[2] + '.'
-                                              + self.data_before_used[3] + ' ' + self.days_dict[self.data_before_used[2]])
+                                              ' (@' + user_data[1] + ') удалил запись на ' + start_time +
+                                              ' - ' + end_time + ', ' + last_day + '.' + last_month +
+                                              ' ' + self.days_dict[last_day])
                     else:
                         self.bot.send_message(chat_id[0], 'Пользователь ' + user_data[2] + ' ' + user_data[3] +
                                               ' (@' + user_data[1] + ') занял переговорку ' + day_reg + '.' + month_reg +
@@ -335,7 +340,10 @@ class BotFuncs:
                 if counter == int(delete_time_id):
                     if self.db_funcs.deleteFromTimetable(row[0]):
                         self.last_function_used = 'delete'
-                        self.data_before_used = row
+                        self.data_before_used.append(self.checkDateFormat(row[2]))
+                        self.data_before_used.append(self.checkDateFormat(row[3]))
+                        self.data_before_used.append(row[3])
+                        self.data_before_used.append(row[4])
                         self.bot.send_message(message.chat.id, 'Запись на ' + row[4] + " - " + row[5] + " за " +
                                               str(self.checkDateFormat(row[2])) + "." + str(self.checkDateFormat(row[3])) +
                                               " удалена!  " + self.success, reply_markup=self.getStartKeyboard())
@@ -365,11 +373,11 @@ class BotFuncs:
             counter = 1
             for row in self.data:
                 if counter == int(update_time_id):
+                    self.last_function_used = 'update'
                     self.data_before_used.append(self.checkDateFormat(row[2]))
                     self.data_before_used.append(self.checkDateFormat(row[3]))
                     self.data_before_used.append(row[3])
                     self.data_before_used.append(row[4])
-                    self.last_function_used = 'update'
                     self.regTime(message)
                     break
                     # if self.db_funcs.updateTimetable(row[0]):

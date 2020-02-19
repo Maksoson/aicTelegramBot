@@ -120,7 +120,7 @@ class DatabaseFuncs:
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
                 query = 'UPDATE public.timetable t SET day_use = %s, month_use = %s, start_time = %s, end_time = %s ' \
-                        'JOIN public.users u WHERE t.user_id = u.id, day_use = %s, month_use = %s, start_time = %s, end_time = %s '
+                        'WHERE day_use = %s, month_use = %s, start_time = %s, end_time = %s '
                 try:
                     cursor.execute(query, [new_data['day_reg'], new_data['month_reg'], new_data['start_time'],
                                            new_data['end_time'], old_data[0], old_data[1], old_data[2], old_data[3]])
