@@ -517,9 +517,9 @@ class BotFuncs:
     @staticmethod
     def getStartKeyboard():
         start_keyboard = telebot.types.ReplyKeyboardMarkup(True)
-        start_keyboard.row('Занять переговорку', 'Моя занятость', 'Удалить запись')
-        start_keyboard.row('Занятость переговорки на сегодня')
-        start_keyboard.row('Дата', 'Справка')
+        start_keyboard.row('Занять переговорку', 'Изменить запись', 'Удалить запись')
+        start_keyboard.row('Моя занятость', 'Занятость переговорки на сегодня')
+        start_keyboard.row('Дата', 'Справка', 'Кот')
 
         return start_keyboard
 

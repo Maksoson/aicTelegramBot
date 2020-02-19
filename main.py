@@ -71,7 +71,7 @@ def send_text(message):
         elif user_message == 'удалить запись':
             bot_funcs.seeTimesListFor(message, 1)
         elif user_message == 'изменить запись':
-            bot_funcs.seeTimesListFor(message, 1)
+            bot_funcs.seeTimesListFor(message, 2)
         elif user_message == 'занять переговорку':
             bot_funcs.regTime(message)
         elif user_message == 'занятость переговорки на сегодня':
