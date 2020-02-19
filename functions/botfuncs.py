@@ -21,6 +21,7 @@ class BotFuncs:
         self.bot_home = bothome.BotHome()
         self.data = []
         self.first_time = ''
+        self.focused_day = ''
         self.added_days = []
         self.day_names = ['(пн)', '(вт)', '(ср)', '(чт)', '(пт)', '(сб)', '(вск)', ]
         self.error = emojize("❌", use_aliases=True)
@@ -53,27 +54,25 @@ class BotFuncs:
             self.bot.register_next_step_handler(message, self.validateSecretWord)
 
     # Записи за выбранный день
-    def getDayList(self, day_data):
-        data = self.db_funcs.sortTimes(self.db_funcs.getTimesDay(day_data), 2)
+    def getDayList(self):
+        data = self.db_funcs.sortTimes(self.db_funcs.getTimesDay(int(self.dataReg['day_reg'])), 2)
         counter = 1
         result_list = self.memo + ' '
-        now_day = ''
-        now_month = ''
+        now_day = str(self.checkDateFormat(self.dataReg['day_reg']))
+        now_month = str(self.checkDateFormat(self.dataReg['month_reg']))
         now_day_num = datetime.today().weekday()
         if len(data) > 0:
             for row in data:
-                now_day = str(self.checkDateFormat(row[11]))
-                now_month = str(self.checkDateFormat(row[12]))
                 if counter == 1:
                     result_list += 'Занятость на ' + now_day + '.' + now_month + '.' + \
-                                   str(datetime.today().year) + ' ' + self.day_names[now_day_num] + ':\n\n'
+                                   str(datetime.today().year) + ' ' + self.focused_day + ':\n\n'
                 result_list += str(counter) + '. ' + row[13] + ' - ' + row[14] + '  ---  ' \
                                + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                 counter += 1
             result_list += '\n'
         else:
             result_list += 'Занятость на ' + now_day + '.' + now_month + '.' + \
-                                   str(datetime.today().year) + ' ' + self.day_names[now_day_num] + ':\n\n'
+                                   str(datetime.today().year) + ' ' + self.focused_day + ':\n\n'
             result_list += 'Список пуст\n\n'
 
         return result_list
@@ -86,6 +85,7 @@ class BotFuncs:
 
     def regDayTime(self, message):
         if message.text.lower().strip() != 'отмена':
+            self.focused_day = str()
             self.dataReg['day_reg'] = str(message.text[0:2]).strip()
             if not re.match(r'^[0-9]{1,2}$', self.dataReg['day_reg'].lower()):
                 self.bot.send_message(message.chat.id, self.error + ' Неверно, выбери снова:',
@@ -101,7 +101,7 @@ class BotFuncs:
                 else:
                     self.dataReg['month_reg'] = str(datetime.today().month)
 
-                day_list = self.getDayList(int(self.dataReg['day_reg']))
+                day_list = self.getDayList()
                 self.bot.send_message(message.chat.id, day_list + 'Во сколько тебе нужна переговорка?',
                                       reply_markup=self.getCancelButton())
                 self.bot.register_next_step_handler(message, self.regStartTime)
