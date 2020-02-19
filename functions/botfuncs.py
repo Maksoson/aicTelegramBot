@@ -20,12 +20,11 @@ class BotFuncs:
         self.bot_home = bothome.BotHome()
 
         self.data = []
-        auto_data = self.getDaysData()
-        self.added_days = auto_data[0]
+        self.added_days = []
         self.day_names = ['(пн)', '(вт)', '(ср)', '(чт)', '(пт)', '(сб)', '(вск)']
 
         self.dataReg = {'start_time': '', 'end_time': '', 'day_reg': '', 'month_reg': ''}
-        self.days_dict = auto_data[1]
+        self.days_dict = {}
 
         self.first_time = ''
         self.focused_day = ''
@@ -390,13 +389,14 @@ class BotFuncs:
             else:
                 day_num = num
             added_days.append(day_num)
-            days_dict[str(self.checkDateFormat(day_num)).strip()] = self.day_names[now_day_num]
+            days_dict[str(self.checkDateFormat(day_num))] = self.day_names[now_day_num]
             if now_day_num != 6:
                 now_day_num += 1
             else:
                 now_day_num = 0
 
-        return added_days, days_dict
+        self.added_days = added_days
+        self.days_dict = days_dict
 
     @staticmethod
     def getStartKeyboard():
