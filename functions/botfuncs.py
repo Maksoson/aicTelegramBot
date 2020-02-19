@@ -255,7 +255,7 @@ class BotFuncs:
                     if last_day != 0:
                         result_list += '\n'
                     result_list += self.pushpin + " " + str(last_day) + '.' + str(now_month) + '.' + \
-                                   str(datetime.today().year) + ' ' + self.days_dict[last_day] + ':\n\n'
+                                   str(datetime.today().year) + ' ' + self.days_dict[str(last_day)] + ':\n\n'
                     if now_day_num != 6:
                         now_day_num += 1
                     else:
@@ -326,7 +326,7 @@ class BotFuncs:
                     if last_day != 0:
                         result_list += '\n'
                     result_list += self.pushpin + " " + str(last_day) + '.' + now_month + '.' + \
-                                   str(datetime.today().year) + ' ' + self.days_dict[last_day] + ':\n\n'
+                                   str(datetime.today().year) + ' ' + self.days_dict[str(last_day)] + ':\n\n'
                 result_list += str(counter) + '. ' + row[4] + ' - ' + row[5] + '\n'
                 counter += 1
             self.bot.send_message(message.chat.id, result_list, reply_markup=self.getStartKeyboard())
@@ -350,7 +350,7 @@ class BotFuncs:
                     if last_day != 0:
                         result_list += '\n'
                     result_list += self.pushpin + " " + str(last_day) + '.' + now_month + '.' \
-                                   + str(datetime.today().year) + ' ' + self.days_dict[last_day] + ':\n\n'
+                                   + str(datetime.today().year) + ' ' + self.days_dict[str(last_day)] + ':\n\n'
                 result_list += str(counter) + '. ' + row[13] + ' - ' + row[14] + '  ---  ' \
                                + row[2] + ' ' + row[3] + ' (@' + row[1] + ')\n'
                 counter += 1
