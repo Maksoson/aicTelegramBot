@@ -198,7 +198,7 @@ class DatabaseFuncs:
     def set_day_reg(self, day_reg, user_id):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
-                query = 'UPDATE TABLE public.self_data SET day_reg = %s WHERE user_id = %s'
+                query = 'UPDATE public.self_data SET day_reg = %s WHERE user_id = %s'
                 cursor.execute(query, [day_reg, user_id])
                 connection.commit()
 
@@ -213,7 +213,7 @@ class DatabaseFuncs:
     def set_month_reg(self, month_reg, user_id):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
-                query = 'UPDATE TABLE public.self_data SET month_reg = %s WHERE user_id = %s'
+                query = 'UPDATE public.self_data SET month_reg = %s WHERE user_id = %s'
                 cursor.execute(query, [month_reg, user_id])
                 connection.commit()
 
@@ -228,7 +228,7 @@ class DatabaseFuncs:
     def set_start_time(self, start_time, user_id):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
-                query = 'UPDATE TABLE public.self_data SET start_time = %s WHERE user_id = %s'
+                query = 'UPDATE public.self_data SET start_time = %s WHERE user_id = %s'
                 cursor.execute(query, [start_time, user_id])
                 connection.commit()
 
@@ -243,7 +243,7 @@ class DatabaseFuncs:
     def set_end_time(self, end_time, user_id):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
-                query = 'UPDATE TABLE public.self_data SET end_time = %s WHERE user_id = %s'
+                query = 'UPDATE public.self_data SET end_time = %s WHERE user_id = %s'
                 cursor.execute(query, [end_time, user_id])
                 connection.commit()
 
@@ -267,7 +267,7 @@ class DatabaseFuncs:
     def set_last_info(self, last_info, user_id):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
-                query = 'UPDATE TABLE public.self_data SET last_func = %s, last_row_id = %s, last_day_reg = %s, ' \
+                query = 'UPDATE public.self_data SET last_func = %s, last_row_id = %s, last_day_reg = %s, ' \
                         'last_month_reg = %s, last_start_time = %s, last_end_time = %s ' \
                         'WHERE user_id = %s'
                 cursor.execute(query, [last_info[0], last_info[1], last_info[2],
@@ -287,7 +287,7 @@ class DatabaseFuncs:
     # def set_last_func(self, last_func, user_id):
     #     with closing(self.getConnection()) as connection:
     #         with connection.cursor() as cursor:
-    #             query = 'UPDATE TABLE public.self_data SET last_func = %s WHERE user_id = %s'
+    #             query = 'UPDATE public.self_data SET last_func = %s WHERE user_id = %s'
     #             cursor.execute(query, [last_func, user_id])
     #             connection.commit()
     #
@@ -302,7 +302,7 @@ class DatabaseFuncs:
     # def set_last_row_id(self, last_row_id, user_id):
     #     with closing(self.getConnection()) as connection:
     #         with connection.cursor() as cursor:
-    #             query = 'UPDATE TABLE public.self_data SET last_row_id = %s WHERE user_id = %s'
+    #             query = 'UPDATE public.self_data SET last_row_id = %s WHERE user_id = %s'
     #             cursor.execute(query, [last_row_id, user_id])
     #             connection.commit()
     #
@@ -317,7 +317,7 @@ class DatabaseFuncs:
     # def set_last_day(self, last_day, user_id):
     #     with closing(self.getConnection()) as connection:
     #         with connection.cursor() as cursor:
-    #             query = 'UPDATE TABLE public.self_data SET last_day = %s WHERE user_id = %s'
+    #             query = 'UPDATE public.self_data SET last_day = %s WHERE user_id = %s'
     #             cursor.execute(query, [last_day, user_id])
     #             connection.commit()
     #
@@ -332,7 +332,7 @@ class DatabaseFuncs:
     # def set_last_month(self, last_month, user_id):
     #     with closing(self.getConnection()) as connection:
     #         with connection.cursor() as cursor:
-    #             query = 'UPDATE TABLE public.self_data SET last_month = %s WHERE user_id = %s'
+    #             query = 'UPDATE public.self_data SET last_month = %s WHERE user_id = %s'
     #             cursor.execute(query, [last_month, user_id])
     #             connection.commit()
     #
@@ -347,7 +347,7 @@ class DatabaseFuncs:
     # def set_last_start_time(self, last_start_time, user_id):
     #     with closing(self.getConnection()) as connection:
     #         with connection.cursor() as cursor:
-    #             query = 'UPDATE TABLE public.self_data SET last_start_time = %s WHERE user_id = %s'
+    #             query = 'UPDATE public.self_data SET last_start_time = %s WHERE user_id = %s'
     #             cursor.execute(query, [last_start_time, user_id])
     #             connection.commit()
     #
@@ -362,7 +362,7 @@ class DatabaseFuncs:
     # def set_last_end_time(self, last_end_time, user_id):
     #     with closing(self.getConnection()) as connection:
     #         with connection.cursor() as cursor:
-    #             query = 'UPDATE TABLE public.self_data SET last_end_time = %s WHERE user_id = %s'
+    #             query = 'UPDATE public.self_data SET last_end_time = %s WHERE user_id = %s'
     #             cursor.execute(query, [last_end_time, user_id])
     #             connection.commit()
     #
