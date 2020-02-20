@@ -247,15 +247,12 @@ class BotFuncs:
         print(last_info)
         if last_info[0] != 'delete':
             new_info = self.db_funcs.get_new_info(message.from_user.id)
-            print(new_info)
-            print(self.db_funcs.get_day_reg(message.from_user.id))
-            print(self.db_funcs.get_month_reg(message.from_user.id))
-            print(self.db_funcs.get_start_time(message.from_user.id))
-            print(self.db_funcs.get_end_time(message.from_user.id))
             day_reg = str(self.checkDateFormat(new_info[0]))
             month_reg = str(self.checkDateFormat(new_info[1]))
             start_time = new_info[2]
             end_time = new_info[3]
+
+        self.db_funcs.del_self_database(message.from_user.id)
 
         if last_info[0] in ['update', 'delete']:
             last_day = str(self.checkDateFormat(last_info[2]))
@@ -286,8 +283,6 @@ class BotFuncs:
                                               month_reg + ' ' + self.days_dict[day_reg])
                 except:
                     pass
-
-        self.db_funcs.del_self_database(message.from_user.id)
 
     # Проверка введенного времени на пересечение с уже существующими записями
     def checkTimesIntersection(self, message, day, month, data_time):
