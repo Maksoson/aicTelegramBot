@@ -23,10 +23,6 @@ class BotFuncs:
         self.day_names = ['(пн)', '(вт)', '(ср)', '(чт)', '(пт)', '(сб)', '(вск)']
         self.days_dict = {}
 
-        # self.dataReg = {'start_time': '', 'end_time': '', 'day_reg': '', 'month_reg': ''}
-        # self.last_function_used = ''
-        # self.data_before_used = []
-
         self.error = emojize("❌", use_aliases=True)
         self.success = emojize("✅", use_aliases=True)
         self.pushpin = emojize("📌", use_aliases=True)
@@ -264,14 +260,14 @@ class BotFuncs:
             if chat_id[0] != message.chat.id:
                 try:
                     time.sleep(0.5)
-                    if self.last_function_used == 'update':
+                    if last_info[0] == 'update':
                         self.bot.send_message(chat_id[0], self.rupor_head + ' Пользователь ' + user_data[2] + ' ' +
                                               user_data[3] + ' (@' + user_data[1] + ') перенес запись:\n\n' + self.minus
                                               + ' ' + last_start_time + ' - ' + last_end_time + ', ' + last_day + '.' +
                                               last_month + ' ' + self.days_dict[last_day] + '\n\n' + self.plus + ' ' +
                                               start_time + ' - ' + end_time + ', ' + day_reg + '.' + month_reg + ' ' +
                                               self.days_dict[day_reg])
-                    elif self.last_function_used == 'delete':
+                    elif last_info[0] == 'delete':
                         self.bot.send_message(chat_id[0], self.rupor_head + ' Пользователь ' + user_data[2] + ' ' +
                                               user_data[3] + ' (@' + user_data[1] + ') удалил запись:\n\n' + self.minus
                                               + ' ' + last_start_time + ' - ' + last_end_time + ', ' + last_day + '.' +
