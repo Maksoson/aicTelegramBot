@@ -73,7 +73,7 @@ class DatabaseFuncs:
                 query = 'SELECT id FROM public.users WHERE user_id = %s'
                 cursor.execute(query, [message.from_user.id])
 
-                return cursor.fetchone()[0]
+                return cursor.fetchone()
 
     # Получить данные о пользователе по telegram_id
     def getUser(self, message):
@@ -107,7 +107,7 @@ class DatabaseFuncs:
                 query = 'INSERT INTO public.timetable (user_id, day_use, month_use, start_time, end_time, date_create, date_update) ' \
                         'VALUES (%s, %s, %s, %s, %s, %s::date, %s::date)'
                 try:
-                    cursor.execute(query, [self.getUserId(message), day_reg, month_reg,
+                    cursor.execute(query, [self.getUserId(message)[0], day_reg, month_reg,
                                            start_time, end_time, date_create, date_update])
                     connection.commit()
 
