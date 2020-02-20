@@ -274,7 +274,7 @@ class BotFuncs:
 
         self.data_before_used = []
         self.last_function_used = ''
-        self.dataReg = {'start_time': '', 'end_time': '', 'day_reg': '', 'month_reg': ''}
+        # self.dataReg = {'start_time': '', 'end_time': '', 'day_reg': '', 'month_reg': ''}
 
     # Проверка введенного времени на пересечение с уже существующими записями
     def checkTimesIntersection(self, day, month, data_time):
