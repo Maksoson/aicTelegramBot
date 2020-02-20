@@ -3,6 +3,7 @@
 .idea/
 
 old_main.py
+old_main_2.py
 test.py
 datafiles/config_archive.py
 datafiles/dbtables.txt
