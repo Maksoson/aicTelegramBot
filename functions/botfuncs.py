@@ -284,6 +284,8 @@ class BotFuncs:
         if len(data) > 0:
             for row in data:
                 print(row)
+                print(day)
+                print(month)
                 is_error = False
                 if int(day) == int(row[11]) and int(month) == int(row[12]):
                     if start_time == '':
