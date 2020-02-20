@@ -181,6 +181,199 @@ class DatabaseFuncs:
                 cursor.execute(query, [datetime.datetime.today().day, datetime.datetime.today().month])
                 connection.commit()
 
+    def add_self_database(self, user_id):
+        with closing(self.getConnection()) as connection:
+            with connection.cursor() as cursor:
+                query = 'INSERT INTO public.self_data (user_id) VALUES %s'
+                cursor.execute(query, [user_id])
+                connection.commit()
+
+    def del_self_database(self, user_id):
+        with closing(self.getConnection()) as connection:
+            with connection.cursor() as cursor:
+                query = 'DELETE FROM public.self_data WHERE user_id = %s'
+                cursor.execute(query, [user_id])
+                connection.commit()
+
+    def set_day_reg(self, day_reg, user_id):
+        with closing(self.getConnection()) as connection:
+            with connection.cursor() as cursor:
+                query = 'UPDATE TABLE public.self_data SET day_reg = %s WHERE user_id = %s'
+                cursor.execute(query, [day_reg, user_id])
+                connection.commit()
+
+    def get_day_reg(self, user_id):
+        with closing(self.getConnection()) as connection:
+            with connection.cursor() as cursor:
+                query = 'SELECT self_data.day_reg FROM public.self_data WHERE user_id = %s'
+                cursor.execute(query, [user_id])
+
+                return cursor.fetchone()[0]
+
+    def set_month_reg(self, month_reg, user_id):
+        with closing(self.getConnection()) as connection:
+            with connection.cursor() as cursor:
+                query = 'UPDATE TABLE public.self_data SET month_reg = %s WHERE user_id = %s'
+                cursor.execute(query, [month_reg, user_id])
+                connection.commit()
+
+    def get_month_reg(self, user_id):
+        with closing(self.getConnection()) as connection:
+            with connection.cursor() as cursor:
+                query = 'SELECT self_data.month_reg FROM public.self_data WHERE user_id = %s'
+                cursor.execute(query, [user_id])
+
+                return cursor.fetchone()[0]
+
+    def set_start_time(self, start_time, user_id):
+        with closing(self.getConnection()) as connection:
+            with connection.cursor() as cursor:
+                query = 'UPDATE TABLE public.self_data SET start_time = %s WHERE user_id = %s'
+                cursor.execute(query, [start_time, user_id])
+                connection.commit()
+
+    def get_start_time(self, user_id):
+        with closing(self.getConnection()) as connection:
+            with connection.cursor() as cursor:
+                query = 'SELECT self_data.start_time FROM public.self_data WHERE user_id = %s'
+                cursor.execute(query, [user_id])
+
+                return cursor.fetchone()[0]
+
+    def set_end_time(self, end_time, user_id):
+        with closing(self.getConnection()) as connection:
+            with connection.cursor() as cursor:
+                query = 'UPDATE TABLE public.self_data SET end_time = %s WHERE user_id = %s'
+                cursor.execute(query, [end_time, user_id])
+                connection.commit()
+
+    def get_end_time(self, user_id):
+        with closing(self.getConnection()) as connection:
+            with connection.cursor() as cursor:
+                query = 'SELECT self_data.end_time FROM public.self_data WHERE user_id = %s'
+                cursor.execute(query, [user_id])
+
+                return cursor.fetchone()[0]
+
+    def get_new_info(self, user_id):
+        with closing(self.getConnection()) as connection:
+            with connection.cursor() as cursor:
+                query = 'SELECT self_data.day_reg, self_data.month_reg, self_data.start_time, self_data.end_time ' \
+                        'FROM public.self_data WHERE user_id = %s'
+                cursor.execute(query, [user_id])
+
+                return cursor.fetchone()[0]
+
+    def set_last_info(self, last_info, user_id):
+        with closing(self.getConnection()) as connection:
+            with connection.cursor() as cursor:
+                query = 'UPDATE TABLE public.self_data SET last_func = %s, last_row_id = %s, last_day_reg = %s, ' \
+                        'last_month_reg = %s, last_start_time = %s, last_end_time = %s ' \
+                        'WHERE user_id = %s'
+                cursor.execute(query, [last_info[0], last_info[1], last_info[2],
+                                       last_info[3], last_info[4], last_info[5], user_id])
+                connection.commit()
+
+    def get_last_info(self, user_id):
+        with closing(self.getConnection()) as connection:
+            with connection.cursor() as cursor:
+                query = 'SELECT self_data.last_func, self_data.last_row_id, self_data.last_day_reg, ' \
+                        'self_data.last_month_reg, self_data.last_start_time, self_data.last_end_time ' \
+                        'FROM public.self_data WHERE user_id = %s'
+                cursor.execute(query, [user_id])
+
+                return cursor.fetchone()[0]
+                
+    # def set_last_func(self, last_func, user_id):
+    #     with closing(self.getConnection()) as connection:
+    #         with connection.cursor() as cursor:
+    #             query = 'UPDATE TABLE public.self_data SET last_func = %s WHERE user_id = %s'
+    #             cursor.execute(query, [last_func, user_id])
+    #             connection.commit()
+    #
+    # def get_last_func(self, user_id):
+    #     with closing(self.getConnection()) as connection:
+    #         with connection.cursor() as cursor:
+    #             query = 'SELECT self_data.last_func FROM public.self_data WHERE user_id = %s'
+    #             cursor.execute(query, [user_id])
+    #
+    #             return cursor.fetchone()[0]
+    #
+    # def set_last_row_id(self, last_row_id, user_id):
+    #     with closing(self.getConnection()) as connection:
+    #         with connection.cursor() as cursor:
+    #             query = 'UPDATE TABLE public.self_data SET last_row_id = %s WHERE user_id = %s'
+    #             cursor.execute(query, [last_row_id, user_id])
+    #             connection.commit()
+    #
+    # def get_last_row_id(self, user_id):
+    #     with closing(self.getConnection()) as connection:
+    #         with connection.cursor() as cursor:
+    #             query = 'SELECT self_data.last_row_id FROM public.self_data WHERE user_id = %s'
+    #             cursor.execute(query, [user_id])
+    #
+    #             return cursor.fetchone()[0]
+    #
+    # def set_last_day(self, last_day, user_id):
+    #     with closing(self.getConnection()) as connection:
+    #         with connection.cursor() as cursor:
+    #             query = 'UPDATE TABLE public.self_data SET last_day = %s WHERE user_id = %s'
+    #             cursor.execute(query, [last_day, user_id])
+    #             connection.commit()
+    #
+    # def get_last_day(self, user_id):
+    #     with closing(self.getConnection()) as connection:
+    #         with connection.cursor() as cursor:
+    #             query = 'SELECT self_data.last_day FROM public.self_data WHERE user_id = %s'
+    #             cursor.execute(query, [user_id])
+    #
+    #             return cursor.fetchone()[0]
+    #
+    # def set_last_month(self, last_month, user_id):
+    #     with closing(self.getConnection()) as connection:
+    #         with connection.cursor() as cursor:
+    #             query = 'UPDATE TABLE public.self_data SET last_month = %s WHERE user_id = %s'
+    #             cursor.execute(query, [last_month, user_id])
+    #             connection.commit()
+    #
+    # def get_last_month(self, user_id):
+    #     with closing(self.getConnection()) as connection:
+    #         with connection.cursor() as cursor:
+    #             query = 'SELECT self_data.last_month FROM public.self_data WHERE user_id = %s'
+    #             cursor.execute(query, [user_id])
+    #
+    #             return cursor.fetchone()[0]
+    #
+    # def set_last_start_time(self, last_start_time, user_id):
+    #     with closing(self.getConnection()) as connection:
+    #         with connection.cursor() as cursor:
+    #             query = 'UPDATE TABLE public.self_data SET last_start_time = %s WHERE user_id = %s'
+    #             cursor.execute(query, [last_start_time, user_id])
+    #             connection.commit()
+    #
+    # def get_last_start_time(self, user_id):
+    #     with closing(self.getConnection()) as connection:
+    #         with connection.cursor() as cursor:
+    #             query = 'SELECT self_data.last_start_time FROM public.self_data WHERE user_id = %s'
+    #             cursor.execute(query, [user_id])
+    #
+    #             return cursor.fetchone()[0]
+    #
+    # def set_last_end_time(self, last_end_time, user_id):
+    #     with closing(self.getConnection()) as connection:
+    #         with connection.cursor() as cursor:
+    #             query = 'UPDATE TABLE public.self_data SET last_end_time = %s WHERE user_id = %s'
+    #             cursor.execute(query, [last_end_time, user_id])
+    #             connection.commit()
+    #
+    # def get_last_end_time(self, user_id):
+    #     with closing(self.getConnection()) as connection:
+    #         with connection.cursor() as cursor:
+    #             query = 'SELECT self_data.last_end_time FROM public.self_data WHERE user_id = %s'
+    #             cursor.execute(query, [user_id])
+    #
+    #             return cursor.fetchone()[0]
+
     # Замена None на пустую строку
     @staticmethod
     def checkNone(string):
