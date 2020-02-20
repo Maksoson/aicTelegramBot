@@ -429,7 +429,7 @@ class BotFuncs:
     # Занятость переговорки на сегодня
     def printAllTimes(self, message):
         self.getDaysData()
-        result_list = 'Занятость на:\n'
+        result_list = self.memo + ' Занятость на:\n'
         data = self.db_funcs.sortTimes(self.db_funcs.getAllTimes(), 2)
         counter = 1
         last_day = 0
