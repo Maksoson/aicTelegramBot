@@ -63,7 +63,7 @@ class BotFuncs:
     # Записи за выбранный день
     def getDayList(self, message):
         day_reg = self.db_funcs.get_day_reg(message.from_user.id)
-        data = self.db_funcs.sortTimes(self.db_funcs.getTimesDay(int(day_reg), 2))
+        data = self.db_funcs.sortTimes(self.db_funcs.getTimesDay(int(day_reg)), 2)
         counter = 1
         result_list = self.memo + ' '
         now_day = str(self.checkDateFormat(day_reg))
