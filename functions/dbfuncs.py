@@ -208,7 +208,7 @@ class DatabaseFuncs:
                 query = 'SELECT self_data.day_reg FROM public.self_data WHERE user_id = %s'
                 cursor.execute(query, [user_id])
 
-                return cursor.fetchone()[0]
+                return cursor.fetchone()
 
     def set_month_reg(self, month_reg, user_id):
         with closing(self.getConnection()) as connection:
@@ -223,7 +223,7 @@ class DatabaseFuncs:
                 query = 'SELECT self_data.month_reg FROM public.self_data WHERE user_id = %s'
                 cursor.execute(query, [user_id])
 
-                return cursor.fetchone()[0]
+                return cursor.fetchone()
 
     def set_start_time(self, start_time, user_id):
         with closing(self.getConnection()) as connection:
@@ -238,7 +238,7 @@ class DatabaseFuncs:
                 query = 'SELECT self_data.start_time FROM public.self_data WHERE user_id = %s'
                 cursor.execute(query, [user_id])
 
-                return cursor.fetchone()[0]
+                return cursor.fetchone()
 
     def set_end_time(self, end_time, user_id):
         with closing(self.getConnection()) as connection:
@@ -253,7 +253,7 @@ class DatabaseFuncs:
                 query = 'SELECT self_data.end_time FROM public.self_data WHERE user_id = %s'
                 cursor.execute(query, [user_id])
 
-                return cursor.fetchone()[0]
+                return cursor.fetchone()
 
     def get_new_info(self, user_id):
         with closing(self.getConnection()) as connection:
@@ -262,7 +262,7 @@ class DatabaseFuncs:
                         'FROM public.self_data WHERE user_id = %s'
                 cursor.execute(query, [user_id])
 
-                return cursor.fetchone()[0]
+                return cursor.fetchone()
 
     def set_last_info(self, last_info, user_id):
         with closing(self.getConnection()) as connection:
@@ -282,7 +282,7 @@ class DatabaseFuncs:
                         'FROM public.self_data WHERE user_id = %s'
                 cursor.execute(query, [user_id])
 
-                return cursor.fetchone()[0]
+                return cursor.fetchone()
 
     # def set_last_func(self, last_func, user_id):
     #     with closing(self.getConnection()) as connection:

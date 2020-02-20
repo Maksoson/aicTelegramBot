@@ -244,9 +244,13 @@ class BotFuncs:
         last_info = self.db_funcs.get_last_info(message.from_user.id)
 
         print(last_info)
-        print('pepepe' + last_info[0] + 'pepepe')
         if last_info[0] != 'delete':
             new_info = self.db_funcs.get_new_info(message.from_user.id)
+            print(new_info)
+            print(self.db_funcs.get_day_reg(message.from_user.id))
+            print(self.db_funcs.get_month_reg(message.from_user.id))
+            print(self.db_funcs.get_start_time(message.from_user.id))
+            print(self.db_funcs.get_end_time(message.from_user.id))
             day_reg = str(self.checkDateFormat(new_info[0]))
             month_reg = str(self.checkDateFormat(new_info[1]))
             start_time = new_info[2]
