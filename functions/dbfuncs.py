@@ -184,7 +184,7 @@ class DatabaseFuncs:
     def add_self_database(self, user_id):
         with closing(self.getConnection()) as connection:
             with connection.cursor() as cursor:
-                query = 'INSERT INTO public.self_data (user_id) VALUES %s'
+                query = 'INSERT INTO public.self_data (user_id) VALUE %s'
                 cursor.execute(query, [user_id])
                 connection.commit()
 
@@ -283,7 +283,7 @@ class DatabaseFuncs:
                 cursor.execute(query, [user_id])
 
                 return cursor.fetchone()[0]
-                
+
     # def set_last_func(self, last_func, user_id):
     #     with closing(self.getConnection()) as connection:
     #         with connection.cursor() as cursor:
