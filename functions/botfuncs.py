@@ -254,7 +254,7 @@ class BotFuncs:
                     time.sleep(1)
                     if self.last_function_used == 'update':
                         self.bot.send_message(chat_id[0], self.rupor_head + ' Пользователь ' + user_data[2] + ' ' + user_data[3] +
-                                              ' (@' + user_data[1] + ') изменил запись:\n\n' + self.minus + ' ' + start_time + ' - ' +
+                                              ' (@' + user_data[1] + ') перенес запись:\n\n' + self.minus + ' ' + start_time + ' - ' +
                                               end_time + ', ' + last_day + '.' + last_month + ' ' +
                                               self.days_dict[last_day] + '\n\n' + self.plus + ' ' + self.dataReg['start_time'] +
                                               ' - ' + self.dataReg['end_time'] + ', ' + day_reg + '.' + month_reg + ' ' +
