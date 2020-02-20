@@ -191,6 +191,7 @@ class BotFuncs:
                     return
 
                 self.added_days = []
+                self.db_funcs.set_end_time(end_time, message.from_user.id)
                 data_reg = {'day_reg': day_reg, 'month_reg': month_reg, 'start_time': start_time, 'end_time': end_time}
                 last_info = self.db_funcs.get_last_info(message.from_user.id)
                 if last_info[0] == 'update':
