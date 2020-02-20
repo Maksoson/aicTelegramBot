@@ -306,7 +306,7 @@ class BotFuncs:
         self.getDaysData()
         self.data_before_used = []
         self.last_function_used = ''
-        self.data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message)), 1)
+        self.data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message)[0]), 1)
         result_list = ''
         chat_id = message.chat.id
         counter = 1
@@ -405,7 +405,7 @@ class BotFuncs:
             result_list = self.memo + ' Твоя занятость на:'
         else:
             result_list = self.memo + ' @' + message.from_user.username + ', '
-        data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message)), 1)
+        data = self.db_funcs.sortTimes(self.db_funcs.getMyTimes(self.db_funcs.getUserId(message)[0]), 1)
         counter = 1
         last_day = 0
         if len(data) > 0:
