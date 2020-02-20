@@ -37,6 +37,7 @@ class BotFuncs:
         self.interrobang = emojize("⁉", use_aliases=True)
         self.minus = emojize("➖", use_aliases=True)
         self.plus = emojize("➕", use_aliases=True)
+        self.rupor_head = emojize("🗣", use_aliases=True)
 
     # Стартовый диалог
     def isUserExist(self, message):
@@ -197,7 +198,7 @@ class BotFuncs:
                     end_time = str(self.db_funcs.checkTimeBefore(self.data_before_used[4]))
                     if self.db_funcs.updateTimetable(row_id, self.dataReg):
                         self.bot.send_message(message.chat.id,
-                                              'Запись успешно перенесена:\n\n' + self.minus + ' ' + start_time + ' - ' + end_time + ', '
+                                              self.success + ' Запись успешно перенесена:\n\n' + self.minus + ' ' + start_time + ' - ' + end_time + ', '
                                               + last_day + '.' + last_month + ' ' + self.days_dict[last_day] + '\n\n' + self.plus + ' '
                                               + self.db_funcs.checkTimeBefore(self.dataReg['start_time'])
                                               + ' - ' + self.db_funcs.checkTimeBefore(self.dataReg['end_time']) +
@@ -214,8 +215,8 @@ class BotFuncs:
                         return
                 else:
                     if self.db_funcs.addToTimetable(message, self.dataReg):
-                        self.bot.send_message(message.chat.id, self.plus + ' Записал тебя c ' + self.dataReg['start_time'] + " до " +
-                                              self.dataReg['end_time'] + ", на " + self.checkDateFormat(self.dataReg['day_reg'])
+                        self.bot.send_message(message.chat.id, self.success + ' Записал тебя на:\n\n' + self.plus + ' ' + self.dataReg['start_time'] + " - " +
+                                              self.dataReg['end_time'] + ", " + self.checkDateFormat(self.dataReg['day_reg'])
                                               + '.' + self.checkDateFormat(self.dataReg['month_reg']) + ' ' +
                                               self.days_dict[self.checkDateFormat(self.dataReg['day_reg'])], 
                                               reply_markup=self.getStartKeyboard())
@@ -252,22 +253,22 @@ class BotFuncs:
                 try:
                     time.sleep(1)
                     if self.last_function_used == 'update':
-                        self.bot.send_message(chat_id[0], 'Пользователь ' + user_data[2] + ' ' + user_data[3] +
-                                              ' (@' + user_data[1] + ') изменил запись:\n\n' + self.minus + ' ' + start_time + ' - ' +
+                        self.bot.send_message(chat_id[0], self.rupor_head + ' Пользователь ' + user_data[2] + ' ' + user_data[3] +
+                                              ' (@' + user_data[1] + ') перенес запись:\n\n' + self.minus + ' ' + start_time + ' - ' +
                                               end_time + ', ' + last_day + '.' + last_month + ' ' +
                                               self.days_dict[last_day] + '\n\n' + self.plus + ' ' + self.dataReg['start_time'] +
                                               ' - ' + self.dataReg['end_time'] + ', ' + day_reg + '.' + month_reg + ' ' +
                                               self.days_dict[day_reg])
                     elif self.last_function_used == 'delete':
-                        self.bot.send_message(chat_id[0], self.minus + ' Пользователь ' + user_data[2] + ' ' + user_data[3] +
-                                              ' (@' + user_data[1] + ') удалил запись на ' + start_time +
+                        self.bot.send_message(chat_id[0], self.rupor_head + ' Пользователь ' + user_data[2] + ' ' + user_data[3] +
+                                              ' (@' + user_data[1] + ') удалил запись:\n\n' + self.minus + ' ' + start_time +
                                               ' - ' + end_time + ', ' + last_day + '.' + last_month +
                                               ' ' + self.days_dict[last_day])
                     else:
-                        self.bot.send_message(chat_id[0], self.plus + ' Пользователь ' + user_data[2] + ' ' + user_data[3] +
-                                              ' (@' + user_data[1] + ') занял переговорку ' + day_reg + '.' + month_reg +
-                                              ' ' + self.days_dict[day_reg] + ' с ' + self.dataReg['start_time'] +
-                                              ' до ' + self.dataReg['end_time'])
+                        self.bot.send_message(chat_id[0], self.rupor_head + ' Пользователь ' + user_data[2] + ' ' + user_data[3] +
+                                              ' (@' + user_data[1] + ') занял переговорку:\n\n' + self.plus + ' ' + self.dataReg['start_time'] +
+                                              ' - ' + self.dataReg['end_time'] + ', ' + day_reg + '.' + month_reg +
+                                              ' ' + self.days_dict[day_reg])
                 except:
                     pass
 
@@ -337,7 +338,6 @@ class BotFuncs:
 
     # Удаление записи
     def deleteTime(self, message):
-        # self.getDaysData()
         delete_time_id = str(message.text).strip()
         if delete_time_id.lower() != 'отмена':
             if not delete_time_id.isdigit():
@@ -354,9 +354,9 @@ class BotFuncs:
                         self.data_before_used.append(row[4])
                         self.data_before_used.append(row[5])
                         
-                        self.bot.send_message(message.chat.id, self.minus + ' Запись на ' + row[4] + " - " + row[5] + " за " +
-                                              str(self.checkDateFormat(row[2])) + "." + str(self.checkDateFormat(row[3])) +
-                                              " удалена!  " + self.success, reply_markup=self.getStartKeyboard())
+                        self.bot.send_message(message.chat.id, self.success + ' Запись успешно удалена:\n\n' + self.minus + ' '
+                                              + row[4] + " - " + row[5] + ", " + str(self.checkDateFormat(row[2])) + "." + str(self.checkDateFormat(row[3])) +
+                                              " " + self.days_dict[str(self.checkDateFormat(row[2]))], reply_markup=self.getStartKeyboard())
                         self.sendTimetableNews(message)
                         self.data = []
                         break
@@ -374,7 +374,6 @@ class BotFuncs:
 
     # Изменение записи
     def updateTime(self, message):
-        # self.getDaysData()
         update_time_id = str(message.text).strip()
         if update_time_id.lower() != 'отмена':
             if not update_time_id.isdigit():
@@ -391,22 +390,6 @@ class BotFuncs:
                     self.data_before_used.append(row[5])
                     self.regTime(message)
                     break
-                    # if self.db_funcs.updateTimetable(row[0]):
-                    #     now_day = str(self.checkDateFormat(row[2]))
-                    #     now_month = str(self.checkDateFormat(row[3]))
-                    #     self.bot.send_message(message.chat.id,
-                    #                           'Запись на ' + row[4] + ' - ' + row[5] + ' за ' + now_day + '.'
-                    #                           + now_month + ' ' + self.days_dict[now_day] + ' успешно изменена!  '
-                    #                           + self.success,
-                    #                           reply_markup=self.getStartKeyboard())
-                    #     self.data = []
-                    #     break
-                    # else:
-                    #     self.bot.send_message(message.chat.id, self.interrobang +
-                    #                           ' Запись не изменена! Произошла какая-то ошибка. Попробуйте позже',
-                    #                           reply_markup=self.getStartKeyboard())
-                    #     self.data = []
-                    #     break
                 counter += 1
         else:
             self.data_before_used = []
@@ -446,7 +429,7 @@ class BotFuncs:
     # Занятость переговорки на сегодня
     def printAllTimes(self, message):
         self.getDaysData()
-        result_list = 'Занятость на:\n'
+        result_list = self.memo + ' Занятость на:\n'
         data = self.db_funcs.sortTimes(self.db_funcs.getAllTimes(), 2)
         counter = 1
         last_day = 0
@@ -470,10 +453,8 @@ class BotFuncs:
 
     # Клавиатура выбора дней
     def getDaysKeyboard(self):
-        # self.added_days = []
         keyboard = telebot.types.ReplyKeyboardMarkup(True, True)
         row_width = 7
-        # days_list = {}
         buttons_added = []
         now = datetime.today()
         now_day_num = now.weekday()
@@ -483,9 +464,7 @@ class BotFuncs:
                 day_num = num - days_in_month
             else:
                 day_num = num
-            # self.added_days.append(day_num)
             buttons_added.append(telebot.types.InlineKeyboardButton(text=str(day_num) + ' ' + self.day_names[now_day_num]))
-            # days_list[str(self.checkDateFormat(day_num)).strip()] = self.day_names[now_day_num]
             if now_day_num != 6:
                 now_day_num += 1
             else:
@@ -493,9 +472,7 @@ class BotFuncs:
             if len(buttons_added) == row_width:
                 keyboard.row(*buttons_added)
                 buttons_added = []
-        # self.days_dict = days_list
         keyboard.row('Отмена')
-        # print(self.days_dict)
 
         return keyboard
 
@@ -529,7 +506,7 @@ class BotFuncs:
     def getStartKeyboard():
         start_keyboard = telebot.types.ReplyKeyboardMarkup(True)
         start_keyboard.row('Занять переговорку', 'Изменить запись', 'Удалить запись')
-        start_keyboard.row('Моя занятость', 'Занятость переговорки на сегодня')
+        start_keyboard.row('Моя занятость', 'Занятость переговорки')
         start_keyboard.row('Дата', 'Справка', 'Кот')
 
         return start_keyboard
@@ -563,8 +540,8 @@ class BotFuncs:
                                                '/update - перейти в режим правки своих записей.\n'
                                                '/all - вывести весь список забронированного времени.\n'
                                                '/my - вывести только твое забронированное время.\n'
-                                               '/time - вывести текущую дату и время.\n'
+                                               '/time - вывести текущую дату и время.\n\n'
                                                # '/cat - вывести случайную гифку с котом. (offed)\n\n'
-                                               'Версия бота: 0.8.21\n'
-                                               'Последнее обновление: 19.02.2020\n',
+                                               'Версия бота: 0.8.33\n'
+                                               'Последнее обновление: 20.02.2020\n',
                               reply_markup=self.getStartKeyboard())

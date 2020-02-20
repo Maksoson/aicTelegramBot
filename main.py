@@ -20,7 +20,7 @@ bot_funcs = botfuncs.BotFuncs(bot)
 
 start_keyboard = telebot.types.ReplyKeyboardMarkup(True)
 start_keyboard.row('Занять переговорку', 'Изменить запись', 'Удалить запись')
-start_keyboard.row('Моя занятость', 'Занятость переговорки на сегодня')
+start_keyboard.row('Моя занятость', 'Занятость переговорки')
 start_keyboard.row('Дата', 'Справка', 'Кот')
 
 
@@ -74,7 +74,7 @@ def send_text(message):
             bot_funcs.seeTimesListFor(message, 2)
         elif user_message == 'занять переговорку':
             bot_funcs.regTime(message)
-        elif user_message == 'занятость переговорки на сегодня':
+        elif user_message == 'занятость переговорки':
             bot_funcs.printAllTimes(message)
         elif user_message == 'справка':
             bot_funcs.printHelp(message)
