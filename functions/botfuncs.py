@@ -205,8 +205,8 @@ class BotFuncs:
                                               + start_time + ' - ' + end_time + ', ' + last_day + '.' + last_month + ' '
                                               + self.days_dict[last_day] + '\n\n' + self.plus + ' '
                                               + data_reg['start_time'] + ' - ' + data_reg['end_time'] +
-                                              ' ' + self.checkDateFormat(data_reg['day_reg']) + '.'
-                                              + self.checkDateFormat(data_reg['month_reg']) + ' '
+                                              ' ' + str(self.checkDateFormat(data_reg['day_reg'])) + '.'
+                                              + str(self.checkDateFormat(data_reg['month_reg'])) + ' '
                                               + self.days_dict[str(self.checkDateFormat(data_reg['day_reg']))],
                                               reply_markup=self.getStartKeyboard())
                     else:
@@ -219,9 +219,9 @@ class BotFuncs:
                     if self.db_funcs.addToTimetable(message, data_reg):
                         self.bot.send_message(message.chat.id, self.success + ' Записал тебя на:\n\n' + self.plus + ' '
                                               + data_reg['start_time'] + " - " + data_reg['end_time'] + ", "
-                                              + self.checkDateFormat(data_reg['day_reg'])
-                                              + '.' + self.checkDateFormat(data_reg['month_reg']) + ' ' +
-                                              self.days_dict[self.checkDateFormat(data_reg['day_reg'])],
+                                              + str(self.checkDateFormat(data_reg['day_reg']))
+                                              + '.' + str(self.checkDateFormat(data_reg['month_reg'])) + ' ' +
+                                              self.days_dict[str(self.checkDateFormat(data_reg['day_reg']))],
                                               reply_markup=self.getStartKeyboard())
                     else:
                         self.bot.send_message(message.chat.id, self.interrobang +
@@ -243,6 +243,8 @@ class BotFuncs:
         user_data = self.db_funcs.getUser(message)
         last_info = self.db_funcs.get_last_info(message.from_user.id)
 
+        print(last_info)
+        print('pepepe' + last_info[0] + 'pepepe')
         if last_info[0] != 'delete':
             new_info = self.db_funcs.get_new_info(message.from_user.id)
             day_reg = str(self.checkDateFormat(new_info[0]))
