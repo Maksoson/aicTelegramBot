@@ -60,7 +60,7 @@ class BotFuncs:
     # Записи за выбранный день
     def get_day_list(self, message):
         day_reg = self.db_funcs.get_day_reg(message.from_user.id)
-        data = self.other_funcs.sort_times(self.db_funcs.get_times_day(int(day_reg)), 2)
+        data = self.other_funcs.check_none(self.db_funcs.get_times_day(int(day_reg)), 2)
         counter = 1
         result_list = self.memo + ' '
         now_day = str(self.other_funcs.check_date_format(day_reg))
@@ -287,7 +287,7 @@ class BotFuncs:
 
     # Проверка введенного времени на пересечение с уже существующими записями
     def check_times_intersection(self, message, day, month, data_time):
-        data = self.other_funcs.sort_times(self.db_funcs.get_all_times(), 2)
+        data = self.other_funcs.check_none(self.db_funcs.get_all_times(), 2)
         start_time = self.other_funcs.check_time_before(self.db_funcs.get_start_time(message.from_user.id))
         intersect_times = []
         if len(data) > 0:
@@ -314,7 +314,7 @@ class BotFuncs:
     def see_times_list_for(self, message, func_type):
         self.get_days_data()
         self.db_funcs.add_self_database(message.from_user.id)
-        data = self.other_funcs.sort_times(self.db_funcs.get_my_times(self.db_funcs.get_user_id(message)[0]), 1)
+        data = self.other_funcs.check_none(self.db_funcs.get_my_times(self.db_funcs.get_user_id(message)[0]), 1)
         result_list = ''
         chat_id = message.chat.id
         counter = 1
@@ -352,7 +352,7 @@ class BotFuncs:
                 self.bot.send_message(message.chat.id, 'Неверно, введи номер еще раз')
                 self.bot.register_next_step_handler(message, self.delete_time)
             counter = 1
-            data = self.other_funcs.sort_times(self.db_funcs.get_my_times(self.db_funcs.get_user_id(message)[0]), 1)
+            data = self.other_funcs.check_none(self.db_funcs.get_my_times(self.db_funcs.get_user_id(message)[0]), 1)
             for row in data:
                 if counter == int(delete_time_id):
                     if self.db_funcs.delete_from_timetable(row[0]):
@@ -387,7 +387,7 @@ class BotFuncs:
                 self.bot.send_message(message.chat.id, 'Неверно, введи номер еще раз')
                 self.bot.register_next_step_handler(message, self.update_time)
             counter = 1
-            data = self.other_funcs.sort_times(self.db_funcs.get_my_times(self.db_funcs.get_user_id(message)[0]), 1)
+            data = self.other_funcs.check_none(self.db_funcs.get_my_times(self.db_funcs.get_user_id(message)[0]), 1)
             for row in data:
                 if counter == int(update_time_id):
                     last_info = ['update', row[0], row[2], row[3], row[4], row[5]]
@@ -403,12 +403,12 @@ class BotFuncs:
     def print_my_times(self, message):
         self.get_days_data()
         is_empty = False
-        if self.other_funcs.sort_times(message.from_user.username) == '':
+        if self.other_funcs.check_none(message.from_user.username) == '':
             is_empty = True
             result_list = self.memo + ' Твоя занятость на:'
         else:
             result_list = self.memo + ' @' + message.from_user.username + ', '
-        data = self.other_funcs.sort_times(self.db_funcs.get_my_times(self.db_funcs.get_user_id(message)[0]), 1)
+        data = self.other_funcs.check_none(self.db_funcs.get_my_times(self.db_funcs.get_user_id(message)[0]), 1)
         counter = 1
         last_day = 0
         if len(data) > 0:
@@ -433,7 +433,7 @@ class BotFuncs:
     def print_all_times(self, message):
         self.get_days_data()
         result_list = self.memo + ' Занятость на:\n'
-        data = self.other_funcs.sort_times(self.db_funcs.get_all_times(), 2)
+        data = self.other_funcs.check_none(self.db_funcs.get_all_times(), 2)
         counter = 1
         last_day = 0
         if len(data) > 0:
@@ -505,7 +505,7 @@ class BotFuncs:
     # Проверка юзернейма на пустоту и выдача части приветствия
     def get_hello_part(self, user_name):
         hello_part = 'Привет'
-        user_name = self.other_funcs.sort_times(user_name)
+        user_name = self.other_funcs.check_none(user_name)
         if user_name == '':
             hello_part += '!\n'
         else:
