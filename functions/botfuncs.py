@@ -37,8 +37,8 @@ class BotFuncs:
         if self.db_funcs.checkUser(message):
             return True
         else:
-            self.bot.send_message(message.chat.id, 'Привет, ' + message.from_user.username + '!\n'
-                                                                                        'Пожалуйста, введи секретное слово, чтобы начать пользоваться моими возможностями :)')
+            self.bot.send_message(message.chat.id, self.getHelloPart(message.from_user.username) +
+                               'Пожалуйста, введи секретное слово, чтобы начать пользоваться моими возможностями :)')
             self.bot.register_next_step_handler(message, self.validateSecretWord)
 
     # Проверка секретного слова
@@ -46,7 +46,7 @@ class BotFuncs:
         secret_word = str(message.text).strip()
         if secret_word == config.SECRET_WORD:
             if self.db_funcs.addUser(message):
-                self.bot.send_message(message.chat.id, 'Привет, ' + message.from_user.username + '!\n'
+                self.bot.send_message(message.chat.id, self.getHelloPart(message.from_user.username) +
                                         'Я - бот компании Russian Robotics, предназначенный для ведения расписания переговорки!\n\n'
                                         'Нажми на "Справка" или введи /help, чтобы увидеть мои возможности (:\n'
                                         'Надеюсь тебе понравится со мной работать!\n\n',
@@ -526,6 +526,17 @@ class BotFuncs:
         keyboard.add('Отмена')
 
         return keyboard
+
+    # Проверка юзернейма на пустоту и выдача части приветствия
+    def getHelloPart(self, user_name):
+        hello_part = 'Привет'
+        user_name = self.db_funcs.checkNone(user_name)
+        if user_name == '':
+            hello_part += '!\n'
+        else:
+            hello_part += ', ' + user_name + '!\n'
+
+        return hello_part
 
     # Время
     def printToday(self, chat_id, today):
