@@ -63,8 +63,8 @@ class BotFuncs:
         data = self.other_funcs.check_none(self.db_funcs.get_times_day(int(day_reg)), 2)
         counter = 1
         result_list = self.memo + ' '
-        now_day = str(self.other_funcs.check_date_format(day_reg))
-        now_month = str(self.other_funcs.check_date_format(self.db_funcs.get_month_reg(message.from_user.id)))
+        now_day = str(self.other_funcs.check_inserted_time(day_reg))
+        now_month = str(self.other_funcs.check_inserted_time(self.db_funcs.get_month_reg(message.from_user.id)))
         if len(data) > 0:
             for row in data:
                 if counter == 1:
@@ -197,8 +197,8 @@ class BotFuncs:
                 last_info = self.db_funcs.get_last_info(message.from_user.id)
                 if last_info[0] == 'update':
                     row_id = int(last_info[1])
-                    last_day = str(self.other_funcs.check_date_format(last_info[2]))
-                    last_month = str(self.other_funcs.check_date_format(last_info[3]))
+                    last_day = str(self.other_funcs.check_inserted_time(last_info[2]))
+                    last_month = str(self.other_funcs.check_inserted_time(last_info[3]))
                     start_time = str(self.other_funcs.check_time_before(last_info[4]))
                     end_time = str(self.other_funcs.check_time_before(last_info[5]))
                     if self.db_funcs.update_timetable(row_id, data_reg):
@@ -207,9 +207,9 @@ class BotFuncs:
                                               + start_time + ' - ' + end_time + ', ' + last_day + '.' + last_month + ' '
                                               + self.days_dict[last_day] + '\n\n' + self.plus + ' '
                                               + data_reg['start_time'] + ' - ' + data_reg['end_time'] +
-                                              ' ' + str(self.other_funcs.check_date_format(data_reg['day_reg'])) + '.'
-                                              + str(self.other_funcs.check_date_format(data_reg['month_reg'])) + ' '
-                                              + self.days_dict[str(self.other_funcs.check_date_format(data_reg['day_reg']))],
+                                              ' ' + str(self.other_funcs.check_inserted_time(data_reg['day_reg'])) + '.'
+                                              + str(self.other_funcs.check_inserted_time(data_reg['month_reg'])) + ' '
+                                              + self.days_dict[str(self.other_funcs.check_inserted_time(data_reg['day_reg']))],
                                               reply_markup=self.other_funcs.get_start_keyboard())
                     else:
                         self.bot.send_message(message.chat.id, self.interrobang +
@@ -221,9 +221,9 @@ class BotFuncs:
                     if self.db_funcs.add_to_timetable(message, data_reg):
                         self.bot.send_message(message.chat.id, self.success + ' Записал тебя на:\n\n' + self.plus + ' '
                                               + data_reg['start_time'] + " - " + data_reg['end_time'] + ", "
-                                              + str(self.other_funcs.check_date_format(data_reg['day_reg']))
-                                              + '.' + str(self.other_funcs.check_date_format(data_reg['month_reg'])) + ' ' +
-                                              self.days_dict[str(self.other_funcs.check_date_format(data_reg['day_reg']))],
+                                              + str(self.other_funcs.check_inserted_time(data_reg['day_reg']))
+                                              + '.' + str(self.other_funcs.check_inserted_time(data_reg['month_reg'])) + ' ' +
+                                              self.days_dict[str(self.other_funcs.check_inserted_time(data_reg['day_reg']))],
                                               reply_markup=self.other_funcs.get_start_keyboard())
                     else:
                         self.bot.send_message(message.chat.id, self.interrobang +
@@ -248,16 +248,16 @@ class BotFuncs:
         print(last_info)
         if last_info[0] != 'delete':
             new_info = self.db_funcs.get_new_info(message.from_user.id)
-            day_reg = str(self.other_funcs.check_date_format(new_info[0]))
-            month_reg = str(self.other_funcs.check_date_format(new_info[1]))
+            day_reg = str(self.other_funcs.check_inserted_time(new_info[0]))
+            month_reg = str(self.other_funcs.check_inserted_time(new_info[1]))
             start_time = new_info[2]
             end_time = new_info[3]
 
         self.db_funcs.del_self_database(message.from_user.id)
 
         if last_info[0] in ['update', 'delete']:
-            last_day = str(self.other_funcs.check_date_format(last_info[2]))
-            last_month = str(self.other_funcs.check_date_format(last_info[3]))
+            last_day = str(self.other_funcs.check_inserted_time(last_info[2]))
+            last_month = str(self.other_funcs.check_inserted_time(last_info[3]))
             last_start_time = str(self.other_funcs.check_time_before(last_info[4]))
             last_end_time = str(self.other_funcs.check_time_before(last_info[5]))
 
@@ -325,9 +325,9 @@ class BotFuncs:
             elif func_type == 2:
                 result_list += 'Введи номер записи, которую хочешь изменить:\n'
             for row in data:
-                now_month = str(self.other_funcs.check_date_format(row[3]))
-                if last_day != self.other_funcs.check_date_format(row[2]):
-                    last_day = self.other_funcs.check_date_format(row[2])
+                now_month = str(self.other_funcs.check_inserted_time(row[3]))
+                if last_day != self.other_funcs.check_inserted_time(row[2]):
+                    last_day = self.other_funcs.check_inserted_time(row[2])
                     if last_day != 0:
                         result_list += '\n'
                     result_list += self.pushpin + " " + str(last_day) + '.' + now_month + '.' + \
@@ -362,9 +362,9 @@ class BotFuncs:
                         self.bot.send_message(message.chat.id,
                                               self.success + ' Запись успешно удалена:\n\n' +
                                               self.minus + ' ' + row[4] + " - " + row[5] + ", " +
-                                              str(self.other_funcs.check_date_format(row[2])) + "." +
-                                              str(self.other_funcs.check_date_format(row[3])) + " " +
-                                              self.days_dict[str(self.other_funcs.check_date_format(row[2]))],
+                                              str(self.other_funcs.check_inserted_time(row[2])) + "." +
+                                              str(self.other_funcs.check_inserted_time(row[3])) + " " +
+                                              self.days_dict[str(self.other_funcs.check_inserted_time(row[2]))],
                                               reply_markup=self.other_funcs.get_start_keyboard())
                         self.send_timetable_news(message)
                         break
@@ -414,9 +414,9 @@ class BotFuncs:
         if len(data) > 0:
             result_list += 'занятость на:\n' if not is_empty else ''
             for row in data:
-                now_month = str(self.other_funcs.check_date_format(row[3]))
-                if last_day != self.other_funcs.check_date_format(row[2]):
-                    last_day = self.other_funcs.check_date_format(row[2])
+                now_month = str(self.other_funcs.check_inserted_time(row[3]))
+                if last_day != self.other_funcs.check_inserted_time(row[2]):
+                    last_day = self.other_funcs.check_inserted_time(row[2])
                     counter = 1
                     if last_day != 0:
                         result_list += '\n'
@@ -438,9 +438,9 @@ class BotFuncs:
         last_day = 0
         if len(data) > 0:
             for row in data:
-                now_month = str(self.other_funcs.check_date_format(row[12]))
-                if last_day != self.other_funcs.check_date_format(row[11]):
-                    last_day = self.other_funcs.check_date_format(row[11])
+                now_month = str(self.other_funcs.check_inserted_time(row[12]))
+                if last_day != self.other_funcs.check_inserted_time(row[11]):
+                    last_day = self.other_funcs.check_inserted_time(row[11])
                     counter = 1
                     if last_day != 0:
                         result_list += '\n'
@@ -451,8 +451,8 @@ class BotFuncs:
                 counter += 1
             self.bot.send_message(message.chat.id, result_list, reply_markup=self.other_funcs.get_start_keyboard())
         else:
-            self.bot.send_message(message.chat.id, 
-                                  'Сегодня переговорку еще никто не занимал! Успей забрать лучшее время ;)', 
+            self.bot.send_message(message.chat.id,
+                                  'Сегодня переговорку еще никто не занимал! Успей забрать лучшее время ;)',
                                   reply_markup=self.other_funcs.get_start_keyboard())
 
     # Клавиатура выбора дней
@@ -493,7 +493,7 @@ class BotFuncs:
             else:
                 day_num = num
             added_days.append(day_num)
-            days_dict[str(self.other_funcs.check_date_format(day_num))] = self.day_names[now_day_num]
+            days_dict[str(self.other_funcs.check_inserted_time(day_num))] = self.day_names[now_day_num]
             if now_day_num != 6:
                 now_day_num += 1
             else:
@@ -515,7 +515,7 @@ class BotFuncs:
             
     # Время
     def print_today(self, chat_id, today):
-        self.bot.send_message(chat_id, str(today.strftime("%H:%M  %d.%m.%Y")), 
+        self.bot.send_message(chat_id, str(today.strftime("%H:%M  %d.%m.%Y")),
                               reply_markup=self.other_funcs.get_start_keyboard())
 
     # Справка
