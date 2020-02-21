@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import telebot
+from telebot import types
 import datetime
 from datafiles import config
 import os
@@ -18,7 +19,7 @@ bot_home.setBot(bot)
 db_funcs = dbfuncs.DatabaseFuncs(bot)
 bot_funcs = botfuncs.BotFuncs(bot)
 
-start_keyboard = telebot.types.ReplyKeyboardMarkup(True)
+start_keyboard = types.ReplyKeyboardMarkup(True)
 start_keyboard.row('Занять переговорку', 'Изменить запись', 'Удалить запись')
 start_keyboard.row('Моя занятость', 'Занятость переговорки')
 start_keyboard.row('Дата', 'Справка', 'Кот')
