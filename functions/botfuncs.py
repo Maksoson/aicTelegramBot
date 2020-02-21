@@ -62,8 +62,8 @@ class BotFuncs:
         data = self.db_funcs.sortTimes(self.db_funcs.getTimesDay(int(day_reg)), 2)
         counter = 1
         result_list = self.memo + ' '
-        now_day = str(self.checkDateFormat(day_reg))
-        now_month = str(self.checkDateFormat(self.db_funcs.get_month_reg(message.from_user.id)))
+        now_day = self.checkDateFormat(day_reg)
+        now_month = self.checkDateFormat(self.db_funcs.get_month_reg(message.from_user.id))
         if len(data) > 0:
             for row in data:
                 if counter == 1:
@@ -196,8 +196,8 @@ class BotFuncs:
                 last_info = self.db_funcs.get_last_info(message.from_user.id)
                 if last_info[0] == 'update':
                     row_id = int(last_info[1])
-                    last_day = str(self.checkDateFormat(last_info[2]))
-                    last_month = str(self.checkDateFormat(last_info[3]))
+                    last_day = self.checkDateFormat(last_info[2])
+                    last_month = self.checkDateFormat(last_info[3])
                     start_time = str(self.db_funcs.checkTimeBefore(last_info[4]))
                     end_time = str(self.db_funcs.checkTimeBefore(last_info[5]))
                     if self.db_funcs.updateTimetable(row_id, data_reg):
@@ -206,9 +206,9 @@ class BotFuncs:
                                               + start_time + ' - ' + end_time + ', ' + last_day + '.' + last_month + ' '
                                               + self.days_dict[last_day] + '\n\n' + self.plus + ' '
                                               + data_reg['start_time'] + ' - ' + data_reg['end_time'] +
-                                              ' ' + str(self.checkDateFormat(data_reg['day_reg'])) + '.'
-                                              + str(self.checkDateFormat(data_reg['month_reg'])) + ' '
-                                              + self.days_dict[str(self.checkDateFormat(data_reg['day_reg']))],
+                                              ' ' + self.checkDateFormat(data_reg['day_reg']) + '.'
+                                              + self.checkDateFormat(data_reg['month_reg']) + ' '
+                                              + self.days_dict[self.checkDateFormat(data_reg['day_reg'])],
                                               reply_markup=self.getStartKeyboard())
                     else:
                         self.bot.send_message(message.chat.id, self.interrobang +
@@ -220,9 +220,9 @@ class BotFuncs:
                     if self.db_funcs.addToTimetable(message, data_reg):
                         self.bot.send_message(message.chat.id, self.success + ' Записал тебя на:\n\n' + self.plus + ' '
                                               + data_reg['start_time'] + " - " + data_reg['end_time'] + ", "
-                                              + str(self.checkDateFormat(data_reg['day_reg']))
-                                              + '.' + str(self.checkDateFormat(data_reg['month_reg'])) + ' ' +
-                                              self.days_dict[str(self.checkDateFormat(data_reg['day_reg']))],
+                                              + self.checkDateFormat(data_reg['day_reg'])
+                                              + '.' + self.checkDateFormat(data_reg['month_reg']) + ' ' +
+                                              self.days_dict[self.checkDateFormat(data_reg['day_reg'])],
                                               reply_markup=self.getStartKeyboard())
                     else:
                         self.bot.send_message(message.chat.id, self.interrobang +
@@ -247,16 +247,16 @@ class BotFuncs:
         print(last_info)
         if last_info[0] != 'delete':
             new_info = self.db_funcs.get_new_info(message.from_user.id)
-            day_reg = str(self.checkDateFormat(new_info[0]))
-            month_reg = str(self.checkDateFormat(new_info[1]))
+            day_reg = self.checkDateFormat(new_info[0])
+            month_reg = self.checkDateFormat(new_info[1])
             start_time = new_info[2]
             end_time = new_info[3]
 
         self.db_funcs.del_self_database(message.from_user.id)
 
         if last_info[0] in ['update', 'delete']:
-            last_day = str(self.checkDateFormat(last_info[2]))
-            last_month = str(self.checkDateFormat(last_info[3]))
+            last_day = self.checkDateFormat(last_info[2])
+            last_month = self.checkDateFormat(last_info[3])
             last_start_time = str(self.db_funcs.checkTimeBefore(last_info[4]))
             last_end_time = str(self.db_funcs.checkTimeBefore(last_info[5]))
 
@@ -324,9 +324,9 @@ class BotFuncs:
             elif func_type == 2:
                 result_list += 'Введи номер записи, которую хочешь изменить:\n'
             for row in data:
-                now_month = str(self.checkDateFormat(row[3]))
-                if last_day != self.checkDateFormat(row[2]):
-                    last_day = self.checkDateFormat(row[2])
+                now_month = self.checkDateFormat(row[3])
+                if last_day != int(self.checkDateFormat(row[2])):
+                    last_day = int(self.checkDateFormat(row[2]))
                     if last_day != 0:
                         result_list += '\n'
                     result_list += self.pushpin + " " + str(last_day) + '.' + now_month + '.' + \
@@ -361,9 +361,9 @@ class BotFuncs:
                         self.bot.send_message(message.chat.id,
                                               self.success + ' Запись успешно удалена:\n\n' +
                                               self.minus + ' ' + row[4] + " - " + row[5] + ", " +
-                                              str(self.checkDateFormat(row[2])) + "." +
-                                              str(self.checkDateFormat(row[3])) + " " +
-                                              self.days_dict[str(self.checkDateFormat(row[2]))],
+                                              self.checkDateFormat(row[2]) + "." +
+                                              self.checkDateFormat(row[3]) + " " +
+                                              self.days_dict[self.checkDateFormat(row[2])],
                                               reply_markup=self.getStartKeyboard())
                         self.sendTimetableNews(message)
                         break
@@ -413,9 +413,9 @@ class BotFuncs:
         if len(data) > 0:
             result_list += 'занятость на:\n' if not is_empty else ''
             for row in data:
-                now_month = str(self.checkDateFormat(row[3]))
-                if last_day != self.checkDateFormat(row[2]):
-                    last_day = self.checkDateFormat(row[2])
+                now_month = self.checkDateFormat(row[3])
+                if last_day != int(self.checkDateFormat(row[2])):
+                    last_day = int(self.checkDateFormat(row[2]))
                     counter = 1
                     if last_day != 0:
                         result_list += '\n'
@@ -437,9 +437,9 @@ class BotFuncs:
         last_day = 0
         if len(data) > 0:
             for row in data:
-                now_month = str(self.checkDateFormat(row[12]))
-                if last_day != self.checkDateFormat(row[11]):
-                    last_day = self.checkDateFormat(row[11])
+                now_month = self.checkDateFormat(row[12])
+                if last_day != int(self.checkDateFormat(row[11])):
+                    last_day = int(self.checkDateFormat(row[11]))
                     counter = 1
                     if last_day != 0:
                         result_list += '\n'
@@ -491,7 +491,7 @@ class BotFuncs:
             else:
                 day_num = num
             added_days.append(day_num)
-            days_dict[str(self.checkDateFormat(day_num))] = self.day_names[now_day_num]
+            days_dict[int(self.checkDateFormat(day_num))] = self.day_names[now_day_num]
             if now_day_num != 6:
                 now_day_num += 1
             else:
@@ -516,9 +516,9 @@ class BotFuncs:
     @staticmethod
     def checkDateFormat(date_data):
         if int(date_data) < 10:
-            return '0' + str(date_data)
+            return str('0' + str(date_data))
         else:
-            return date_data
+            return str(date_data)
 
     @staticmethod
     def getCancelButton():
