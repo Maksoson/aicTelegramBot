@@ -6,48 +6,38 @@ from contextlib import closing
 import dj_database_url
 import psycopg2
 import datetime
-import re
+from functions import otherfuncs
 
 
 class DatabaseFuncs:
 
     def __init__(self, bot):
         self.bot = bot
+        self.other_funcs = otherfuncs.OtherFuncs()
 
     # Проверка данных о пользователе из БД на актуальность
-    def checkUser(self, message):
-        if self.getUserId(message) is not None:
-            if not self.compareUserData(self.getUser(message), message):
-                self.updateUser(message)
+    def check_user(self, message):
+        if self.get_user_id(message) is not None:
+            if not self.other_funcs.compare_user_data(self.get_user(message), message):
+                self.update_user(message)
                 return True
         else:
             return False
 
-    # Сравнение старых и текущих данных о пользователе
-    def compareUserData(self, old_user_data, new_user_data):
-        if str(old_user_data[1]).strip() != new_user_data.from_user.username:
-            return False
-        if str(old_user_data[2]).strip() != new_user_data.from_user.first_name:
-            return False
-        if str(old_user_data[3]).strip() != new_user_data.from_user.last_name:
-            return False
-        if str(old_user_data[5]).strip() != new_user_data.from_user.language_code:
-            return False
-        if str(old_user_data[7]).strip() != new_user_data.from_user.is_bot:
-            return False
-
-        return True
-
     # Добавить пользователя
-    def addUser(self, message):
-        with closing(self.getConnection()) as connection:
+    def add_user(self, message):
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
-                query = 'INSERT INTO public.users (user_accname, user_firstname, user_lastname, user_id, user_chat_id, user_language, user_isbot) ' \
+                query = 'INSERT INTO public.users (user_accname, user_firstname, user_lastname, ' \
+                                                  'user_id, user_chat_id, user_language, user_isbot) ' \
                         'VALUES (%s, %s, %s, %s, %s, %s, %s)'
                 try:
                     cursor.execute(query,
-                                   [self.checkNone(message.from_user.username), self.checkNone(message.from_user.first_name), self.checkNone(message.from_user.last_name),
-                                    message.from_user.id, message.chat.id, str(message.from_user.language_code).strip(), message.from_user.is_bot])
+                                   [self.other_funcs.check_none(message.from_user.username),
+                                    self.other_funcs.check_none(message.from_user.first_name),
+                                    self.other_funcs.check_none(message.from_user.last_name),
+                                    message.from_user.id, message.chat.id,
+                                    message.from_user.language_code, message.from_user.is_bot])
                     connection.commit()
 
                     return True
@@ -55,20 +45,24 @@ class DatabaseFuncs:
                     return False
 
     # Обновить данные о пользователе
-    def updateUser(self, message):
-        with closing(self.getConnection()) as connection:
+    def update_user(self, message):
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
                 query = 'UPDATE public.users ' \
-                        'SET user_accname = %s, user_firstname = %s, user_lastname = %s, user_id = %s, user_chat_id = %s, user_language = %s, user_isbot = %s ' \
+                        'SET user_accname = %s, user_firstname = %s, user_lastname = %s, user_id = %s, ' \
+                            'user_chat_id = %s, user_language = %s, user_isbot = %s ' \
                         'WHERE user_id = %s'
                 cursor.execute(query,
-                               [self.checkNone(message.from_user.username), self.checkNone(message.from_user.first_name), self.checkNone(message.from_user.last_name),
-                                message.from_user.id, message.chat.id, str(message.from_user.language_code).strip(), message.from_user.is_bot, message.from_user.id])
+                               [self.other_funcs.check_none(message.from_user.username),
+                                self.other_funcs.check_none(message.from_user.first_name),
+                                self.other_funcs.check_none(message.from_user.last_name),
+                                message.from_user.id, message.chat.id,
+                                message.from_user.language_code, message.from_user.is_bot, message.from_user.id])
                 connection.commit()
 
     # Получить id пользователя по telegram_id (user_id)
-    def getUserId(self, message):
-        with closing(self.getConnection()) as connection:
+    def get_user_id(self, message):
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
                 query = 'SELECT id FROM public.users WHERE user_id = %s'
                 cursor.execute(query, [message.from_user.id])
@@ -76,8 +70,8 @@ class DatabaseFuncs:
                 return cursor.fetchone()
 
     # Получить данные о пользователе по telegram_id
-    def getUser(self, message):
-        with closing(self.getConnection()) as connection:
+    def get_user(self, message):
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
                 query = 'SELECT * FROM public.users WHERE user_id = %s'
                 cursor.execute(query, [message.from_user.id])
@@ -85,8 +79,8 @@ class DatabaseFuncs:
                 return cursor.fetchone()
 
     # Получить все чаты для рассылки
-    def getAllChatIds(self):
-        with closing(self.getConnection()) as connection:
+    def get_all_chat_ids(self):
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
                 query = 'SELECT users.user_chat_id FROM public.users'
                 cursor.execute(query)
@@ -94,20 +88,21 @@ class DatabaseFuncs:
                 return cursor.fetchall()
 
     # Добавить запись на переговорку
-    def addToTimetable(self, message, collection):
-        with closing(self.getConnection()) as connection:
+    def add_to_timetable(self, message, collection):
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
-                start_time = self.checkTimeBefore(collection['start_time'])
-                end_time = self.checkTimeBefore(collection['end_time'])
+                start_time = self.other_funcs.check_time_before(collection['start_time'])
+                end_time = self.other_funcs.check_time_before(collection['end_time'])
                 day_reg = int(collection['day_reg'])
                 month_reg = int(collection['month_reg'])
                 date_create = datetime.datetime.today().date()
                 date_update = date_create
 
-                query = 'INSERT INTO public.timetable (user_id, day_use, month_use, start_time, end_time, date_create, date_update) ' \
+                query = 'INSERT INTO public.timetable (user_id, day_use, month_use, start_time, ' \
+                                                      'end_time, date_create, date_update) ' \
                         'VALUES (%s, %s, %s, %s, %s, %s::date, %s::date)'
                 try:
-                    cursor.execute(query, [self.getUserId(message)[0], day_reg, month_reg,
+                    cursor.execute(query, [self.get_user_id(message)[0], day_reg, month_reg,
                                            start_time, end_time, date_create, date_update])
                     connection.commit()
 
@@ -116,8 +111,8 @@ class DatabaseFuncs:
                     return False
 
     # Изменение записи
-    def updateTimetable(self, row_id, new_data):
-        with closing(self.getConnection()) as connection:
+    def update_timetable(self, row_id, new_data):
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
                 print(new_data)
                 query = 'UPDATE public.timetable SET day_use = %s, month_use = %s, start_time = %s, end_time = %s ' \
@@ -132,8 +127,8 @@ class DatabaseFuncs:
                     return False
 
     # Удаление записи (разрешено удалять только свои записи)
-    def deleteFromTimetable(self, time_id):
-        with closing(self.getConnection()) as connection:
+    def delete_from_timetable(self, time_id):
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
                 query = 'DELETE FROM public.timetable WHERE id = %s'
                 try:
@@ -145,8 +140,8 @@ class DatabaseFuncs:
                     return False
 
     # Получить мои записи на переговорку
-    def getMyTimes(self, user_id):
-        with closing(self.getConnection()) as connection:
+    def get_my_times(self, user_id):
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
                 query = 'SELECT * FROM public.timetable WHERE user_id = %s'
                 cursor.execute(query, [user_id])
@@ -154,8 +149,8 @@ class DatabaseFuncs:
                 return cursor.fetchall()
 
     # Получить все записи на переговорку
-    def getAllTimes(self):
-        with closing(self.getConnection()) as connection:
+    def get_all_times(self):
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
                 query = 'SELECT public.users.*, public.timetable.* FROM public.timetable ' \
                         'INNER JOIN public.users ON public.users.id = public.timetable.user_id'
@@ -164,8 +159,8 @@ class DatabaseFuncs:
                 return cursor.fetchall()
 
     # Получить мои сегодняшние записи на переговорку
-    def getTimesDay(self, day):
-        with closing(self.getConnection()) as connection:
+    def get_times_day(self, day):
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
                 query = 'SELECT public.users.*, public.timetable.* FROM public.timetable ' \
                         'INNER JOIN public.users ON public.users.id = public.timetable.user_id WHERE day_use = %s'
@@ -174,89 +169,100 @@ class DatabaseFuncs:
                 return cursor.fetchall()
 
     # Удалить все записи за прошедший день из БД
-    def deleteOldTimes(self):
-        with closing(self.getConnection()) as connection:
+    def delete_old_times(self):
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
                 query = 'DELETE FROM public.timetable WHERE day_use = %s AND month_use = %s'
                 cursor.execute(query, [datetime.datetime.today().day, datetime.datetime.today().month])
                 connection.commit()
 
+    # Добавить запись в таблицу временных данных
     def add_self_database(self, user_id):
-        with closing(self.getConnection()) as connection:
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
                 query = 'INSERT INTO public.self_data (user_id) VALUES (%s)'
                 cursor.execute(query, [user_id])
                 connection.commit()
 
+    # Удалить запись из таблицы временных данных
     def del_self_database(self, user_id):
-        with closing(self.getConnection()) as connection:
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
                 query = 'DELETE FROM public.self_data WHERE user_id = %s'
                 cursor.execute(query, [user_id])
                 connection.commit()
 
+    # Добавить день потенциальной записи
     def set_day_reg(self, day_reg, user_id):
-        with closing(self.getConnection()) as connection:
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
                 query = 'UPDATE public.self_data SET day_reg = %s WHERE user_id = %s'
                 cursor.execute(query, [day_reg, user_id])
                 connection.commit()
 
+    # Достать день потенциальной записи
     def get_day_reg(self, user_id):
-        with closing(self.getConnection()) as connection:
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
                 query = 'SELECT self_data.day_reg FROM public.self_data WHERE user_id = %s'
                 cursor.execute(query, [user_id])
 
                 return cursor.fetchone()[0]
 
+    # Добавить месяц потенциальной записи
     def set_month_reg(self, month_reg, user_id):
-        with closing(self.getConnection()) as connection:
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
                 query = 'UPDATE public.self_data SET month_reg = %s WHERE user_id = %s'
                 cursor.execute(query, [month_reg, user_id])
                 connection.commit()
 
+    # Достать месяц потенциальной записи
     def get_month_reg(self, user_id):
-        with closing(self.getConnection()) as connection:
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
                 query = 'SELECT self_data.month_reg FROM public.self_data WHERE user_id = %s'
                 cursor.execute(query, [user_id])
 
                 return cursor.fetchone()[0]
 
+    # Добавить начальное время потенциальной записи
     def set_start_time(self, start_time, user_id):
-        with closing(self.getConnection()) as connection:
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
                 query = 'UPDATE public.self_data SET start_time = %s WHERE user_id = %s'
                 cursor.execute(query, [start_time, user_id])
                 connection.commit()
 
+    # Достать начаотное время потенциальной записи
     def get_start_time(self, user_id):
-        with closing(self.getConnection()) as connection:
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
                 query = 'SELECT self_data.start_time FROM public.self_data WHERE user_id = %s'
                 cursor.execute(query, [user_id])
 
                 return cursor.fetchone()[0]
 
+    # Добавить конечное время потенциальной записи
     def set_end_time(self, end_time, user_id):
-        with closing(self.getConnection()) as connection:
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
                 query = 'UPDATE public.self_data SET end_time = %s WHERE user_id = %s'
                 cursor.execute(query, [end_time, user_id])
                 connection.commit()
 
+    # Достать конечное время потенциальной записи
     def get_end_time(self, user_id):
-        with closing(self.getConnection()) as connection:
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
                 query = 'SELECT self_data.end_time FROM public.self_data WHERE user_id = %s'
                 cursor.execute(query, [user_id])
 
                 return cursor.fetchone()[0]
 
+    # Достать информацию о потенциальной записи
     def get_new_info(self, user_id):
-        with closing(self.getConnection()) as connection:
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
                 query = 'SELECT self_data.day_reg, self_data.month_reg, self_data.start_time, self_data.end_time ' \
                         'FROM public.self_data WHERE user_id = %s'
@@ -264,8 +270,9 @@ class DatabaseFuncs:
 
                 return cursor.fetchone()
 
+    # Добавить информацию удаляемой/изменяемой записи
     def set_last_info(self, last_info, user_id):
-        with closing(self.getConnection()) as connection:
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
                 query = 'UPDATE public.self_data SET last_func = %s, last_row_id = %s, last_day_reg = %s, ' \
                         'last_month_reg = %s, last_start_time = %s, last_end_time = %s ' \
@@ -274,8 +281,9 @@ class DatabaseFuncs:
                                        last_info[3], last_info[4], last_info[5], user_id])
                 connection.commit()
 
+    # Добавить информацию удаляемой/изменяемой записи
     def get_last_info(self, user_id):
-        with closing(self.getConnection()) as connection:
+        with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
                 query = 'SELECT self_data.last_func, self_data.last_row_id, self_data.last_day_reg, ' \
                         'self_data.last_month_reg, self_data.last_start_time, self_data.last_end_time ' \
@@ -284,134 +292,9 @@ class DatabaseFuncs:
 
                 return cursor.fetchone()
 
-    # def set_last_func(self, last_func, user_id):
-    #     with closing(self.getConnection()) as connection:
-    #         with connection.cursor() as cursor:
-    #             query = 'UPDATE public.self_data SET last_func = %s WHERE user_id = %s'
-    #             cursor.execute(query, [last_func, user_id])
-    #             connection.commit()
-    #
-    # def get_last_func(self, user_id):
-    #     with closing(self.getConnection()) as connection:
-    #         with connection.cursor() as cursor:
-    #             query = 'SELECT self_data.last_func FROM public.self_data WHERE user_id = %s'
-    #             cursor.execute(query, [user_id])
-    #
-    #             return cursor.fetchone()[0]
-    #
-    # def set_last_row_id(self, last_row_id, user_id):
-    #     with closing(self.getConnection()) as connection:
-    #         with connection.cursor() as cursor:
-    #             query = 'UPDATE public.self_data SET last_row_id = %s WHERE user_id = %s'
-    #             cursor.execute(query, [last_row_id, user_id])
-    #             connection.commit()
-    #
-    # def get_last_row_id(self, user_id):
-    #     with closing(self.getConnection()) as connection:
-    #         with connection.cursor() as cursor:
-    #             query = 'SELECT self_data.last_row_id FROM public.self_data WHERE user_id = %s'
-    #             cursor.execute(query, [user_id])
-    #
-    #             return cursor.fetchone()[0]
-    #
-    # def set_last_day(self, last_day, user_id):
-    #     with closing(self.getConnection()) as connection:
-    #         with connection.cursor() as cursor:
-    #             query = 'UPDATE public.self_data SET last_day = %s WHERE user_id = %s'
-    #             cursor.execute(query, [last_day, user_id])
-    #             connection.commit()
-    #
-    # def get_last_day(self, user_id):
-    #     with closing(self.getConnection()) as connection:
-    #         with connection.cursor() as cursor:
-    #             query = 'SELECT self_data.last_day FROM public.self_data WHERE user_id = %s'
-    #             cursor.execute(query, [user_id])
-    #
-    #             return cursor.fetchone()[0]
-    #
-    # def set_last_month(self, last_month, user_id):
-    #     with closing(self.getConnection()) as connection:
-    #         with connection.cursor() as cursor:
-    #             query = 'UPDATE public.self_data SET last_month = %s WHERE user_id = %s'
-    #             cursor.execute(query, [last_month, user_id])
-    #             connection.commit()
-    #
-    # def get_last_month(self, user_id):
-    #     with closing(self.getConnection()) as connection:
-    #         with connection.cursor() as cursor:
-    #             query = 'SELECT self_data.last_month FROM public.self_data WHERE user_id = %s'
-    #             cursor.execute(query, [user_id])
-    #
-    #             return cursor.fetchone()[0]
-    #
-    # def set_last_start_time(self, last_start_time, user_id):
-    #     with closing(self.getConnection()) as connection:
-    #         with connection.cursor() as cursor:
-    #             query = 'UPDATE public.self_data SET last_start_time = %s WHERE user_id = %s'
-    #             cursor.execute(query, [last_start_time, user_id])
-    #             connection.commit()
-    #
-    # def get_last_start_time(self, user_id):
-    #     with closing(self.getConnection()) as connection:
-    #         with connection.cursor() as cursor:
-    #             query = 'SELECT self_data.last_start_time FROM public.self_data WHERE user_id = %s'
-    #             cursor.execute(query, [user_id])
-    #
-    #             return cursor.fetchone()[0]
-    #
-    # def set_last_end_time(self, last_end_time, user_id):
-    #     with closing(self.getConnection()) as connection:
-    #         with connection.cursor() as cursor:
-    #             query = 'UPDATE public.self_data SET last_end_time = %s WHERE user_id = %s'
-    #             cursor.execute(query, [last_end_time, user_id])
-    #             connection.commit()
-    #
-    # def get_last_end_time(self, user_id):
-    #     with closing(self.getConnection()) as connection:
-    #         with connection.cursor() as cursor:
-    #             query = 'SELECT self_data.last_end_time FROM public.self_data WHERE user_id = %s'
-    #             cursor.execute(query, [user_id])
-    #
-    #             return cursor.fetchone()[0]
-
-    # Замена None на пустую строку
-    @staticmethod
-    def checkNone(string):
-        return '' if str(string).strip() == 'None' else str(string).strip()
-
-    # Сортировка списка записей по времени по возрастанию
-    @staticmethod
-    def sortTimes(times_data, type_func):
-        new_times_data = []
-
-        if type_func == 1:
-            new_times_data = sorted(times_data, key=lambda row: (row[3], row[2], row[4]), reverse=False)
-        elif type_func == 2:
-            new_times_data = sorted(times_data, key=lambda row: (row[12], row[11], row[13]), reverse=False)
-
-        return new_times_data
-
-    # Преобразование к формату ЦЦ:ЦЦ
-    @staticmethod
-    def checkTimeBefore(data_time):
-        if len(data_time) == 5:
-            if re.match(r'^[0-9]{0,2}(:|\s)[0-9]{2}$', data_time):
-                return data_time.replace(' ', ':')
-            return data_time
-        elif len(data_time) == 4:
-            if re.match(r'^[0-9]{0,2}(:|\s)[0-9]{2}$', data_time):
-                return '0' + data_time.replace(' ', ':')
-            return '0' + data_time
-        elif len(data_time) == 2:
-            return data_time + ':00'
-        elif len(data_time) == 1:
-            return '0' + data_time + ':00'
-        elif len(data_time) == 0:
-            return ''
-
     # Связь с БД
     @staticmethod
-    def getConnection():
+    def get_connection():
         database_link = config.DATABASELINK
 
         db_info = dj_database_url.config(default=database_link)

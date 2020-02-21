@@ -13,7 +13,7 @@ from functions import dbfuncs, botfuncs
 
 bot = telebot.TeleBot(config.TOKEN)
 bot_home = bothome.BotHome()
-bot_home.setBot(bot)
+bot_home.set_bot(bot)
 
 db_funcs = dbfuncs.DatabaseFuncs(bot)
 bot_funcs = botfuncs.BotFuncs(bot)
@@ -37,15 +37,15 @@ def startFunc(message):
         elif command == '/add':
             bot_funcs.regTime(message)
         elif command == '/time':
-            bot_funcs.printToday(message.chat.id, datetime.datetime.today())
+            bot_funcs.print_today(message.chat.id, datetime.datetime.today())
         elif command == '/all':
-            bot_funcs.printAllTimes(message)
+            bot_funcs.print_all_times(message)
         elif command == '/delete':
-            bot_funcs.seeTimesListFor(message, 1)
+            bot_funcs.see_times_list_for(message, 1)
         elif command == '/update':
-            bot_funcs.seeTimesListFor(message, 2)
+            bot_funcs.see_times_list_for(message, 2)
         elif command == '/my':
-            bot_funcs.printMyTimes(message)
+            bot_funcs.print_my_times(message)
         elif command == '/cat':
             bot.send_message(message.chat.id, 'Мяу', reply_markup=start_keyboard)
 
@@ -65,17 +65,17 @@ def send_text(message):
         elif user_message == 'пока':
             bot.send_message(chat_id, 'Удачи тебе, ' + user_first_name)
         elif user_message == 'дата':
-            bot_funcs.printToday(chat_id, today)
+            bot_funcs.print_today(chat_id, today)
         elif user_message == 'моя занятость':
-            bot_funcs.printMyTimes(message)
+            bot_funcs.print_my_times(message)
         elif user_message == 'удалить запись':
-            bot_funcs.seeTimesListFor(message, 1)
+            bot_funcs.see_times_list_for(message, 1)
         elif user_message == 'изменить запись':
-            bot_funcs.seeTimesListFor(message, 2)
+            bot_funcs.see_times_list_for(message, 2)
         elif user_message == 'занять переговорку':
             bot_funcs.regTime(message)
         elif user_message == 'занятость переговорки':
-            bot_funcs.printAllTimes(message)
+            bot_funcs.print_all_times(message)
         elif user_message == 'справка':
             bot_funcs.printHelp(message)
         elif user_message == 'кот':
