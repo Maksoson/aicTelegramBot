@@ -153,8 +153,9 @@ class DatabaseFuncs:
         with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
                 query = 'SELECT public.users.*, public.timetable.* FROM public.timetable ' \
-                        'INNER JOIN public.users ON public.users.id = public.timetable.user_id'
-                cursor.execute(query)
+                        'INNER JOIN public.users ON public.users.id = public.timetable.user_id ' \
+                        'WHERE public.timetable.day_use >= %s OR public.month_use > %s'
+                cursor.execute(query, [datetime.datetime.today().day, datetime.datetime.today().month])
 
                 return cursor.fetchall()
 
