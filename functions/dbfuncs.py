@@ -143,8 +143,13 @@ class DatabaseFuncs:
     def get_my_times(self, user_id):
         with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
-                query = 'SELECT * FROM public.timetable WHERE user_id = %s'
-                cursor.execute(query, [user_id])
+                today = datetime.datetime.today().day
+                now_month = datetime.datetime.today().month
+
+                query = 'SELECT * FROM public.timetable WHERE user_id = %s AND ' \
+                        '((public.timetable.day_use >= %s AND public.timetable.month_use = %s) ' \
+                        'OR (public.timetable.day_use < %s AND public.timetable.month_use > %s))'
+                cursor.execute(query, [user_id, today, now_month, today, now_month])
 
                 return cursor.fetchall()
 
@@ -152,12 +157,14 @@ class DatabaseFuncs:
     def get_all_times(self):
         with closing(self.get_connection()) as connection:
             with connection.cursor() as cursor:
+                today = datetime.datetime.today().day
+                now_month = datetime.datetime.today().month
+                
                 query = 'SELECT public.users.*, public.timetable.* FROM public.timetable ' \
                         'INNER JOIN public.users ON public.users.id = public.timetable.user_id ' \
                         'WHERE (public.timetable.day_use >= %s AND public.timetable.month_use = %s) ' \
                         'OR (public.timetable.day_use < %s AND public.timetable.month_use > %s) '
-                cursor.execute(query, [datetime.datetime.today().day, datetime.datetime.today().month,
-                                       datetime.datetime.today().day, datetime.datetime.today().month])
+                cursor.execute(query, [today, now_month, today, now_month])
 
                 return cursor.fetchall()
 
