@@ -8,83 +8,70 @@ import os
 import bothome
 from flask import Flask, request
 
-from functions import dbfuncs, botfuncs
+from functions import dbfuncs, botfuncs, otherfuncs
 
 
 bot = telebot.TeleBot(config.TOKEN)
 bot_home = bothome.BotHome()
-bot_home.setBot(bot)
+bot_home.set_bot(bot)
 
 db_funcs = dbfuncs.DatabaseFuncs(bot)
 bot_funcs = botfuncs.BotFuncs(bot)
-
-start_keyboard = telebot.types.ReplyKeyboardMarkup(True)
-start_keyboard.row('Занять переговорку', 'Изменить запись', 'Удалить запись')
-start_keyboard.row('Моя занятость', 'Занятость переговорки')
-start_keyboard.row('Дата', 'Справка', 'Кот')
+other_funcs = otherfuncs.OtherFuncs()
 
 
 # ------------------------------------------------ #
 @bot.message_handler(commands=['start', 'help', 'add', 'time', 'all', 'my', 'delete', 'update', 'cat'])
-def startFunc(message):
-    if bot_funcs.isUserExist(message):
+def start_func(message):
+    if bot_funcs.is_user_exist(message):
         command = str(message.text).strip()
         if command == '/start':
-            bot.send_message(message.chat.id, 'Я тебя уже знаю, ' + message.from_user.username,
-                             reply_markup=start_keyboard)
+            user_name = other_funcs.check_none(message.from_user.username)
+            user_name = ', ' + user_name if user_name != '' else '!'
+            bot.send_message(message.chat.id, 'Я тебя уже знаю' + user_name,
+                             reply_markup=other_funcs.get_start_keyboard())
         elif command == '/help':
-            bot_funcs.printHelp(message)
+            bot_funcs.print_help(message)
         elif command == '/add':
-            bot_funcs.regTime(message)
+            bot_funcs.reg_time(message)
         elif command == '/time':
-            bot_funcs.printToday(message.chat.id, datetime.datetime.today())
+            bot_funcs.print_today(message.chat.id, datetime.datetime.today())
         elif command == '/all':
-            bot_funcs.printAllTimes(message)
+            bot_funcs.print_all_times(message)
         elif command == '/delete':
-            bot_funcs.seeTimesListFor(message, 1)
+            bot_funcs.see_times_list_for(message, 1)
         elif command == '/update':
-            bot_funcs.seeTimesListFor(message, 2)
+            bot_funcs.see_times_list_for(message, 2)
         elif command == '/my':
-            bot_funcs.printMyTimes(message)
+            bot_funcs.print_my_times(message)
         elif command == '/cat':
-            bot.send_message(message.chat.id, 'Мяу', reply_markup=start_keyboard)
+            bot.send_message(message.chat.id, 'Мяу', reply_markup=other_funcs.get_start_keyboard())
 
 
 @bot.message_handler(content_types=['text'])
 def send_text(message):
     print(message)
-    if bot_funcs.isUserExist(message):
+    if bot_funcs.is_user_exist(message):
         user_message = message.text.lower()
         chat_id = message.chat.id
-        user_first_name = message.from_user.first_name
         today = datetime.datetime.today()
-        now_day = today.day
 
-        if user_message == 'привет':
-            bot.send_message(chat_id, 'Привет, ' + user_first_name)
-        elif user_message == 'пока':
-            bot.send_message(chat_id, 'Удачи тебе, ' + user_first_name)
-        elif user_message == 'дата':
-            bot_funcs.printToday(chat_id, today)
+        if user_message == 'дата':
+            bot_funcs.print_today(chat_id, today)
         elif user_message == 'моя занятость':
-            bot_funcs.printMyTimes(message)
+            bot_funcs.print_my_times(message)
         elif user_message == 'удалить запись':
-            bot_funcs.seeTimesListFor(message, 1)
+            bot_funcs.see_times_list_for(message, 1)
         elif user_message == 'изменить запись':
-            bot_funcs.seeTimesListFor(message, 2)
+            bot_funcs.see_times_list_for(message, 2)
         elif user_message == 'занять переговорку':
-            bot_funcs.regTime(message)
+            bot_funcs.reg_time(message)
         elif user_message == 'занятость переговорки':
-            bot_funcs.printAllTimes(message)
+            bot_funcs.print_all_times(message)
         elif user_message == 'справка':
-            bot_funcs.printHelp(message)
+            bot_funcs.print_help(message)
         elif user_message == 'кот':
-            bot.send_message(message.chat.id, 'Мяу', reply_markup=start_keyboard)
-
-
-# @bot.message_handler(content_types=['sticker'])
-# def sticker_id(message):
-#     print(message)
+            bot.send_message(message.chat.id, 'Мяу', reply_markup=other_funcs.get_start_keyboard())
 
 
 # ------------------------------------------------ #
@@ -92,7 +79,7 @@ server = Flask(__name__)
 
 
 @server.route("/{}".format(config.TOKEN), methods=['POST'])
-def getMessage():
+def get_message():
     updates = bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode('utf-8'))])
     print(updates)
 
@@ -100,13 +87,13 @@ def getMessage():
 
 
 @server.route('/setwebhook', methods=['GET', 'POST'])
-def set_webhook():
+def set_web_hook():
     bot.remove_webhook()
     s = bot.set_webhook('{URL}{HOOK}'.format(URL=config.URL, HOOK=config.TOKEN))
     if s:
-        return "webhook setup ok", 200
+        return "web_hook setup ok", 200
     else:
-        return "webhook setup failed", 200
+        return "web_hook setup failed", 200
 
 
 @server.route('/')

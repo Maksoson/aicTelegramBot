@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+
 class BotHome:
 
     bot = None
 
-    def setBot(self, bot):
+    def set_bot(self, bot):
         self.bot = bot
 
-    def getBot(self):
+    def get_bot(self):
         return self.bot
