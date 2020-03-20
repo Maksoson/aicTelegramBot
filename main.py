@@ -74,33 +74,36 @@ def send_text(message):
             bot.send_message(message.chat.id, 'Мяу', reply_markup=other_funcs.get_start_keyboard())
 
 
-# ------------------------------------------------ #
-server = Flask(__name__)
+bot.remove_webhook()
+bot.polling(none_stop=True)
 
-
-@server.route("/{}".format(config.TOKEN), methods=['POST'])
-def get_message():
-    updates = bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode('utf-8'))])
-    print(updates)
-
-    return "!", 200
-
-
-@server.route('/setwebhook', methods=['GET', 'POST'])
-def set_web_hook():
-    bot.remove_webhook()
-    s = bot.set_webhook('{URL}{HOOK}'.format(URL=config.URL, HOOK=config.TOKEN))
-    if s:
-        return "web_hook setup ok", 200
-    else:
-        return "web_hook setup failed", 200
-
-
-@server.route('/')
-def index():
-    return '.'
-
-
-# ------------------------------------------------ #
-if __name__ == "__main__":
-    server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
+# # ------------------------------------------------ #
+# server = Flask(__name__)
+#
+#
+# @server.route("/{}".format(config.TOKEN), methods=['POST'])
+# def get_message():
+#     updates = bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode('utf-8'))])
+#     print(updates)
+#
+#     return "!", 200
+#
+#
+# @server.route('/setwebhook', methods=['GET', 'POST'])
+# def set_web_hook():
+#     bot.remove_webhook()
+#     s = bot.set_webhook('{URL}{HOOK}'.format(URL=config.URL, HOOK=config.TOKEN))
+#     if s:
+#         return "web_hook setup ok", 200
+#     else:
+#         return "web_hook setup failed", 200
+#
+#
+# @server.route('/')
+# def index():
+#     return '.'
+#
+#
+# # ------------------------------------------------ #
+# if __name__ == "__main__":
+#     server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
