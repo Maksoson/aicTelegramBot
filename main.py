@@ -74,8 +74,7 @@ def send_text(message):
             bot.send_message(message.chat.id, 'Мяу', reply_markup=other_funcs.get_start_keyboard())
 
 
-bot.remove_webhook()
-bot.polling(none_stop=True)
+bot.polling(interval=2, none_stop=True)
 
 # # ------------------------------------------------ #
 # server = Flask(__name__)
