@@ -10,6 +10,7 @@ hw.py
 ind_1.py
 test.py
 /datafiles/config.py
+/datafiles/config_work.py
 /datafiles/config_archive.py
 /datafiles/config_heroku.py
 /datafiles/dbtables.txt
