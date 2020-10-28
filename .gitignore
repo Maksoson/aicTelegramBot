@@ -2,15 +2,16 @@
 /virtualenv
 .idea/
 
-old_main.py
-old_main_2.py
-functions/old_botfuncs.py
+/old_main.py
+/old_main_2.py
+/functions/old_botfuncs.py
 
 hw.py
 ind_1.py
 test.py
-datafiles/config_archive.py
-datafiles/config_heroku.py
-datafiles/dbtables.txt
+/datafiles/config.py
+/datafiles/config_archive.py
+/datafiles/config_heroku.py
+/datafiles/dbtables.txt
 
 *.txt
